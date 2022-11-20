@@ -8,16 +8,6 @@
           maxlength="140"></textarea>
         <p class="info">{{ content.length }}/140 characters</p>
       </div>
-      <div>
-        <select name="privatecircle" v-model="privatecircle" id="privatecircle"
-          v-if="$store.state.privatecircles.length">
-          <option value="" selected>Post publicly</option>
-          <option v-for="privatecircle in $store.state.privatecircles" :value=privatecircle.name>Post to
-            {{ privatecircle.name }}</option>
-        </select>
-        <p v-else class="info">Want to post to a smaller audience? Create a <router-link to="privatecircles">Private
-            Circle</router-link>.</p>
-      </div>
     </section>
     <button type="submit">
       Post freet
@@ -28,13 +18,9 @@
 <script>
 
 export default {
-  async mounted() {
-    await this.$store.commit('refreshPrivateCircles');
-  },
   data() {
     return {
       content: '',
-      privatecircle: '',
     };
   },
   methods: {
@@ -53,7 +39,6 @@ export default {
       };
       const fields = {
         content: this.content,
-        private_circle: this.privatecircle
       }
       options.body = JSON.stringify(fields);
 
@@ -67,7 +52,6 @@ export default {
         this.$store.commit('refreshFreets');
 
         this.content = '';
-        this.privatecircle = '';
 
         this.$store.commit('alert', {
           message: 'Successfully created a freet!', status: 'success'

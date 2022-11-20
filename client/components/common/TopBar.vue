@@ -12,7 +12,6 @@
           </h1>
         </header>
       </router-link>
-      <SearchComponent />
     </div>
     <div v-if="$store.state.username" class="right">
       <router-link to="/" class="nav">
@@ -20,9 +19,6 @@
       </router-link>
       <router-link :to="{ name: 'Profile', params: { username: this.$store.state.username } }" class="nav">
         Profile<span class="material-symbols-outlined">Person</span>
-      </router-link>
-      <router-link to="/privatecircles" class="nav">
-        Private Circles<span class="material-symbols-outlined">Workspaces</span>
       </router-link>
       <router-link to="/settings" class="nav">
         Settings<span class="material-symbols-outlined">Settings</span>
@@ -41,10 +37,8 @@
 
 
 <script>
-import SearchComponent from '@/components/common/SearchComponent.vue';
 
 export default {
-  components: { SearchComponent },
   methods: {
     async signOut() {
       try {
@@ -69,8 +63,6 @@ export default {
         this.$store.state.showAllFreets = false;
         this.$store.state.filter = null;
         this.$store.state.freets = [];
-        this.$store.state.shieldedTopics = [];
-        this.$store.state.privateCircles = [];
 
         // Alert user that they have signed out
         this.$store.commit('alert', {

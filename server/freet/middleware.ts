@@ -57,33 +57,8 @@ const isValidFreetModifier = async (req: Request, res: Response, next: NextFunct
   next();
 };
 
-/**
- * Checks if valid report reason
- */
-const isValidAnxietyReport = async (req: Request, res: Response, next: NextFunction) => {
-  const topic = req.body.topic;
-  const valid_report_reasons = [
-    'Death',
-    'Suicide',
-    'Serious Injury or Disease',
-    'Addiction',
-    'Sexual Violence',
-    'Financial Issues',
-    'Other Anxiety',
-  ]
-  if (!valid_report_reasons.includes(topic)) {
-    res.status(400).json({
-      error: `Topic must be one of the predefined options: ${valid_report_reasons}.`
-    });
-    return;
-  }
-
-  next();
-};
-
 export {
   isValidFreetContent,
   isFreetExists,
   isValidFreetModifier,
-  isValidAnxietyReport
 };

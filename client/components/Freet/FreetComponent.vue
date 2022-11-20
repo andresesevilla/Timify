@@ -2,8 +2,7 @@
 <!-- We've tagged some elements with classes; consider writing CSS using those classes to style them... -->
 
 <template>
-  <article
-    v-if="!reporting && (!$store.state.shieldedTopics.some((e) => { return freet.topics.includes(e) }) || viewAnyway)">
+  <article>
     <header>
       <h3>
         <router-link :to="{ name: 'Profile', params: { username: freet.author } }">
@@ -27,46 +26,7 @@
       <button @click="deleteFreet" v-if="$store.state.username === freet.author">
         <span class="material-symbols-outlined">Delete</span> Delete
       </button>
-      <button @click="startReport">
-        <span class="material-symbols-outlined">Security</span> Report Anxiety
-      </button>
     </div>
-  </article>
-  <article v-else-if="!reporting">
-    <h3>
-      <router-link :to="{ name: 'Settings' }">
-        Anxiety Shield
-      </router-link>
-    </h3>
-    <p class="content">This freet by <router-link :to="{ name: 'Profile', params: { username: freet.author } }">
-        @{{ freet.author }}</router-link> may contain the following
-      topic(s):
-    </p>
-    <ul>
-      <li v-for="topic in freet.topics" v-if="$store.state.shieldedTopics.includes(topic)">
-        {{ topic }}
-      </li>
-    </ul>
-    <button @click="() => { viewAnyway = true }"><span class="material-symbols-outlined">Visibility</span>View</button>
-  </article>
-  <article v-else>
-    <h3>
-      Anxiety Shield
-    </h3>
-    <p class="info">Help users avoid anxiety inducing content by reporting it to Anxiety Shield.</p>
-    <form @submit.prevent="submit" v-on:change="reportToAnxietyShield">
-      <label for="topic">What anxiety inducing topic does this freet contain?</label>
-      <select name="topic" id="topic" v-model="reportedTopic">
-        <option>Death</option>
-        <option>Suicide</option>
-        <option>Serious Injury or Disease</option>
-        <option>Addiction</option>
-        <option>Sexual Violence</option>
-        <option>Financial Issues</option>
-        <option>Other Anxiety</option>
-      </select>
-    </form>
-    <button @click="() => { reporting = false }"><span class="material-symbols-outlined">Cancel</span>Cancel</button>
   </article>
 </template>
 
@@ -80,50 +40,7 @@ export default {
       required: true
     }
   },
-  data() {
-    return {
-      viewAnyway: false,
-      reporting: false,
-      reportedTopic: '',
-    };
-  },
-  watch: {
-    freet() {
-      this.viewAnyway = false;
-    }
-  },
   methods: {
-    startReport() {
-      this.reporting = true;
-    },
-    async reportToAnxietyShield() {
-      const options = {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin'
-      };
-      const fields = {
-        topic: this.reportedTopic,
-      }
-      options.body = JSON.stringify(fields);
-      try {
-        const r = await fetch(`/api/freets/${this.freet._id}`, options);
-        if (!r.ok) {
-          const res = await r.json();
-          throw new Error(res.error);
-        }
-        this.reportedTopic = '';
-        this.$store.commit('alert', {
-          message: 'Successfully reported freet to Anxiety Shield!', status: 'success'
-        });
-        this.reporting = false;
-      } catch (e) {
-        this.reportedTopic = '';
-        this.$store.commit('alert', {
-          message: e, status: 'error'
-        });
-      }
-    },
     deleteFreet() {
       /**
        * Deletes this freet.

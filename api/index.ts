@@ -11,7 +11,6 @@ import {userRouter} from '../server/user/router';
 import {freetRouter} from '../server/freet/router';
 import {followRouter} from '../server/follow/router';
 import {privateCircleRouter} from '../server/privatecircle/router';
-import { anxietyShieldRouter } from '../server/anxietyshield/router';
 import MongoStore from 'connect-mongo';
 
 // Load environmental variables
@@ -75,7 +74,6 @@ app.use('/api/users', userRouter);
 app.use('/api/freets', freetRouter);
 app.use('/api/follows', followRouter)
 app.use('/api/privatecircles', privateCircleRouter)
-app.use('/api/anxietyshield', anxietyShieldRouter)
 
 // Catch all the other routes and display error message
 app.all('*', (req: Request, res: Response) => {

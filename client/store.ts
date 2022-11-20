@@ -13,7 +13,6 @@ const store = new Vuex.Store({
     filter: null, // Username to filter shown freets by (null = show all) (overrides showAllFreets)
     freets: [], // All freets created in the app
     privatecircles: [], // All private circles of the logged in user
-    shieldedTopics: [],
     username: null, // Username of the logged in user
     alerts: {} // global success/error messages encountered during submissions to non-visible forms
   },
@@ -75,15 +74,6 @@ const store = new Vuex.Store({
       const res = await fetch(url).then(async r => r.json());
       state.privatecircles = res.privateCircles;
     },
-    async refreshShieldedTopics(state) {
-      /**
-       * Request the server for the user's shielded topics.
-       */
-       state.shieldedTopics = [];
-      const url = '/api/anxietyshield';
-      const res = await fetch(url).then(async r => r.json());
-      state.shieldedTopics = res.anxietyShield.shieldedTopics;
-    }
   },
   // Store data across page refreshes, only discard on browser close
   plugins: [createPersistedState()]

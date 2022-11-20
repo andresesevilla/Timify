@@ -132,25 +132,4 @@ router.delete(
   }
 );
 
-/**
- * Report a freet
- *
- * @name PATCH /api/freets/:id
- */
-router.patch(
-  '/:freetId?',
-  [
-    userValidator.isUserLoggedIn,
-    freetValidator.isFreetExists,
-    freetValidator.isValidAnxietyReport
-  ],
-  async (req: Request, res: Response) => {
-    const freet = await FreetCollection.reportOne(req.params.freetId, req.body.topic);
-    res.status(200).json({
-      message: 'Topic added to freet successfully.',
-      freet: util.constructFreetResponse(freet)
-    });
-  }
-);
-
 export { router as freetRouter };

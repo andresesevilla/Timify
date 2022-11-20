@@ -13,7 +13,6 @@ export type Freet = {
   content: string;
   dateCreated: Date;
   restrictAccess: string;
-  topics: Array<string>;
 };
 
 export type PopulatedFreet = {
@@ -22,7 +21,6 @@ export type PopulatedFreet = {
   content: string;
   dateCreated: Date;
   restrictAccess: string;
-  topics: Array<string>;
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table
@@ -50,12 +48,6 @@ const FreetSchema = new Schema<Freet>({
     type: String,
     required: false
   },
-  topics: {
-    type: [
-      { type: String }
-    ],
-    required: true
-  }
 });
 
 const FreetModel = model<Freet>('Freet', FreetSchema);

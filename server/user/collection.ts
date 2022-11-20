@@ -1,4 +1,3 @@
-import AnxietyShieldCollection from '../anxietyshield/collection';
 import type { HydratedDocument, Types } from 'mongoose';
 import type { User } from './model';
 import UserModel from './model';
@@ -22,7 +21,6 @@ class UserCollection {
   static async addOne(username: string, password: string): Promise<HydratedDocument<User>> {
     const user = new UserModel({ username, password });
     await user.save(); // Saves user to MongoDB
-    await AnxietyShieldCollection.addOne(user.id);
     return user;
   }
 

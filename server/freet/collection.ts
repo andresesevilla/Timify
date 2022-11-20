@@ -172,24 +172,6 @@ class FreetCollection {
   static async deleteMany(privateCircle: string): Promise<void> {
     await FreetModel.deleteMany({ restrictAccess: privateCircle });
   }
-
-  /**
-   * Report a freet with given reason
-   *
-   * @param {string} freetId - The id of the freet to be reported
-   * @param {string} reason - The report reason
-   * @return {Promise<HydratedDocument<Freet>>} - The newly updated freet
-   */
-  static async reportOne(freetId: Types.ObjectId | string, reason: string): Promise<HydratedDocument<Freet>> {
-    const freet = await FreetModel.findOne({ _id: freetId });
-    const topics = freet.topics;
-    if (!topics.includes(reason)) {
-      topics.push(reason);
-    }
-    freet.topics = topics;
-    freet.save();
-    return freet.populate('authorId');
-  }
 }
 
 export default FreetCollection;
