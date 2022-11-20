@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Timify | Page not found</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <header>
+    <h1>Timify</h1>
+  </header>
+
+  <div class="error-container">
+    <span>
+      Hmm...this page doesn't exist. Click the button below to navigate to the Home page
+    </span>
+    <button onclick="goToHome()" > BACK TO HOME</button>
+  </div>
+</body>
+<script>
+  function goToHome() {
+    location.href = "/";
+  }
+</script>
+</html>
