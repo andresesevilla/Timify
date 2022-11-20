@@ -1,24 +1,24 @@
-<!-- Reusable component representing a single freet and its actions -->
+<!-- Reusable component representing a single goal and its actions -->
 <!-- We've tagged some elements with classes; consider writing CSS using those classes to style them... -->
 
 <template>
   <article>
     <header>
       <h3>
-        <router-link :to="{ name: 'Profile', params: { username: freet.author } }">
-          @{{ freet.author }}
+        <router-link :to="{ name: 'Profile', params: { username: goal.author } }">
+          @{{ goal.author }}
         </router-link>
       </h3>
       <div class="info">
-        {{ freet.dateCreated }}
+        {{ goal.dateCreated }}
       </div>
     </header>
     <p class="content">
-      {{ freet.content }}
+      {{ goal.content }}
     </p>
 
     <div class="button-row">
-      <button @click="deleteFreet" v-if="$store.state.username === freet.author">
+      <button @click="deleteGoal" v-if="$store.state.username === goal.author">
         <span class="material-symbols-outlined">Delete</span> Delete
       </button>
     </div>
@@ -27,24 +27,24 @@
 
 <script>
 export default {
-  name: 'FreetComponent',
+  name: 'GoalComponent',
   props: {
-    // Data from the stored freet
-    freet: {
+    // Data from the stored goal
+    goal: {
       type: Object,
       required: true
     }
   },
   methods: {
-    deleteFreet() {
+    deleteGoal() {
       /**
-       * Deletes this freet.
+       * Deletes this goal.
        */
       const params = {
         method: 'DELETE',
         callback: () => {
           this.$store.commit('alert', {
-            message: 'Successfully deleted freet!', status: 'success'
+            message: 'Successfully deleted goal!', status: 'success'
           });
         }
       };
@@ -52,7 +52,7 @@ export default {
     },
     async request(params) {
       /**
-       * Submits a request to the freet's endpoint
+       * Submits a request to the goal's endpoint
        * @param params - Options for the request
        * @param params.body - Body for the request, if it exists
        * @param params.callback - Function to run if the the request succeeds
@@ -65,13 +65,13 @@ export default {
       }
 
       try {
-        const r = await fetch(`/api/freets/${this.freet._id}`, options);
+        const r = await fetch(`/api/goals/${this.goal._id}`, options);
         if (!r.ok) {
           const res = await r.json();
           throw new Error(res.error);
         }
 
-        this.$store.commit('refreshFreets');
+        this.$store.commit('refreshGoals');
 
         params.callback();
       } catch (e) {

@@ -1,4 +1,4 @@
-<!-- Display freets on profile -->
+<!-- Display goals on profile -->
 
 <template>
     <main v-if="isValidUsername">
@@ -22,11 +22,11 @@
         <section v-if="!follower && following">
           <p class="info">You are following @{{ $route.params.username }}, but they do not follow you back.</p>
         </section>
-        <section v-if="$store.state.freets.length">
-          <FreetComponent v-for="freet in $store.state.freets" :key="freet.id" :freet="freet" />
+        <section v-if="$store.state.goals.length">
+          <GoalComponent v-for="goal in $store.state.goals" :key="goal.id" :goal="goal" />
         </section>
         <article v-else>
-          <h3>No freets found.</h3>
+          <h3>No goals found.</h3>
         </article>
       </section>
     </main>
@@ -35,16 +35,16 @@
 
 <script>
 import NotFound from '../../NotFound.vue';
-import FreetComponent from '@/components/Freet/FreetComponent.vue';
+import GoalComponent from '@/components/Goal/GoalComponent.vue';
 
 export default {
   name: 'ProfilePage',
-  components: { NotFound, FreetComponent },
+  components: { NotFound, GoalComponent },
   async mounted() {
-    const getFreets = this.getFreets();
+    const getGoals = this.getGoals();
     const getFollower = this.getFollower();
     const getFollowing = this.getFollowing();
-    await getFreets;
+    await getGoals;
     await getFollower;
     await getFollowing;
   },
@@ -59,10 +59,10 @@ export default {
     async '$route'() {
       this.follower = false;
       this.following = false;
-      const getFreets = this.getFreets();
+      const getGoals = this.getGoals();
       const getFollower = this.getFollower();
       const getFollowing = this.getFollowing();
-      await getFreets;
+      await getGoals;
       await getFollower;
       await getFollowing;
     }
@@ -115,7 +115,7 @@ export default {
             message: `Successfully unfollowed user!`, status: 'success'
           });
           this.following = false;
-          await this.getFreets();
+          await this.getGoals();
         } catch (e) {
           this.$store.commit('alert', {
             message: e, status: 'error'
@@ -147,9 +147,9 @@ export default {
         this.follower = true;
       }
     },
-    async getFreets() {
+    async getGoals() {
       const username = this.$route.params.username
-      const url = `/api/freets?author=${username}`;
+      const url = `/api/goals?author=${username}`;
       try {
         const r = await fetch(url);
         const res = await r.json();
@@ -158,7 +158,7 @@ export default {
         }
         this.isValidUsername = true;
         this.$store.commit('updateFilter', username);
-        this.$store.commit('updateFreets', res);
+        this.$store.commit('updateGoals', res);
       } catch (e) {
         this.isValidUsername = false;
       }

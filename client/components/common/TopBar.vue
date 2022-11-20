@@ -60,9 +60,9 @@ export default {
         this.$store.commit('setUsername', null);
 
         // Avoid persisting state across sessions
-        this.$store.state.showAllFreets = false;
+        this.$store.state.showAllGoals = false;
         this.$store.state.filter = null;
-        this.$store.state.freets = [];
+        this.$store.state.goals = [];
 
         // Alert user that they have signed out
         this.$store.commit('alert', {

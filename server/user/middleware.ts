@@ -3,7 +3,7 @@ import UserCollection from '../user/collection';
 
 /**
  * Checks if the current session user (if any) still exists in the database, for instance,
- * a user may try to post a freet in some browser while the account has been deleted in another or
+ * a user may try to post a goal in some browser while the account has been deleted in another or
  * when a user tries to modify an account in some browser while it has been deleted in another
  */
 const isCurrentSessionUserExists = async (req: Request, res: Response, next: NextFunction) => {

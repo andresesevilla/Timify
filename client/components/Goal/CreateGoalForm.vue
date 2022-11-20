@@ -1,4 +1,4 @@
-<!-- Form for creating freets (based on BlockForm) -->
+<!-- Form for creating goals (based on BlockForm) -->
 
 <template>
   <form @submit.prevent="submit">
@@ -10,7 +10,7 @@
       </div>
     </section>
     <button type="submit">
-      Post freet
+      Post goal
     </button>
   </form>
 </template>
@@ -27,7 +27,7 @@ export default {
     async submit() {
       if (!this.content.trim()) {
         this.$store.commit('alert', {
-          message: 'Freet content must be at least one character long.', status: 'error'
+          message: 'Goal content must be at least one character long.', status: 'error'
         });
         return;
       }
@@ -43,18 +43,18 @@ export default {
       options.body = JSON.stringify(fields);
 
       try {
-        const r = await fetch('/api/freets', options);
+        const r = await fetch('/api/goals', options);
         if (!r.ok) {
           const res = await r.json();
           throw new Error(res.error);
         }
 
-        this.$store.commit('refreshFreets');
+        this.$store.commit('refreshGoals');
 
         this.content = '';
 
         this.$store.commit('alert', {
-          message: 'Successfully created a freet!', status: 'success'
+          message: 'Successfully created a goal!', status: 'success'
         });
 
       } catch (e) {

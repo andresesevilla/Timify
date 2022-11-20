@@ -1,10 +1,10 @@
-<!-- Form for getting freets (all, from user) -->
+<!-- Form for getting goals (all, from user) -->
 <template>
   <section>
     <div class="feed-control">
       <h2>
         Viewing
-        <span v-if="$store.state.showAllFreets">
+        <span v-if="$store.state.showAllGoals">
           global feed
         </span>
         <span v-else>
@@ -12,12 +12,12 @@
         </span>
       </h2>
       <button @click="click">
-        Switch to {{ $store.state.showAllFreets ? 'your' : 'global' }} feed <span class="material-symbols-outlined">{{
-            $store.state.showAllFreets ? 'Groups' : 'Public'
+        Switch to {{ $store.state.showAllGoals ? 'your' : 'global' }} feed <span class="material-symbols-outlined">{{
+            $store.state.showAllGoals ? 'Groups' : 'Public'
         }}</span>
       </button>
     </div>
-    <p class="info">Your feed has freets from users you follow. Global feed has freets from all users.</p>
+    <p class="info">Your feed has goals from users you follow. Global feed has goals from all users.</p>
   </section>
 </template>
 
@@ -25,10 +25,10 @@
 <script>
 
 export default {
-  name: 'GetFreetsForm',
+  name: 'GetGoalsForm',
   data() {
     return {
-      value: this.$store.state.showAllFreets
+      value: this.$store.state.showAllGoals
     };
   },
   mounted() {
@@ -40,8 +40,8 @@ export default {
       await this.submit();
     },
     async submit() {
-      this.$store.commit('setShowAllFreets', this.value);
-      const url = this.value ? '/api/freets' : '/api/freets?feed';
+      this.$store.commit('setShowAllGoals', this.value);
+      const url = this.value ? '/api/goals' : '/api/goals?feed';
       try {
         const r = await fetch(url);
         const res = await r.json();
@@ -49,7 +49,7 @@ export default {
           throw new Error(res.error);
         }
         this.$store.commit('updateFilter', null);
-        this.$store.commit('updateFreets', res);
+        this.$store.commit('updateGoals', res);
       } catch (e) {
         this.$store.commit('alert', {
           message: e, status: 'error'

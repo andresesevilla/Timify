@@ -62,7 +62,7 @@ router.delete(
  *
  * @name GET /api/follows?followerUsername=id
  *
- * @return {FreetResponse[]} - An array of follows created by user with id, followerUsername
+ * @return {GoalResponse[]} - An array of follows created by user with id, followerUsername
  * @throws {400} - If followerUsername is not given
  * @throws {404} - If no user has given followerUsername
  *

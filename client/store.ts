@@ -9,9 +9,9 @@ Vue.use(Vuex);
  */
 const store = new Vuex.Store({
   state: {
-    showAllFreets: false, // By default, don't show all freets (show feed instead)
-    filter: null, // Username to filter shown freets by (null = show all) (overrides showAllFreets)
-    freets: [], // All freets created in the app
+    showAllGoals: false, // By default, don't show all goals (show feed instead)
+    filter: null, // Username to filter shown goals by (null = show all) (overrides showAllGoals)
+    goals: [], // All goals created in the app
     username: null, // Username of the logged in user
     alerts: {} // global success/error messages encountered during submissions to non-visible forms
   },
@@ -25,12 +25,12 @@ const store = new Vuex.Store({
         Vue.delete(state.alerts, payload.message);
       }, 3000);
     },
-    setShowAllFreets(state, value) {
+    setShowAllGoals(state, value) {
       /**
-       * Update whether all freets are shown
+       * Update whether all goals are shown
        * @param value - new value to set
        */
-      state.showAllFreets = value;
+      state.showAllGoals = value;
     },
     setUsername(state, username) {
       /**
@@ -41,28 +41,28 @@ const store = new Vuex.Store({
     },
     updateFilter(state, filter) {
       /**
-       * Update the stored freets filter to the specified one.
-       * @param filter - Username of the user to filter freets by
+       * Update the stored goals filter to the specified one.
+       * @param filter - Username of the user to filter goals by
        */
       state.filter = filter;
     },
-    updateFreets(state, freets) {
+    updateGoals(state, goals) {
       /**
-       * Update the stored freets to the provided freets.
-       * @param freets - Freets to store
+       * Update the stored goals to the provided goals.
+       * @param goals - Goals to store
        */
-      state.freets = freets;
+      state.goals = goals;
     },
-    async refreshFreets(state) {
+    async refreshGoals(state) {
       /**
-       * Request the server for the currently available freets.
+       * Request the server for the currently available goals.
        */
-      let url = state.showAllFreets ? '/api/freets' : '/api/freets?feed';
+      let url = state.showAllGoals ? '/api/goals' : '/api/goals?feed';
       if (state.filter) {
-        url = `/api/freets?author=${state.filter}`;
+        url = `/api/goals?author=${state.filter}`;
       }
       const res = await fetch(url).then(async r => r.json());
-      state.freets = res;
+      state.goals = res;
     },
   },
   // Store data across page refreshes, only discard on browser close

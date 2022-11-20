@@ -1,27 +1,27 @@
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
-import FreetCollection from './collection';
+import GoalCollection from './collection';
 import * as userValidator from '../user/middleware';
-import * as freetValidator from '../freet/middleware';
+import * as goalValidator from '../goal/middleware';
 import * as util from './util';
 import UserCollection from '../user/collection';
 
 const router = express.Router();
 
 /**
- * Get all the freets
+ * Get all the goals
  *
- * @name GET /api/freets
+ * @name GET /api/goals
  *
- * @return {FreetResponse[]} - A list of all the freets sorted in descending
+ * @return {GoalResponse[]} - A list of all the goals sorted in descending
  *                      order by date modified
  */
 /**
- * Get freets by author.
+ * Get goals by author.
  *
- * @name GET /api/freets?authorId=username
+ * @name GET /api/goals?authorId=username
  *
- * @return {FreetResponse[]} - An array of freets created by user with username, author
+ * @return {GoalResponse[]} - An array of goals created by user with username, author
  * @throws {400} - If author is not given
  * @throws {404} - If no user has given author
  *
@@ -42,12 +42,12 @@ router.get(
     const user = await UserCollection.findOneByUserId(userId);
     // Check if feed query parameter was supplied
     if (req.query.feed !== undefined) {
-      const feedFreets = await FreetCollection.findAllInFeed(userId);
-      const response = feedFreets.map(util.constructFreetResponse);
+      const feedGoals = await GoalCollection.findAllInFeed(userId);
+      const response = feedGoals.map(util.constructGoalResponse);
       res.status(200).json(response);
     } else {
-      const allFreets = await FreetCollection.findAll(userId);
-      const response = allFreets.map(util.constructFreetResponse);
+      const allGoals = await GoalCollection.findAll(userId);
+      const response = allGoals.map(util.constructGoalResponse);
       res.status(200).json(response);
     }
   },
@@ -56,62 +56,62 @@ router.get(
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    const authorFreets = await FreetCollection.findAllByUsername(userId, req.query.author as string);
-    const response = authorFreets.map(util.constructFreetResponse);
+    const authorGoals = await GoalCollection.findAllByUsername(userId, req.query.author as string);
+    const response = authorGoals.map(util.constructGoalResponse);
     res.status(200).json(response);
   }
 );
 
 /**
- * Create a new freet.
+ * Create a new goal.
  *
- * @name POST /api/freets
+ * @name POST /api/goals
  *
- * @param {string} content - The content of the freet
- * @return {FreetResponse} - The created freet
+ * @param {string} content - The content of the goal
+ * @return {GoalResponse} - The created goal
  * @throws {403} - If the user is not logged in
- * @throws {400} - If the freet content is empty or a stream of empty spaces
- * @throws {413} - If the freet content is more than 140 characters long
+ * @throws {400} - If the goal content is empty or a stream of empty spaces
+ * @throws {413} - If the goal content is more than 140 characters long
  */
 router.post(
   '/',
   [
     userValidator.isUserLoggedIn,
-    freetValidator.isValidFreetContent
+    goalValidator.isValidGoalContent
   ],
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    const freet = await FreetCollection.addOne(userId, req.body.content);
+    const goal = await GoalCollection.addOne(userId, req.body.content);
     res.status(201).json({
-      message: 'Your freet was created successfully.',
-      freet: util.constructFreetResponse(freet)
+      message: 'Your goal was created successfully.',
+      goal: util.constructGoalResponse(goal)
     });
   }
 );
 
 /**
- * Delete a freet
+ * Delete a goal
  *
- * @name DELETE /api/freets/:id
+ * @name DELETE /api/goals/:id
  *
  * @return {string} - A success message
  * @throws {403} - If the user is not logged in or is not the author of
- *                 the freet
- * @throws {404} - If the freetId is not valid
+ *                 the goal
+ * @throws {404} - If the goalId is not valid
  */
 router.delete(
-  '/:freetId?',
+  '/:goalId?',
   [
     userValidator.isUserLoggedIn,
-    freetValidator.isFreetExists,
-    freetValidator.isValidFreetModifier
+    goalValidator.isGoalExists,
+    goalValidator.isValidGoalModifier
   ],
   async (req: Request, res: Response) => {
-    await FreetCollection.deleteOne(req.params.freetId);
+    await GoalCollection.deleteOne(req.params.goalId);
     res.status(200).json({
-      message: 'Your freet was deleted successfully.'
+      message: 'Your goal was deleted successfully.'
     });
   }
 );
 
-export { router as freetRouter };
+export { router as goalRouter };
