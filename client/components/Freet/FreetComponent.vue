@@ -17,11 +17,6 @@
       {{ freet.content }}
     </p>
 
-    <p v-if="freet.restrictAccess" class="info">
-      <router-link :to="{ name: 'PrivateCircles' }" class="no-style">Private Circle</router-link>: {{
-          freet.restrictAccess
-      }}
-    </p>
     <div class="button-row">
       <button @click="deleteFreet" v-if="$store.state.username === freet.author">
         <span class="material-symbols-outlined">Delete</span> Delete

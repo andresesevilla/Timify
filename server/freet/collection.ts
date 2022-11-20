@@ -4,7 +4,6 @@ import FreetModel from './model';
 import UserCollection from '../user/collection';
 import FollowCollection from '../follow/collection';
 import type { PopulatedFollow } from '../follow/model';
-import PrivateCircleCollection from '../privatecircle/collection';
 
 /**
  * This files contains a class that has the functionality to explore freets
@@ -15,27 +14,6 @@ import PrivateCircleCollection from '../privatecircle/collection';
  * and contains all the information in Freet. https://mongoosejs.com/docs/typescript.html
  */
 class FreetCollection {
-  /**
-   * Check if user has access to a freet by freetId
-   *
-   * @param {string} userId - The id of the user
-   * @param {string} freet - The id of the freet to check
-   * @return {Promise<Boolean>} - True if user has access, false otherwise
-   */
-  static async checkAccess(userId: Types.ObjectId | string, freet: Freet): Promise<Boolean> {
-    const privateCircleName = freet.restrictAccess;
-    if (!privateCircleName) {
-      return true;
-    }
-    const privateCircle = await PrivateCircleCollection.findPrivateCircleByOwnerAndName(freet.authorId, privateCircleName);
-    if (privateCircle.ownerId._id.toString() === userId) {
-      return true;
-    }
-    const members = privateCircle.members;
-    const user = await UserCollection.findOneByUserId(userId);
-    return members.includes(user.id)
-  }
-
   /**
    * Add a freet to the collection
    *
@@ -49,26 +27,6 @@ class FreetCollection {
       authorId,
       dateCreated: date,
       content,
-    });
-    await freet.save(); // Saves freet to MongoDB
-    return freet.populate('authorId');
-  }
-
-  /**
-   * Add a freet to the collection with Private Circle
-   *
-   * @param {string} authorId - The id of the author of the freet
-   * @param {string} content - The id of the content of the freet
-   * @param {string} privateCircle - The name of the private circle of the freet
-   * @return {Promise<HydratedDocument<Freet>>} - The newly created freet
-   */
-  static async addOneWithPrivateCircle(authorId: Types.ObjectId | string, content: string, restrictAccess: string): Promise<HydratedDocument<Freet>> {
-    const date = new Date();
-    const freet = new FreetModel({
-      authorId,
-      dateCreated: date,
-      content,
-      restrictAccess
     });
     await freet.save(); // Saves freet to MongoDB
     return freet.populate('authorId');
@@ -91,15 +49,8 @@ class FreetCollection {
    */
   static async findAll(userId: string): Promise<Array<HydratedDocument<Freet>>> {
     // Retrieves freets and sorts them from most to least recent
-    const allFreets = await FreetModel.find({}).sort({ dateCreated: -1 }).populate('authorId')
-    const result = [];
-    for (const freet of allFreets) {
-      const accessGranted = await this.checkAccess(userId, freet);
-      if (accessGranted) {
-        result.push(freet);
-      }
-    }
-    return result;
+    const allFreets = await FreetModel.find({}).sort({ dateCreated: -1 }).populate('authorId');
+    return allFreets;
   }
 
   /**
@@ -111,14 +62,7 @@ class FreetCollection {
   static async findAllByUsername(userId: string, username: string): Promise<Array<HydratedDocument<Freet>>> {
     const author = await UserCollection.findOneByUsername(username);
     const freets = await FreetModel.find({ authorId: author._id }).sort({ dateCreated: -1 }).populate('authorId');
-    const result = [];
-    for (const freet of freets) {
-      const accessGranted = await this.checkAccess(userId, freet);
-      if (accessGranted) {
-        result.push(freet);
-      }
-    }
-    return result;
+    return freets;
   }
 
   /**
@@ -143,14 +87,7 @@ class FreetCollection {
     }
 
     const freets = await FreetModel.find({ $or: followingUsernames }).sort({ dateCreated: -1 }).populate('authorId');
-    const result = [];
-    for (const freet of freets) {
-      const accessGranted = await this.checkAccess(userId, freet);
-      if (accessGranted) {
-        result.push(freet);
-      }
-    }
-    return result;
+    return freets;
   }
 
   /**
@@ -162,15 +99,6 @@ class FreetCollection {
   static async deleteOne(freetId: Types.ObjectId | string): Promise<boolean> {
     const freet = await FreetModel.deleteOne({ _id: freetId });
     return freet !== null;
-  }
-
-  /**
-   * Delete all the freets by the given private circle
-   *
-   * @param {string} privateCircle - The name of the private circle of freets
-   */
-  static async deleteMany(privateCircle: string): Promise<void> {
-    await FreetModel.deleteMany({ restrictAccess: privateCircle });
   }
 }
 

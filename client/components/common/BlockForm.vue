@@ -94,10 +94,6 @@ export default {
           this.$store.commit('refreshFreets');
         }
 
-        if (this.refreshPrivateCircles) {
-          this.$store.commit('refreshPrivateCircles');
-        }
-
         if (this.callback) {
           this.callback();
         }

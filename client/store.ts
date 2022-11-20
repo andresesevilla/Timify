@@ -12,7 +12,6 @@ const store = new Vuex.Store({
     showAllFreets: false, // By default, don't show all freets (show feed instead)
     filter: null, // Username to filter shown freets by (null = show all) (overrides showAllFreets)
     freets: [], // All freets created in the app
-    privatecircles: [], // All private circles of the logged in user
     username: null, // Username of the logged in user
     alerts: {} // global success/error messages encountered during submissions to non-visible forms
   },
@@ -64,15 +63,6 @@ const store = new Vuex.Store({
       }
       const res = await fetch(url).then(async r => r.json());
       state.freets = res;
-    },
-    async refreshPrivateCircles(state) {
-      /**
-       * Request the server for the user's Private Circles.
-       */
-      state.privatecircles = [];
-      const url = '/api/privatecircles';
-      const res = await fetch(url).then(async r => r.json());
-      state.privatecircles = res.privateCircles;
     },
   },
   // Store data across page refreshes, only discard on browser close
