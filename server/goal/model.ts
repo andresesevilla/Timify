@@ -12,7 +12,6 @@ export type Goal = {
   authorId: Types.ObjectId;
   content: string;
   dateCreated: Date;
-  restrictAccess: string;
 };
 
 export type PopulatedGoal = {
@@ -20,7 +19,6 @@ export type PopulatedGoal = {
   authorId: User;
   content: string;
   dateCreated: Date;
-  restrictAccess: string;
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table
@@ -43,10 +41,6 @@ const GoalSchema = new Schema<Goal>({
   content: {
     type: String,
     required: true
-  },
-  restrictAccess: {
-    type: String,
-    required: false
   },
 });
 

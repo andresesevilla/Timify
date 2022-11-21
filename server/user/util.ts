@@ -9,14 +9,6 @@ type UserResponse = {
 };
 
 /**
- * Encode a date as an unambiguous string
- *
- * @param {Date} date - A date object
- * @returns {string} - formatted date as string
- */
-const formatDate = (date: Date): string => moment(date).format('MMMM Do YYYY, h:mm:ss a');
-
-/**
  * Transform a raw User object from the database into an object
  * with all the information needed by the frontend
  * (in this case, removing the password for security)

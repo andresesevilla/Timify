@@ -2,7 +2,6 @@ import type {HydratedDocument} from 'mongoose';
 import moment from 'moment';
 import type {Goal, PopulatedGoal} from '../goal/model';
 
-// Update this if you add a property to the Goal type!
 type GoalResponse = {
   _id: string;
   author: string;
