@@ -9,6 +9,12 @@
 
       <label for="hours">Hours:</label>
       <input type='number' name="hours" min="1" v-model="hours">
+
+      <label for="type">Type:</label>
+      <select name="type" v-model="type" id="type">
+        <option value="goal">Goal</option>
+        <option value="budget">Budget</option>
+      </select>
     </section>
     <button type="submit">
       Post goal
@@ -23,6 +29,7 @@ export default {
     return {
       content: '',
       hours: 1,
+      type: 'goal'
     };
   },
   methods: {
@@ -42,6 +49,7 @@ export default {
       const fields = {
         content: this.content,
         hours: this.hours,
+        budget: this.type === 'budget'
       }
       options.body = JSON.stringify(fields);
 

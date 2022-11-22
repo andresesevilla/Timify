@@ -14,7 +14,10 @@
       {{ goal.content }}
     </p>
     <p class="info">
-      {{ goal.hours }} hours
+      Hours: {{ goal.hours }}
+    </p>
+    <p class="info">
+      Type: {{ goal.budget ? "Budget" : "Goal" }}
     </p>
 
     <div class="button-row">
