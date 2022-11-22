@@ -4,7 +4,7 @@ import HomeWrapper from './components/Home/HomeWrapper.vue';
 import FeedPage from './components/Feed/FeedPage.vue';
 import SettingsPage from './components/Settings/SettingsPage.vue';
 import ProfilePage from './components/Profile/ProfilePage.vue';
-import FollowPage from './components/Follow/FollowPage.vue';
+import FriendPage from './components/Friend/FriendPage.vue';
 import NotFound from './NotFound.vue';
 
 Vue.use(VueRouter);
@@ -14,8 +14,7 @@ const routes = [
   { path: '/feed', name: 'Feed', component: FeedPage },
   { path: '/settings', name: 'Settings', component: SettingsPage },
   { path: '/@:username', name: 'Profile', component: ProfilePage },
-  { path: '/@:username/followers', name: 'Followers', component: FollowPage },
-  { path: '/@:username/following', name: 'Following', component: FollowPage },
+  { path: '/@:username/friends', name: 'Friends', component: FriendPage },
   { path: '*', name: 'Not Found', component: NotFound }
 ];
 

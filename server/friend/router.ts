@@ -27,7 +27,8 @@ router.get(
   },
   [
     FriendValidator.isValidUser,
-    FriendValidator.isViewAllowed
+    // Removing this for now - I think we should allow everyone to see everyone's friends
+    // FriendValidator.isViewAllowed
   ],
   async (req: Request, res: Response) => {
     const {friend} = req.params;
@@ -104,7 +105,7 @@ router.get(
     }
 
     res.status(200).json({
-      status: 'not friends'
+      status: 'no'
     });
   }
 );

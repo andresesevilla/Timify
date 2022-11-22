@@ -15,7 +15,7 @@ type FriendRequestResponse = {
   status: string;
 };
 
-const constructFriendResponse = (friend: HydratedDocument<Friend>): FriendResponse => {
+const constructFriendResponse = (friend: HydratedDocument<PopulatedFriend>): FriendResponse => {
   const friendCopy: PopulatedFriend = {
     ...friend.toObject()
   };

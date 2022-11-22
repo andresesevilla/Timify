@@ -3,6 +3,7 @@ import type { Goal } from './model';
 import GoalModel from './model';
 import UserCollection from '../user/collection';
 import FollowCollection from '../follow/collection';
+import {FriendCollection, FriendRequestCollection} from '../friend/collection';
 import type { PopulatedFollow } from '../follow/model';
 
 /**
@@ -72,21 +73,19 @@ class GoalCollection {
    * @return {Promise<HydratedDocument<Goal>[]>} - An array of all of the goals made by followed users
    */
   static async findAllInFeed(userId: string): Promise<Array<HydratedDocument<Goal>>> {
-    // Get all of the users that this user follows
-    const user = await UserCollection.findOneByUserId(userId);
-    const following = await FollowCollection.findAllFollowingByUsername(user.username);
+    // Get all of the users that this user is friends with
+    const friendsUsernames = await FriendCollection.findAllFriendUsernames(userId);
 
-    const followingUsernames = following.map(follow => {
-      const followCopy: PopulatedFollow = { ...follow.toObject() };
-      const { _id: followee } = followCopy.followeeId;
-      return { authorId: followee };
-    })
+    const friendIds = await Promise.all(friendsUsernames.map(async username => {
+      const friend = await UserCollection.findOneByUsername(username.toString());
+      return { authorId: friend.id };
+    }));
 
-    if (followingUsernames.length === 0) {
+    if (friendIds.length === 0) {
       return [];
     }
 
-    const goals = await GoalModel.find({ $or: followingUsernames }).sort({ dateCreated: -1 }).populate('authorId');
+    const goals = await GoalModel.find({ $or: friendIds }).sort({ dateCreated: -1 }).populate('authorId');
     return goals;
   }
 

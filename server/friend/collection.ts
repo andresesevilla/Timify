@@ -1,6 +1,6 @@
 import type {HydratedDocument, Types} from 'mongoose';
 import UserCollection from '../user/collection';
-import type {Friend, FriendRequest} from './model';
+import type {Friend, FriendRequest, PopulatedFriend} from './model';
 import {FriendModel, FriendRequestModel} from './model';
 
 type MongoId = Types.ObjectId | string;
@@ -15,13 +15,13 @@ class FriendCollection {
     return friend.populate('friendship');
   }
 
-  static async findAllFriends(userId: MongoId): Promise<Array<HydratedDocument<Friend>>> {
+  static async findAllFriends(userId: MongoId): Promise<Array<HydratedDocument<PopulatedFriend>>> {
     return FriendModel.find({friendship: userId}).sort({dateFriends: -1}).populate('friendship');
   }
 
-  static async findAllFriendUsernames(userId: MongoId): Promise<MongoId[]> {
+  static async findAllFriendUsernames(userId: MongoId): Promise<String[]> {
     const friends = await FriendCollection.findAllFriends(userId);
-    const friendUsernames = friends.map(friend => friend.friendship.find(user => user._id.toString() !== userId.toString())._id);
+    const friendUsernames = friends.map(friend => friend.friendship.find(user => user._id.toString() !== userId.toString()).username);
     return friendUsernames;
   }
 
