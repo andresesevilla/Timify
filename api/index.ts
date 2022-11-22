@@ -9,7 +9,6 @@ import dotenv from 'dotenv';
 import * as userValidator from '../server/user/middleware';
 import {userRouter} from '../server/user/router';
 import {goalRouter} from '../server/goal/router';
-import {followRouter} from '../server/follow/router';
 import {friendRouter} from '../server/friend/router'
 import MongoStore from 'connect-mongo';
 
@@ -72,7 +71,6 @@ app.use(userValidator.isCurrentSessionUserExists);
 // Add routers from routes folder
 app.use('/api/users', userRouter);
 app.use('/api/goals', goalRouter);
-app.use('/api/follows', followRouter);
 app.use('/api/friends', friendRouter);
 
 // Catch all the other routes and display error message

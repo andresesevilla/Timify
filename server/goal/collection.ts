@@ -65,10 +65,10 @@ class GoalCollection {
   }
 
   /**
-   * Get all goals written by an author followed by user
+   * Get all goals written by an author friends with the user
    *
    * @param {string} userId - The username of the user
-   * @return {Promise<HydratedDocument<Goal>[]>} - An array of all of the goals made by followed users
+   * @return {Promise<HydratedDocument<Goal>[]>} - An array of all of the goals made by friend users
    */
   static async findAllInFeed(userId: string): Promise<Array<HydratedDocument<Goal>>> {
     // Get all of the users that this user is friends with
