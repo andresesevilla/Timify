@@ -4,7 +4,7 @@
   <form @submit.prevent="submit">
     <section>
       <div>
-        <textarea name="content" v-model="content" id="content" placeholder="What's happening?"
+        <textarea name="content" v-model="content" id="content" placeholder="What's your goal?"
           maxlength="140"></textarea>
         <p class="info">{{ content.length }}/140 characters</p>
       </div>
