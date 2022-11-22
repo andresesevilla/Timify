@@ -9,9 +9,6 @@
           @{{ goal.author }}
         </router-link>
       </h3>
-      <div class="info">
-        {{ goal.dateCreated }}
-      </div>
     </header>
     <p class="content">
       {{ goal.content }}

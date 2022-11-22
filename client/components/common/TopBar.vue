@@ -17,6 +17,9 @@
       <router-link to="/" class="nav">
         Home<span class="material-symbols-outlined">Home</span>
       </router-link>
+      <router-link to="/feed" class="nav">
+        Feed<span class="material-symbols-outlined">Feed</span>
+      </router-link>
       <router-link :to="{ name: 'Profile', params: { username: this.$store.state.username } }" class="nav">
         Profile<span class="material-symbols-outlined">Person</span>
       </router-link>
