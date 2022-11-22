@@ -55,7 +55,6 @@ export default {
         this.isValidUsername = true;
         this.friends = res.map((value) => { return value.friendship[0] !== username ? value.friendship[0] : value.friendship[1] })
       } catch (e) {
-        console.log(e);
         this.isValidUsername = false;
       }
     }

@@ -20,12 +20,13 @@ class GoalCollection {
    * @param {string} content - The id of the content of the goal
    * @return {Promise<HydratedDocument<Goal>>} - The newly created goal
    */
-  static async addOne(authorId: Types.ObjectId | string, content: string): Promise<HydratedDocument<Goal>> {
+  static async addOne(authorId: Types.ObjectId | string, content: string, hours: number): Promise<HydratedDocument<Goal>> {
     const date = new Date();
     const goal = new GoalModel({
       authorId,
       dateCreated: date,
       content,
+      hours
     });
     await goal.save(); // Saves goal to MongoDB
     return goal.populate('authorId');

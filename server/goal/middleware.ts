@@ -24,13 +24,20 @@ const isGoalExists = async (req: Request, res: Response, next: NextFunction) => 
  */
 const isValidGoalContent = (req: Request, res: Response, next: NextFunction) => {
   const { content } = req.body as { content: string };
+  const { hours } = req.body as { hours: number };
+  console.log(`Content is ${hours}`)
   if (!content.trim()) {
     res.status(400).json({
       error: 'Goal content must be at least one character long.'
     });
     return;
   }
-
+  if (!hours) {
+    res.status(400).json({
+      error: 'Hours must be a valid number.'
+    });
+    return;
+  }
   if (content.length > 140) {
     res.status(413).json({
       error: 'Goal content must be no more than 140 characters.'

@@ -13,6 +13,9 @@
     <p class="content">
       {{ goal.content }}
     </p>
+    <p class="info">
+      {{ goal.hours }} hours
+    </p>
 
     <div class="button-row">
       <button @click="deleteGoal" v-if="$store.state.username === goal.author">

@@ -3,11 +3,12 @@
 <template>
   <form @submit.prevent="submit">
     <section>
-      <div>
-        <textarea name="content" v-model="content" id="content" placeholder="What's your goal?"
-          maxlength="140"></textarea>
-        <p class="info">{{ content.length }}/140 characters</p>
-      </div>
+      <textarea name="content" v-model="content" id="content" placeholder="What's your goal?"
+        maxlength="140"></textarea>
+      <p class="info">{{ content.length }}/140 characters</p>
+
+      <label for="hours">Hours:</label>
+      <input type='number' name="hours" min="1" v-model="hours">
     </section>
     <button type="submit">
       Post goal
@@ -21,6 +22,7 @@ export default {
   data() {
     return {
       content: '',
+      hours: 1,
     };
   },
   methods: {
@@ -39,6 +41,7 @@ export default {
       };
       const fields = {
         content: this.content,
+        hours: this.hours,
       }
       options.body = JSON.stringify(fields);
 
@@ -52,6 +55,7 @@ export default {
         this.$store.commit('refreshGoals');
 
         this.content = '';
+        this.hours = 1;
 
         this.$store.commit('alert', {
           message: 'Successfully created a goal!', status: 'success'
@@ -73,7 +77,7 @@ form {
   flex-direction: column;
 }
 
-section>div {
+section {
   display: flex;
   flex-direction: column;
 }

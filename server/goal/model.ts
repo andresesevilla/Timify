@@ -12,6 +12,7 @@ export type Goal = {
   authorId: Types.ObjectId;
   content: string;
   dateCreated: Date;
+  hours: number;
 };
 
 export type PopulatedGoal = {
@@ -19,6 +20,7 @@ export type PopulatedGoal = {
   authorId: User;
   content: string;
   dateCreated: Date;
+  hours: number;
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table
@@ -40,6 +42,10 @@ const GoalSchema = new Schema<Goal>({
   // The content of the goal
   content: {
     type: String,
+    required: true
+  },
+  hours: {
+    type: Number,
     required: true
   },
 });

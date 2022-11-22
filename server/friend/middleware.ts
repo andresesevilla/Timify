@@ -120,8 +120,6 @@ const isFriendRequestExists = async (req: Request, res: Response, next: NextFunc
     });
   }
 
-  console.log(friendRequest);
-
   next();
 };
 
