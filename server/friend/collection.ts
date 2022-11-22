@@ -25,6 +25,12 @@ class FriendCollection {
     return friendUsernames;
   }
 
+  static async findAllFriendIds(userId: MongoId): Promise<MongoId[]> {
+    const friends = await FriendCollection.findAllFriends(userId);
+    const friendIds = friends.map(friend => friend.friendship.find(user => user._id.toString() !== userId.toString())._id);
+    return friendIds;
+  }
+
   static async addOneFriend(friend1: MongoId, friend2: MongoId): Promise<HydratedDocument<Friend>> {
     const friend = new FriendModel({friendship: [friend1, friend2], dateFriends: new Date()});
     await friend.save();

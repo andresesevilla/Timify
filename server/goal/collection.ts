@@ -2,9 +2,7 @@ import type { HydratedDocument, Types } from 'mongoose';
 import type { Goal } from './model';
 import GoalModel from './model';
 import UserCollection from '../user/collection';
-import FollowCollection from '../follow/collection';
 import {FriendCollection, FriendRequestCollection} from '../friend/collection';
-import type { PopulatedFollow } from '../follow/model';
 
 /**
  * This files contains a class that has the functionality to explore goals
@@ -74,12 +72,11 @@ class GoalCollection {
    */
   static async findAllInFeed(userId: string): Promise<Array<HydratedDocument<Goal>>> {
     // Get all of the users that this user is friends with
-    const friendsUsernames = await FriendCollection.findAllFriendUsernames(userId);
+    const friendIdsRaw = await FriendCollection.findAllFriendIds(userId);
 
-    const friendIds = await Promise.all(friendsUsernames.map(async username => {
-      const friend = await UserCollection.findOneByUsername(username.toString());
-      return { authorId: friend.id };
-    }));
+    const friendIds = friendIdsRaw.map(id => {
+      return { authorId: id };
+    });
 
     if (friendIds.length === 0) {
       return [];
