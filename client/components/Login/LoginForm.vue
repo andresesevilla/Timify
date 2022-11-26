@@ -86,6 +86,10 @@ export default {
         } else {
           this.$store.commit('setUsername', res.user.username);
           this.$router.push('/');
+          this.$buefy.toast.open({
+            message: `Welcome back, ${res.user.username}!`,
+            type: 'is-success'
+          });
         }
       });
     }
