@@ -27,6 +27,8 @@ export default {
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
 :root {
   --background-color: rgb(247, 247, 247);
   --content-color: rgb(253, 253, 253);
@@ -60,7 +62,7 @@ textarea {
   border: 1px solid var(--text-color);
   resize: none;
   font-size: 1.2em;
-  font-family: Inter;
+  font-family: inherit;
   height: 100px;
 }
 
@@ -126,7 +128,6 @@ body {
   margin: 0;
 
   font-size: 1.2em;
-  font-family: Inter;
   color: var(--text-color);
 }
 
