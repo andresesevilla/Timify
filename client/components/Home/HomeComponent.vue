@@ -6,6 +6,7 @@
       <header>
         <h2>Welcome @{{ $store.state.username }}</h2>
       </header>
+      <ManageCategoriesComponent />
       <CreateGoalForm />
       <header>
         <h2>Your Goals</h2>
@@ -18,9 +19,10 @@
 <script>
 import CreateGoalForm from '@/components/Goal/CreateGoalForm.vue';
 import GoalFeedComponent from '@/components/Goal/GoalFeedComponent.vue';
+import ManageCategoriesComponent from '../Category/ManageCategoriesComponent.vue';
 
 export default {
   name: 'HomeComponent',
-  components: { CreateGoalForm, GoalFeedComponent }
+  components: { ManageCategoriesComponent, CreateGoalForm, GoalFeedComponent }
 };
 </script>
