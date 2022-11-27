@@ -30,15 +30,23 @@
         <!-- editing this category, present editable and uncollapsable view -->
         <div v-else class="card" animation="slide">
           <div class="card-header" role="button">
-              <b-input class="card-header-title" v-model="draft[category.name].name" />
+              <b-field 
+                :type="{'is-danger': badName[draft[category.name].name]}" 
+                :message="{'This name is being used more than once.': badName[draft[category.name].name]}">
+                  <b-input class="card-header-title" v-model="draft[category.name].name" />
+              </b-field>
           </div>
           <div class="card-content">
             <div class="content">
               <ul v-if="draft[category.name].subcategories.length" id="subcategories-list">
                 <li v-for="subcategory in draft[category.name].subcategories" :key="subcategory.id" class="card subcategory">
-                  <b-input class="card-header-title" v-model="subcategory.name" />
-                  <a 
-                    @click="draft[category.name].subcategories = draft[category.name].subcategories.filter(sc => sc.name != subcategory.name)">
+                  <b-field
+                    :type="{'is-danger': badName[subcategory.name]}" 
+                    :message="{'This name is being used more than once somewhere.': badName[subcategory.name]}">
+                      <b-input class="card-header-title" v-model="subcategory.name" required placeholder="Subcategory name" />
+                  </b-field>
+                  <a
+                    @click="draft[category.name].subcategories = draft[category.name].subcategories.filter(sc => sc != subcategory)">
                     <b-icon icon="delete" />
                   </a>
                 </li>
@@ -64,6 +72,7 @@ export default {
     return {
       editing: {},
       draft: {},
+      badName: {},
       categories: null,
     }
   },
@@ -72,11 +81,6 @@ export default {
   },
   methods: {
     fetchCategories() {
-      // fetch('/api/categories')
-      //   .then(response => response.json())
-      //   .then(categories => {
-      //     this.categories = categories;
-      //   });
       this.categories = [
         {name: 'Category 1', subcategories: [{name: 'Subcategory 1'}, {name: 'Subcategory 2'}]},
         {name: 'Category 2', subcategories: [{name: 'Subcategory 3'}, {name: 'Subcategory 4'}]},
@@ -94,6 +98,32 @@ export default {
       this.draft[category.name].subcategories.push({name: ''});
     },
     saveChanges(category) {
+      let names = new Set();
+      let valid = true;
+      this.badName = {};
+
+      // first, add names of other, NOT YET SAVED categories
+      this.categories.filter(c => c !== category).forEach(c => {
+        names.add(c.name);
+        c.subcategories.forEach(sc => names.add(sc.name));
+      });
+
+      // this is tedious, but we need to check if the name is already used
+      if (names.has(this.draft[category.name].name)) {
+        this.badName[this.draft[category.name].name] = true;
+        valid = false;
+      }
+      names.add(this.draft[category.name].name);
+      // now the same thing for subcategories
+      this.draft[category.name].subcategories.forEach(sc => {
+        if (names.has(sc.name)) {
+          this.$set(this.badName, sc.name, true);
+          valid = false;
+        }
+        names.add(sc.name);
+      });
+      if (!valid) return;
+
       this.$set(this.editing, category.name, false);
       this.$set(this.categories, this.categories.indexOf(category), this.draft[category.name]);
       this.$delete(this.draft, category.name);
@@ -134,7 +164,8 @@ li {
 }
 .card-content {
   padding: 1em;
-  // display: flex;
-  // justify-content: center;
+}
+li .field {
+  margin-bottom: 0;
 }
 </style>
