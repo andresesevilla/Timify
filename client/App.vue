@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import '@/public/main.scss';
 import TopBar from '@/components/common/TopBar.vue';
 
 export default {

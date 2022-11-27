@@ -61,9 +61,11 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '@/public/variables.scss';
+
 nav {
-  background-color: #78C3FB;
+  background-color: $secondary;
 }
 h2 {
   margin-left: 10px;

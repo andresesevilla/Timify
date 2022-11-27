@@ -4,17 +4,29 @@
       <header>
         <h2>
           Friends:&nbsp;
-          <router-link :to="{ name: 'Profile', params: { username: $route.params.username } }">
+          <router-link
+            :to="{
+              name: 'Profile',
+              params: { username: $route.params.username },
+            }"
+          >
             @{{ $route.params.username }}
           </router-link>
         </h2>
-        <p class="info">@{{ $route.params.username }} is friends with the following users.</p>
+        <p class="info">
+          @{{ $route.params.username }} is friends with the following users.
+        </p>
       </header>
       <article v-if="friends.length === 0">
         <h3>No friends found.</h3>
       </article>
-      <article v-else="friends.length" v-for="friend in friends">
-        <router-link :to="{ name: 'Profile', params: { username: friend } }"> @{{ friend }}
+      <article
+        v-for="friend in friends"
+        v-else
+        :key="friend.username"
+      >
+        <router-link :to="{ name: 'Profile', params: { username: friend } }">
+          @{{ friend }}
         </router-link>
       </article>
     </section>
@@ -23,24 +35,24 @@
 </template>
 
 <script>
-import NotFound from '../../NotFound.vue';
+import NotFound from "../../NotFound.vue";
 
 export default {
-  name: 'FriendPage',
+  name: "FriendPage",
   components: { NotFound },
-  async mounted() {
-    await this.getFriends();
-  },
   data() {
     return {
       isValidUsername: true,
-      friends: []
+      friends: [],
     };
   },
   watch: {
-    async '$route'() {
+    async $route() {
       await this.getFriends();
-    }
+    },
+  },
+  async mounted() {
+    await this.getFriends();
   },
   methods: {
     async getFriends() {
@@ -53,11 +65,15 @@ export default {
           throw new Error(res.error);
         }
         this.isValidUsername = true;
-        this.friends = res.map((value) => { return value.friendship[0] !== username ? value.friendship[0] : value.friendship[1] })
+        this.friends = res.map((value) => {
+          return value.friendship[0] !== username
+            ? value.friendship[0]
+            : value.friendship[1];
+        });
       } catch (e) {
         this.isValidUsername = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
