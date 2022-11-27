@@ -4,7 +4,7 @@
 <template>
 
   <main>
-    <b-tabs expanded v-model="activeTab" :animated="false">
+    <b-tabs expanded :animated="false">
       <b-tab-item label="Login" icon="login">
         <h2>Have an account?</h2>
         <LoginForm />

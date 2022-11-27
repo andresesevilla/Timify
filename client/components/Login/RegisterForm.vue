@@ -103,4 +103,8 @@ article.notification.is-danger  {
   margin: 0;
   margin-top: 1em;
 }
+button {
+  margin-top: 0.5em;
+  width: 100%;
+}
 </style>
