@@ -113,9 +113,6 @@ section {
   max-width: 35em;
   margin: auto;
 }
-.card {
-  margin-bottom: 1em;
-}
 li {
   list-style: none;
   margin-left: 0;
@@ -123,11 +120,17 @@ li {
 #categories-list, #subcategories-list {
   margin-left: 0;
 }
+.card {
+  margin-bottom: 1em;
+  background-color: $color-5;
+}
 .subcategory.card {
   padding: 0.5em 1em;
   display: flex;
   width: max-content;
   align-items: center; 
+
+  background-color: $color-4;
 }
 .card-content {
   padding: 1em;
