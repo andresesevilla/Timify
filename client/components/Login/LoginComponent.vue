@@ -2,19 +2,18 @@
 <!-- User should be NOT authenticated in order to see this page -->
 
 <template>
+
   <main>
-    <section>
-      <header>
+    <b-tabs expanded v-model="activeTab" :animated="false">
+      <b-tab-item label="Login" icon="login">
         <h2>Have an account?</h2>
-      </header>
-      <LoginForm />
-    </section>
-    <section>
-      <header>
+        <LoginForm />
+      </b-tab-item>
+      <b-tab-item label="Register" icon="account-plus">
         <h2>New to Timify?</h2>
-      </header>
-      <RegisterForm />
-    </section>
+        <RegisterForm />
+      </b-tab-item>
+    </b-tabs>
   </main>
 </template>
 

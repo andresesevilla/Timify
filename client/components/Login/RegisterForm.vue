@@ -52,7 +52,7 @@ export default {
       if (!this.username) {
         this.usernameError = 'Username is required.';
       } else if (!/^\w+$/i.test(this.username)) {
-        this.usernameError = 'Username should only have uppercase or lowercase letters and numbers.';
+        this.usernameError = 'Username should only have letters and numbers.';
       } else {
         this.usernameError = null;
       }
@@ -100,5 +100,7 @@ export default {
 <style scoped>
 article.notification.is-danger  {
   padding: 0.8rem;
+  margin: 0;
+  margin-top: 1em;
 }
 </style>
