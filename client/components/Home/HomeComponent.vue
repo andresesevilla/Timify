@@ -16,12 +16,11 @@
 </template>
 
 <script>
-import GoalComponent from '@/components/Goal/GoalComponent.vue';
 import CreateGoalForm from '@/components/Goal/CreateGoalForm.vue';
 import GoalFeedComponent from '@/components/Goal/GoalFeedComponent.vue';
 
 export default {
   name: 'HomeComponent',
-  components: { GoalComponent, CreateGoalForm, GoalFeedComponent }
+  components: { CreateGoalForm, GoalFeedComponent }
 };
 </script>
