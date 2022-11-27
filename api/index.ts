@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 import * as userValidator from '../server/user/middleware';
 import {userRouter} from '../server/user/router';
 import {goalRouter} from '../server/goal/router';
-import {friendRouter} from '../server/friend/router'
+import {friendRouter} from '../server/friend/router';
 import MongoStore from 'connect-mongo';
 
 // Load environmental variables

@@ -4,17 +4,21 @@ import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
-/**
- * Storage for data that needs to be accessed from various compoentns.
- */
-const store = new Vuex.Store({
-  state: {
+export function getDefaultState() {
+  return {
     showAllGoals: false, // By default, don't show all goals (show feed instead)
     filter: null, // Username to filter shown goals by (null = show all) (overrides showAllGoals)
     goals: [], // All goals created in the app
     username: null, // Username of the logged in user
     alerts: {} // global success/error messages encountered during submissions to non-visible forms
-  },
+  };
+}
+
+/**
+ * Storage for data that needs to be accessed from various compoentns.
+ */
+const store = new Vuex.Store({
+  state: getDefaultState(),
   mutations: {
     alert(state, payload) {
       /**
