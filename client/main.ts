@@ -1,10 +1,11 @@
+import Buefy from 'buefy';
+import 'buefy/dist/buefy.css'; // this line coming before import App one is important (css rules)
+
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
 
-import Buefy from 'buefy';
-import './public/timify-buefy.css';
 
 Vue.config.productionTip = false;
 

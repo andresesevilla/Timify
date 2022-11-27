@@ -5,15 +5,15 @@
   <main>
     <section>
       <header>
-        <h2>New to Timify?</h2>
-      </header>
-      <RegisterForm />
-    </section>
-    <section>
-      <header>
         <h2>Have an account?</h2>
       </header>
       <LoginForm />
+    </section>
+    <section>
+      <header>
+        <h2>New to Timify?</h2>
+      </header>
+      <RegisterForm />
     </section>
   </main>
 </template>
@@ -30,3 +30,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+main {
+  max-width: 40em;
+  margin: auto;
+}
+</style>

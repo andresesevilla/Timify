@@ -52,6 +52,7 @@ form {
 
 
 body {
+  min-height: 100vh;
   background-color: var(--background-color);
   display: flex;
   flex-direction: column;
@@ -61,4 +62,27 @@ body {
 main {
   padding: 1em;
 }
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+}
+h1 {
+  font-size: 2rem;
+}
+h2 {
+  font-size: 1.5rem;
+}
+h3 {
+  font-size: 1.3rem;
+}
+h4 {
+  font-size: 1rem;
+}
+h5 {
+  font-size: 0.8rem;
+}
+h6 {
+  font-size: 0.7rem;
+}
+
 </style>
