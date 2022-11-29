@@ -23,7 +23,6 @@ const CategorySchema = new Schema({
         required: true
       }
     }],
-    _id: false,
     required: true,
     default: [
       {name: 'Gym'},

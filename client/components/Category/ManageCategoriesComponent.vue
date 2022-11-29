@@ -1,24 +1,34 @@
 <template>
-  <section>
-    <b-button class="is-primary" id="add-category" @click="addCategory">Add category</b-button>
-    
+  <section v-if="categories !== null" class="animate">
+    <b-button class="is-primary" id="add-category" @click="addCategory"
+      >Add category</b-button
+    >
+
     <ul v-if="categories.length" id="categories-list">
       <li v-for="category in categories" :key="category.id" class="category">
         <span v-if="editing !== category">{{ category.name }}</span>
-        <b-input v-else v-model="draft.name"></b-input> 
+        <b-input v-else v-model="draft.name"></b-input>
         <span class="category-actions" v-if="!editing">
-          <a @click="startEdit(category)"><b-icon icon="pencil" /></a>
-          <a @click="deleteCategory(category)"><b-icon icon="delete" /></a>
+          <b-tooltip label="Edit"><a @click="startEdit(category)"><b-icon icon="pencil" /></a></b-tooltip>
+          <b-tooltip label="Delete"><a @click="deleteCategory(category)"><b-icon icon="delete" /></a></b-tooltip>
         </span>
         <span class="category-actions" v-else-if="editing === category">
-          <a @click="saveEdit(category)"><b-icon icon="check" /></a>
-          <a @click="discardEdit(category)"><b-icon icon="close" /></a>
+          <b-tooltip label="Save"><a @click="saveEdit(category)"><b-icon icon="check" /></a></b-tooltip>
+          <b-tooltip label="Cancel"><a @click="discardEdit(category)"><b-icon icon="close" /></a></b-tooltip>
         </span>
       </li>
     </ul>
     <div v-else>
       <p>You have no categories yet. Add one!</p>
     </div>
+  </section>
+  <section v-else>
+    <b-skeleton :animated="true"></b-skeleton>
+    <b-skeleton :animated="true"></b-skeleton>
+    <b-skeleton :animated="true"></b-skeleton>
+    <b-skeleton :animated="true"></b-skeleton>
+    <b-skeleton :animated="true"></b-skeleton>
+    <b-skeleton :animated="true"></b-skeleton>
   </section>
 </template>
 
@@ -28,30 +38,37 @@ export default {
   data() {
     return {
       editing: null,
-      draft: {}
-    }
+      draft: {},
+      categories: null,
+      isLoading: true
+    };
   },
-  computed: {
-    categories: {
-      get: function() {
-        return this.$store.state.categories;
-      },
-      set: function(newCategories) {
-        this.$store.dispatch('updateCategories', newCategories);
-        this.$store.commit('setCategories', newCategories);
-      }
-    }
-  },
-  beforeCreate() {
-    this.$store.dispatch('fetchCategories');
+  mounted() {
+    this.fetchCategories();
   },
   methods: {
+    fetchCategories() {
+      fetch("/api/categories")
+        .then((response) => response.json())
+        .then((categories) => {
+          this.categories = categories;
+        });
+    },
+    saveCategories() {
+      fetch("/api/categories", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(this.categories),
+      });
+    },
     addCategory() {
-      this.categories.unshift({name: this.getUniqueName("Category")});
+      this.categories.unshift({ name: this.getUniqueName("Category") });
       if (!this.editing) {
         this.startEdit(this.categories[0]);
       }
-      this.categories = this.categories; // important, don't delete
+      this.saveCategories();
     },
     startEdit(category) {
       this.editing = category;
@@ -59,13 +76,15 @@ export default {
       const index = this.categories.indexOf(category);
       // focus on li with this index
       this.$nextTick(() => {
-        this.$el.querySelector(`#categories-list li:nth-child(${index + 1}) input`).focus();
+        this.$el
+          .querySelector(`#categories-list li:nth-child(${index + 1}) input`)
+          .focus();
       });
     },
     saveEdit(category) {
       this.editing = null;
       this.categories[this.categories.indexOf(category)] = this.draft;
-      this.categories = this.categories; // important, don't delete
+      this.saveCategories();
     },
     discardEdit(category) {
       this.editing = null;
@@ -74,31 +93,32 @@ export default {
     deleteCategory(category) {
       this.$buefy.dialog.confirm({
         title: "Deleting category",
-        message: 'Are you sure you want to delete this category? It will also remove all the timelogs associated with it.',
-        confirmText: 'Delete category',
-        type: 'is-danger',
+        message:
+          "Are you sure you want to delete this category? It will also remove all the timelogs associated with it.",
+        confirmText: "Delete category",
+        type: "is-danger",
         hasIcon: true,
         onConfirm: () => {
           this.categories.splice(this.categories.indexOf(category), 1);
-          this.categories = this.categories; // important, don't delete
-        }
+          this.saveCategories();
+        },
       });
     },
     getUniqueName(prefix) {
       let names = new Set();
-      this.categories.forEach(c => {
+      this.categories.forEach((c) => {
         names.add(c.name);
       });
       let ptr = 1;
       while (names.has(`${prefix} ${ptr}`)) ptr++;
       return `${prefix} ${ptr}`;
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-@import '@/public/variables.scss';
+@import "@/public/variables.scss";
 
 section {
   max-width: 35em;
@@ -121,6 +141,7 @@ li {
   display: flex;
   gap: 2em;
   align-items: center;
+  transition: 0.1s;
 }
 .category-actions {
   margin-left: auto;
@@ -128,7 +149,11 @@ li {
 #add-category {
   margin-bottom: 0.5em;
 }
-#categories-list, #subcategories-list {
+#categories-list,
+#subcategories-list {
   margin-left: 0;
+}
+.animate {
+  transition: 0.2s;
 }
 </style>
