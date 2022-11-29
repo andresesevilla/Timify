@@ -1,7 +1,7 @@
 import type {Types} from 'mongoose';
 import {Schema, model} from 'mongoose';
 
-export type CategoryT = Array<{name: string; subcategories: Array<{name: string}>}>;
+export type CategoryT = Array<{name: string}>;
 
 export type Category = {
   _id: Types.ObjectId;
@@ -21,18 +21,13 @@ const CategorySchema = new Schema({
       name: {
         type: String,
         required: true
-      },
-      subcategories: {
-        type: Array,
-        required: true
       }
     }],
     _id: false,
     required: true,
     default: [
-      {name: 'Health', subcategories: [{name: 'Fitness'}, {name: 'Nutrition'}]},
-      {name: 'Career', subcategories: [{name: 'Job'}, {name: 'Business'}]},
-      {name: 'Education', subcategories: [{name: 'School'}, {name: 'Self-Learning'}]}
+      {name: 'Gym'},
+      {name: 'School'}
     ]
   },
   dateUpdated: {
