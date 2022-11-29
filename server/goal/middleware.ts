@@ -22,7 +22,7 @@ const isGoalExists = async (req: Request, res: Response, next: NextFunction) => 
  * Checks if the content of the goal in req.body is valid, i.e not a stream of empty
  * spaces and not more than 70 characters
  */
-const isValidGoalName = (req: Request, res: Response, next: NextFunction) => {
+const isValidGoalContent = (req: Request, res: Response, next: NextFunction) => {
   const { name } = req.body as { name: string };
   const { hours } = req.body as { hours: number };
   if (!name.trim()) {
@@ -40,6 +40,13 @@ const isValidGoalName = (req: Request, res: Response, next: NextFunction) => {
   if (name.length > 70) {
     res.status(413).json({
       error: 'Goal name must be no more than 70 characters.'
+    });
+    return;
+  }
+  const type = req.body.type;
+  if (type !== 'goal' && type !== 'budget') {
+    res.status(400).json({
+      error: 'Goal type is invalid.'
     });
     return;
   }
@@ -63,24 +70,8 @@ const isValidGoalModifier = async (req: Request, res: Response, next: NextFuncti
   next();
 };
 
-/**
- * Checks if the goal type is either budget or goal
- */
- const isValidGoalType = async (req: Request, res: Response, next: NextFunction) => {
-  const type = req.body.type;
-
-  if (type !== 'goal' && type !== 'budget') {
-    res.status(400).json({
-      error: 'Goal type is invalid.'
-    });
-    return;
-  }
-  next();
-};
-
 export {
-  isValidGoalName as isValidGoalContent,
+  isValidGoalContent as isValidGoalContent,
   isGoalExists,
-  isValidGoalModifier,
-  isValidGoalType
+  isValidGoalModifier
 };
