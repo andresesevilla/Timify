@@ -64,24 +64,17 @@ router.get(
 
 /**
  * Create a new goal.
- *
- * @name POST /api/goals
- *
- * @param {string} content - The content of the goal
- * @return {GoalResponse} - The created goal
- * @throws {403} - If the user is not logged in
- * @throws {400} - If the goal content is empty or a stream of empty spaces
- * @throws {413} - If the goal content is more than 140 characters long
  */
 router.post(
   '/',
   [
     userValidator.isUserLoggedIn,
-    goalValidator.isValidGoalContent
+    goalValidator.isValidGoalContent,
+    goalValidator.isValidGoalType
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    const goal = await GoalCollection.addOne(userId, req.body.content, req.body.hours, req.body.budget);
+    const goal = await GoalCollection.addOne(userId, req.body.name, req.body.hours, req.body.type);
     res.status(201).json({
       message: 'Your goal was created successfully.',
       goal: util.constructGoalResponse(goal)

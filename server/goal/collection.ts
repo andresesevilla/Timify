@@ -2,7 +2,7 @@ import type { HydratedDocument, Types } from 'mongoose';
 import type { Goal } from './model';
 import GoalModel from './model';
 import UserCollection from '../user/collection';
-import {FriendCollection, FriendRequestCollection} from '../friend/collection';
+import { FriendCollection, FriendRequestCollection } from '../friend/collection';
 
 /**
  * This files contains a class that has the functionality to explore goals
@@ -20,14 +20,14 @@ class GoalCollection {
    * @param {string} content - The id of the content of the goal
    * @return {Promise<HydratedDocument<Goal>>} - The newly created goal
    */
-  static async addOne(authorId: Types.ObjectId | string, content: string, hours: number, budget:boolean): Promise<HydratedDocument<Goal>> {
+  static async addOne(authorId: Types.ObjectId | string, name: string, hours: number, type: string): Promise<HydratedDocument<Goal>> {
     const date = new Date();
     const goal = new GoalModel({
       authorId,
       dateCreated: date,
-      content,
+      name,
       hours,
-      budget
+      type
     });
     await goal.save(); // Saves goal to MongoDB
     return goal.populate('authorId');

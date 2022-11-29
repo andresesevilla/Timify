@@ -11,13 +11,13 @@
       </h3>
     </header>
     <p class="content">
-      {{ goal.content }}
+      {{ goal.name }}
     </p>
     <p class="info">
       Hours: {{ goal.hours }}
     </p>
     <p class="info">
-      Type: {{ goal.budget ? "Budget" : "Goal" }}
+      Type: {{ goal.type }}
     </p>
 
     <div class="button-row">

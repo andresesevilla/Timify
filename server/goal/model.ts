@@ -9,20 +9,20 @@ import type { User } from '../user/model';
 // Type definition for Goal on the backend
 export type Goal = {
   _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
-  authorId: Types.ObjectId;
-  content: string;
-  dateCreated: Date;
+  name: string;
   hours: number;
-  budget: boolean;
+  authorId: Types.ObjectId;
+  dateCreated: Date;
+  type: string;
 };
 
 export type PopulatedGoal = {
   _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
-  authorId: User;
-  content: string;
-  dateCreated: Date;
+  name: string;
   hours: number;
-  budget: boolean;
+  authorId: User;
+  dateCreated: Date;
+  type: string;
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table
@@ -42,7 +42,7 @@ const GoalSchema = new Schema<Goal>({
     required: true
   },
   // The content of the goal
-  content: {
+  name: {
     type: String,
     required: true
   },
@@ -50,8 +50,8 @@ const GoalSchema = new Schema<Goal>({
     type: Number,
     required: true
   },
-  budget: {
-    type: Boolean,
+  type: {
+    type: String,
     required: true
   },
 });

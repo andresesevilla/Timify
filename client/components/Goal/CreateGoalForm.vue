@@ -4,8 +4,8 @@
   <form @submit.prevent="submit">
     <section>
       <textarea name="content" v-model="content" id="content" placeholder="What's your goal?"
-        maxlength="140"></textarea>
-      <p class="info">{{ content.length }}/140 characters</p>
+        maxlength="70"></textarea>
+      <p class="info">{{ content.length }}/70 characters</p>
 
       <label for="hours">Hours:</label>
       <input type='number' name="hours" min="1" v-model="hours">
@@ -47,9 +47,9 @@ export default {
         credentials: 'same-origin'
       };
       const fields = {
-        content: this.content,
+        name: this.content,
         hours: this.hours,
-        budget: this.type === 'budget'
+        type: this.type
       }
       options.body = JSON.stringify(fields);
 
