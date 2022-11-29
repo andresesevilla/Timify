@@ -7,7 +7,7 @@
         "build": "cd client && vue-cli-service build main.js",
         "lint": "eslint . --fix --ext=.ts,.vue",
         "start": "ts-node api/index.ts",
-        "dev": "nodemon api/index.ts -e js,ts,json"
+        "dev": "nodemon --ignore 'client/' api/index.ts -e js,ts,json"
     },
     "dependencies": {
         "buefy": "^0.9.22",
