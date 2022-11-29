@@ -36,7 +36,6 @@ export type FriendRequest = {
   requester: Types.ObjectId;
   requestee: Types.ObjectId;
   dateRequested: Date;
-  status: 'pending' | 'accepted' | 'rejected';
 };
 
 export type PopulatedFriendRequest = {
@@ -44,7 +43,6 @@ export type PopulatedFriendRequest = {
   requester: User;
   requestee: User;
   dateRequested: Date;
-  status: 'pending' | 'accepted' | 'rejected';
 };
 
 const FriendRequestSchema = new Schema<FriendRequest>({
@@ -61,11 +59,6 @@ const FriendRequestSchema = new Schema<FriendRequest>({
   dateRequested: {
     type: Date,
     required: true
-  },
-  status: {
-    type: String,
-    required: true,
-    enum: ['pending', 'accepted', 'rejected']
   }
 });
 

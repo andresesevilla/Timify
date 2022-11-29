@@ -14,26 +14,9 @@ router.get(
   [
     UserValidator.isUserLoggedIn
   ],
-  async (req: Request, res: Response, next: NextFunction) => {
-    if (req.params.friend) {
-      next();
-      return;
-    }
-
+  async (req: Request, res: Response) => {
     const userId = req.session.userId as string;
     const allFriends = await FriendCollection.findAllFriends(userId);
-    const response = allFriends.map(util.constructFriendResponse);
-    res.status(200).json(response);
-  },
-  [
-    FriendValidator.isValidUser,
-    // Removing this for now - I think we should allow everyone to see everyone's friends
-    // FriendValidator.isViewAllowed
-  ],
-  async (req: Request, res: Response) => {
-    const {friend} = req.params;
-    const friendId = (await UserCollection.findOneByUsername(friend))._id;
-    const allFriends = await FriendCollection.findAllFriends(friendId);
     const response = allFriends.map(util.constructFriendResponse);
     res.status(200).json(response);
   }
@@ -180,17 +163,12 @@ router.put(
     const {requester} = req.params;
     const response = req.body.response as string;
     const requesterId = (await UserCollection.findOneByUsername(requester))._id.toString();
+    await FriendRequestCollection.deleteOneFriendRequest(requesterId, userId)
     if (response === 'accept') {
-      await Promise.all([
-        FriendCollection.addOneFriend(userId, requesterId),
-      ]);
+      await FriendCollection.addOneFriend(userId, requesterId);
     }
-
-    const friendRequest = await FriendRequestCollection.updateFriendRequest(requesterId, userId, `${response}ed`);
-
     res.status(200).json({
-      message: `You ${response}ed a friend request from ${requester}.${response === 'accept'}`,
-      friendRequest: util.constructFriendRequestResponse(friendRequest)
+      message: `You ${response}ed a friend request from ${requester}.`,
     });
   }
 );

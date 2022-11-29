@@ -12,7 +12,6 @@ type FriendRequestResponse = {
   requesterUsername: string;
   requesteeUsername: string;
   dateRequested: Date;
-  status: string;
 };
 
 const constructFriendResponse = (friend: HydratedDocument<PopulatedFriend>): FriendResponse => {
@@ -37,7 +36,6 @@ const constructFriendRequestResponse = (friendRequest: HydratedDocument<FriendRe
     requesterUsername,
     requesteeUsername,
     dateRequested: friendRequestCopy.dateRequested,
-    status: friendRequestCopy.status
   };
 };
 

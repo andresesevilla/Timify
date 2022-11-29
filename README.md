@@ -105,7 +105,7 @@ The following backend routes are implemented.
 - `404` if category does not exist
 - `400` if type is invalid
 
-## `DELETE /api/goals/:goalName?` - Delete an existing Private Circle
+## `DELETE /api/goals/:goalName?` - Delete an existing goal
 
 **Returns**
 
@@ -244,10 +244,13 @@ The following backend routes are implemented.
 
 ## `PUT /api/friends/requests/respond/:requester?` - Respond to a friend request
 
+**Body**
+
+- `response` *{string}* - 'accept' if accepting, 'reject' if rejecting
+
 **Returns**
 
 - Success message
-- Friend request object
 
 **Throws**
 
@@ -255,6 +258,7 @@ The following backend routes are implemented.
 - `400` is `requester` is empty
 - `404` if `requester` is not recognizable username
 - `404` if friend request does not exist
+- `400` is `response` is not 'accept' nor 'reject'
 
 ## `GET /api/entries?category=categoryName&start=startTime&end=endTime` - Get logged in user’s time entries over given time period associated with given categories
 
