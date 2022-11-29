@@ -1,6 +1,6 @@
 <template>
   <section>
-    <ul id="categories-list">
+    <ul v-if="categories.length" id="categories-list">
       <li v-for="category in categories" :key="category.id">
 
         <!-- viewing this category, present a collapsable view -->
@@ -59,9 +59,12 @@
             <a class="card-footer-item" @click="discardChanges(category)"><b-icon icon="cancel"/>Discard changes</a>
           </footer>
         </div>
-
       </li>
     </ul>
+    <div v-else>
+      <p>You have no categories yet. Add one below.</p>
+    </div>
+    <b-button class="is-primary" @click="addCategory">Add category</b-button>
   </section>
 </template>
 
@@ -73,21 +76,39 @@ export default {
       editing: {},
       draft: {},
       badName: {},
-      categories: null,
+    }
+  },
+  computed: {
+    categories: {
+      get: function() {
+        return this.$store.state.categories;
+      },
+      set: function(newCategories) {
+        this.$store.commit("setCategories", newCategories);
+      }
     }
   },
   created() {
-    this.fetchCategories();
+    // this.fetchCategories();
   },
   methods: {
     fetchCategories() {
-      this.categories = [
-        {name: 'Category 1', subcategories: [{name: 'Subcategory 1'}, {name: 'Subcategory 2'}]},
-        {name: 'Category 2', subcategories: [{name: 'Subcategory 3'}, {name: 'Subcategory 4'}]},
-        {name: 'Category 3', subcategories: [{name: 'Subcategory 5'}, {name: 'Subcategory 6'}]},
-      ]
+      // this.categories = [
+      //   {name: 'Category 1', subcategories: [{name: 'Subcategory 1'}, {name: 'Subcategory 2'}]},
+      //   {name: 'Category 2', subcategories: [{name: 'Subcategory 3'}, {name: 'Subcategory 4'}]},
+      //   {name: 'Category 3', subcategories: [{name: 'Subcategory 5'}, {name: 'Subcategory 6'}]},
+      // ]
     },
     startEdit(category) {
+      if (Object.keys(this.draft).length) {
+        this.$buefy.toast.open({
+          message: "You are already editing a category. Please save or discard your changes before editing another category.",
+          type: "is-danger",
+          position: "is-top",
+          duration: 3000,
+        });
+        return;
+      }
       this.$set(this.editing, category.name, true);
       this.$set(this.draft, category.name, JSON.parse(JSON.stringify(category)));
     },
@@ -131,6 +152,22 @@ export default {
     discardChanges(category) {
       this.$set(this.editing, category.name, false);
       this.$delete(this.draft, category.name);
+    },
+    addCategory() {
+      // get names of all categories and subcategories
+      let names = new Set();
+      this.categories.forEach(c => {
+        names.add(c.name);
+        c.subcategories.forEach(sc => names.add(sc.name));
+      });
+      // find a name that is not used yet
+      let ptr = 1;
+      while (names.has(`Category ${ptr}`)) ptr++;
+
+      this.categories.push({name: `Category ${ptr}`, subcategories: []});
+      if (!Object.keys(this.draft).length) {
+        this.startEdit(this.categories[this.categories.length - 1]);
+      }
     }
   }
 }
