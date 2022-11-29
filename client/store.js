@@ -10,7 +10,8 @@ export function getDefaultState() {
     filter: null, // Username to filter shown goals by (null = show all) (overrides showAllGoals)
     goals: [], // All goals created in the app
     username: null, // Username of the logged in user
-    alerts: {} // global success/error messages encountered during submissions to non-visible forms
+    alerts: {}, // global success/error messages encountered during submissions to non-visible forms
+    categories: []
   };
 }
 
@@ -19,6 +20,24 @@ export function getDefaultState() {
  */
 const store = new Vuex.Store({
   state: getDefaultState(),
+  actions: {
+    fetchCategories: async function({ commit }) {
+      return fetch('/api/categories')
+        .then(response => response.json())
+        .then(categories => commit('setCategories', categories));
+    },
+    updateCategories: async function({ commit }, categories) {
+      return fetch('/api/categories', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(categories)
+      });
+        // .then(response => response.json())
+        // .then(categories => commit('setCategories', categories));
+    }
+  },
   mutations: {
     alert(state, payload) {
       /**
@@ -68,6 +87,9 @@ const store = new Vuex.Store({
       const res = await fetch(url).then(async r => r.json());
       state.goals = res;
     },
+    setCategories(state, categories) {
+      state.categories = categories;
+    }
   },
   // Store data across page refreshes, only discard on browser close
   plugins: [createPersistedState()]

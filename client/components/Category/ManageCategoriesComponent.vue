@@ -31,8 +31,8 @@
         <div v-else class="card" animation="slide">
           <div class="card-header" role="button">
               <b-field 
-                :type="{'is-danger': badName[draft[category.name].name]}" 
-                :message="{'This name is being used more than once.': badName[draft[category.name].name]}">
+                :type="{'is-danger': !draft[category.name].name || badName[draft[category.name].name]}" 
+                :message="{'This name is being used more than once.': badName[draft[category.name].name], 'Cannot be empty': !draft[category.name].name}">
                   <b-input class="card-header-title" v-model="draft[category.name].name" />
               </b-field>
           </div>
@@ -41,8 +41,8 @@
               <ul v-if="draft[category.name].subcategories.length" id="subcategories-list">
                 <li v-for="subcategory in draft[category.name].subcategories" :key="subcategory.id" class="card subcategory">
                   <b-field
-                    :type="{'is-danger': badName[subcategory.name]}" 
-                    :message="{'This name is being used more than once somewhere.': badName[subcategory.name]}">
+                    :type="{'is-danger': !subcategory.name || badName[subcategory.name]}" 
+                    :message="{'This name is being used more than once somewhere.': badName[subcategory.name], 'Cannot be empty': !subcategory.name}">
                       <b-input class="card-header-title" v-model="subcategory.name" required placeholder="Subcategory name" />
                   </b-field>
                   <a
@@ -84,21 +84,15 @@ export default {
         return this.$store.state.categories;
       },
       set: function(newCategories) {
+        this.$store.dispatch('updateCategories', newCategories);
         this.$store.commit("setCategories", newCategories);
       }
     }
   },
-  created() {
-    // this.fetchCategories();
+  beforeCreate() {
+    this.$store.dispatch('fetchCategories');
   },
   methods: {
-    fetchCategories() {
-      // this.categories = [
-      //   {name: 'Category 1', subcategories: [{name: 'Subcategory 1'}, {name: 'Subcategory 2'}]},
-      //   {name: 'Category 2', subcategories: [{name: 'Subcategory 3'}, {name: 'Subcategory 4'}]},
-      //   {name: 'Category 3', subcategories: [{name: 'Subcategory 5'}, {name: 'Subcategory 6'}]},
-      // ]
-    },
     startEdit(category) {
       if (Object.keys(this.draft).length) {
         this.$buefy.toast.open({
@@ -116,7 +110,7 @@ export default {
       this.categories = this.categories.filter(c => c.name !== category.name);
     },
     addSubcategory(category) {
-      this.draft[category.name].subcategories.push({name: ''});
+      this.draft[category.name].subcategories.push({name: this.getUniqueName("Subcategory")});
     },
     saveChanges(category) {
       let names = new Set();
@@ -146,7 +140,10 @@ export default {
       if (!valid) return;
 
       this.$set(this.editing, category.name, false);
-      this.$set(this.categories, this.categories.indexOf(category), this.draft[category.name]);
+
+      this.categories[this.categories.indexOf(category)] = this.draft[category.name];
+      this.categories = this.categories;
+
       this.$delete(this.draft, category.name);
     },
     discardChanges(category) {
@@ -154,20 +151,21 @@ export default {
       this.$delete(this.draft, category.name);
     },
     addCategory() {
-      // get names of all categories and subcategories
+      this.categories.push({name: this.getUniqueName("Category"), subcategories: []});
+      if (!Object.keys(this.draft).length) {
+        this.startEdit(this.categories[this.categories.length - 1]);
+      }
+      this.categories = this.categories;
+    },
+    getUniqueName(prefix) {
       let names = new Set();
       this.categories.forEach(c => {
         names.add(c.name);
         c.subcategories.forEach(sc => names.add(sc.name));
       });
-      // find a name that is not used yet
       let ptr = 1;
-      while (names.has(`Category ${ptr}`)) ptr++;
-
-      this.categories.push({name: `Category ${ptr}`, subcategories: []});
-      if (!Object.keys(this.draft).length) {
-        this.startEdit(this.categories[this.categories.length - 1]);
-      }
+      while (names.has(`${prefix} ${ptr}`)) ptr++;
+      return `${prefix} ${ptr}`;
     }
   }
 }
