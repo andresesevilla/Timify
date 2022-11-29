@@ -53,10 +53,7 @@ class CategoryCollection {
    * @returns - The updated Category entry.
    */
   static async updateOneByUserId(userId: Types.ObjectId | string, categoryEntries: CategoryT): Promise<HydratedDocument<Category>> {
-    const category = await this.findOneByUserId(userId);
-    category.entries = categoryEntries;
-    category.dateUpdated = new Date();
-    await category.save();
+    const category = await CategoryModel.findOneAndUpdate({userId}, {entries: categoryEntries, dateUpdated: new Date()});
     return category;
   }
 }

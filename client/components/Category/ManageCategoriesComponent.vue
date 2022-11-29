@@ -7,7 +7,7 @@
     <ul v-if="categories.length" id="categories-list">
       <li v-for="category in categories" :key="category.id" class="category">
         <span v-if="editing !== category">{{ category.name }}</span>
-        <b-input v-else v-model="draft.name"></b-input>
+        <b-input v-else v-model="draft.name" v-on:keyup.native.enter="saveEdit(category)"></b-input>
         <span class="category-actions" v-if="!editing">
           <b-tooltip label="Edit"><a @click="startEdit(category)"><b-icon icon="pencil" /></a></b-tooltip>
           <b-tooltip label="Delete"><a @click="deleteCategory(category)"><b-icon icon="delete" /></a></b-tooltip>
