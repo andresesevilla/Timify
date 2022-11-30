@@ -1,10 +1,11 @@
-import type {HydratedDocument} from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 import moment from 'moment';
-import type {Goal, PopulatedGoal} from '../goal/model';
+import type { Goal, PopulatedGoal } from '../goal/model';
 
 type GoalResponse = {
   _id: string;
   hours: number;
+  category: string;
   author: string;
   dateCreated: string;
   type: string;
@@ -31,11 +32,16 @@ const constructGoalResponse = (goal: HydratedDocument<Goal>): GoalResponse => {
       versionKey: false // Cosmetics; prevents returning of __v property
     })
   };
-  const {username} = goalCopy.authorId;
+
+  const { username } = goalCopy.authorId;
+  const { name } = goalCopy.category;
+  console.log(name)
   delete goalCopy.authorId;
+  delete goalCopy.category;
   return {
     ...goalCopy,
     _id: goalCopy._id.toString(),
+    category: name,
     author: username,
     dateCreated: formatDate(goal.dateCreated),
   };

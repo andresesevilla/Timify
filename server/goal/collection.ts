@@ -2,6 +2,7 @@ import type { HydratedDocument, Types } from 'mongoose';
 import type { Goal } from './model';
 import GoalModel from './model';
 import UserCollection from '../user/collection';
+import CategoryCollection from '../category/collection';
 import { FriendCollection, FriendRequestCollection } from '../friend/collection';
 
 /**
@@ -20,16 +21,20 @@ class GoalCollection {
    * @param {string} content - The id of the content of the goal
    * @return {Promise<HydratedDocument<Goal>>} - The newly created goal
    */
-  static async addOne(authorId: Types.ObjectId | string, hours: number, type: string): Promise<HydratedDocument<Goal>> {
+  static async addOne(authorId: Types.ObjectId | string, categoryName: string, hours: number, type: string): Promise<HydratedDocument<Goal>> {
+
+    const category = await CategoryCollection.findByNameAndUserId(authorId, categoryName);
+
     const date = new Date();
     const goal = new GoalModel({
       authorId,
+      category: category.id,
       dateCreated: date,
       hours,
       type
     });
     await goal.save(); // Saves goal to MongoDB
-    return goal.populate('authorId');
+    return goal.populate(['authorId', 'category']);
   }
 
   /**
@@ -38,9 +43,16 @@ class GoalCollection {
    * @param {string} goalId - The id of the goal to find
    * @return {Promise<HydratedDocument<Goal>> | Promise<null> } - The goal with the given goalId, if any
    */
-  static async findOne(goalId: Types.ObjectId | string): Promise<HydratedDocument<Goal>> {
-    return GoalModel.findOne({ _id: goalId }).populate('authorId');
+  static async findOneById(goalId: Types.ObjectId | string): Promise<HydratedDocument<Goal>> {
+    return GoalModel.findOne({ _id: goalId }).populate(['authorId', 'category']);
   }
+
+  /**
+   * Find a goal by categoryId
+   */
+     static async findOneByCategoryId(goalId: Types.ObjectId | string): Promise<HydratedDocument<Goal>> {
+      return GoalModel.findOne({ category: goalId }).populate(['authorId', 'category']);
+    }
 
   /**
    * Get all the goals in the database
@@ -49,7 +61,7 @@ class GoalCollection {
    */
   static async findAll(): Promise<Array<HydratedDocument<Goal>>> {
     // Retrieves goals and sorts them from most to least recent
-    const allGoals = await GoalModel.find({}).sort({ dateCreated: -1 }).populate('authorId');
+    const allGoals = await GoalModel.find({}).sort({ dateCreated: -1 }).populate(['authorId', 'category']);
     return allGoals;
   }
 
@@ -61,7 +73,7 @@ class GoalCollection {
    */
   static async findAllByUsername(username: string): Promise<Array<HydratedDocument<Goal>>> {
     const author = await UserCollection.findOneByUsername(username);
-    const goals = await GoalModel.find({ authorId: author._id }).sort({ dateCreated: -1 }).populate('authorId');
+    const goals = await GoalModel.find({ authorId: author._id }).sort({ dateCreated: -1 }).populate(['authorId', 'category']);
     return goals;
   }
 
@@ -72,7 +84,7 @@ class GoalCollection {
    * @return {Promise<HydratedDocument<Goal>[]>} - An array of all of the goals
    */
      static async findAllByUserId(userId: string): Promise<Array<HydratedDocument<Goal>>> {
-      const goals = await GoalModel.find({ authorId: userId }).sort({ dateCreated: -1 }).populate('authorId');
+      const goals = await GoalModel.find({ authorId: userId }).sort({ dateCreated: -1 }).populate(['authorId', 'category']);
       return goals;
     }
 
@@ -94,7 +106,7 @@ class GoalCollection {
       return [];
     }
 
-    const goals = await GoalModel.find({ $or: friendIds }).sort({ dateCreated: -1 }).populate('authorId');
+    const goals = await GoalModel.find({ $or: friendIds }).sort({ dateCreated: -1 }).populate(['authorId', 'category']);
     return goals;
   }
 

@@ -1,5 +1,6 @@
 import type { Types } from 'mongoose';
 import { Schema, model } from 'mongoose';
+import { Category } from 'server/category/model';
 import type { User } from '../user/model';
 
 /**
@@ -10,6 +11,7 @@ import type { User } from '../user/model';
 export type Goal = {
   _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
   hours: number;
+  category: Types.ObjectId;
   authorId: Types.ObjectId;
   dateCreated: Date;
   type: string;
@@ -18,6 +20,7 @@ export type Goal = {
 export type PopulatedGoal = {
   _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
   hours: number;
+  category: Category;
   authorId: User;
   dateCreated: Date;
   type: string;
@@ -33,6 +36,12 @@ const GoalSchema = new Schema<Goal>({
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'User'
+  },
+  category: {
+    // Use Types.ObjectId outside of the schema
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'Category'
   },
   // The date the goal was created
   dateCreated: {

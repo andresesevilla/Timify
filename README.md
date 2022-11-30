@@ -120,13 +120,12 @@ The following backend routes are implemented.
 **Throws**
 
 - `403` if the user is not logged in
-- `400` if name is incorrect format
-- `409` if logged in user already has a goal with name
+- `409` if logged in user already has a goal for the given category
 - `400` if hours is invalid number
 - `404` if category does not exist
 - `400` if type is invalid
 
-## `DELETE /api/goals/:categoryName?` - Delete an existing goal
+## `DELETE /api/goals/:goalId?` - Delete an existing goal
 
 **Returns**
 
@@ -135,7 +134,8 @@ The following backend routes are implemented.
 **Throws**
 
 - `403` if the user is not logged in
-- `404` If the logged in user doesn’t have a goal with the given name
+- `403` if the user does not own the given goal
+- `404` If the given goal does not exist
 
 ## `GET /api/categories` - Get logged in user’s categories
 
