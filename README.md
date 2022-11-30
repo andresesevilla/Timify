@@ -126,7 +126,7 @@ The following backend routes are implemented.
 
 - `403` if the user is not logged in
 
-## `POST /api/goals` - Create a new category
+## `POST /api/categories` - Create a new category
 
 **Body**
 
@@ -143,7 +143,7 @@ The following backend routes are implemented.
 - `400` if name is incorrect format
 - `409` if logged in user already has a category with name
 
-## `DELETE /api/goals/:categoryName?` - Delete an existing category
+## `DELETE /api/categories/:categoryName?` - Delete an existing category
 
 **Returns**
 
@@ -154,7 +154,7 @@ The following backend routes are implemented.
 - `403` if the user is not logged in
 - `404` If the logged in user doesn’t have a category with the given name
 
-## `PATCH /api/goals/:categoryName?` - Update the name of logged in user’s category
+## `PATCH /api/categories/:categoryName?` - Update the name of logged in user’s category
 
 **Body**
 
@@ -168,7 +168,9 @@ The following backend routes are implemented.
 **Throws**
 
 - `403` if the user is not logged in
-- `400` if name is in the wrong format
+- `400` if new name is incorrect format
+- `404` If the logged in user doesn’t have a category with the given name
+- `409` if logged in user already has a category with new name
 
 ## `GET /api/friends/list` - Get your friends
 

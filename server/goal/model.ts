@@ -9,7 +9,6 @@ import type { User } from '../user/model';
 // Type definition for Goal on the backend
 export type Goal = {
   _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
-  name: string;
   hours: number;
   authorId: Types.ObjectId;
   dateCreated: Date;
@@ -18,7 +17,6 @@ export type Goal = {
 
 export type PopulatedGoal = {
   _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
-  name: string;
   hours: number;
   authorId: User;
   dateCreated: Date;
@@ -39,11 +37,6 @@ const GoalSchema = new Schema<Goal>({
   // The date the goal was created
   dateCreated: {
     type: Date,
-    required: true
-  },
-  // The content of the goal
-  name: {
-    type: String,
     required: true
   },
   hours: {

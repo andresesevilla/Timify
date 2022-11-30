@@ -70,11 +70,10 @@ router.post(
   [
     userValidator.isUserLoggedIn,
     goalValidator.isValidGoalContent,
-    goalValidator.isValidGoalType
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    const goal = await GoalCollection.addOne(userId, req.body.name, req.body.hours, req.body.type);
+    const goal = await GoalCollection.addOne(userId, req.body.hours, req.body.type);
     res.status(201).json({
       message: 'Your goal was created successfully.',
       goal: util.constructGoalResponse(goal)

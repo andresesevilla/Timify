@@ -1,43 +1,30 @@
 import type {Types} from 'mongoose';
 import {Schema, model} from 'mongoose';
-
-export type CategoryT = Array<{name: string}>;
+import type { User } from '../user/model';
 
 export type Category = {
   _id: Types.ObjectId;
   userId: Types.ObjectId;
-  entries: CategoryT;
-  dateUpdated: Date;
+  name: string;
+};
+
+export type PopulatedCategory = {
+  _id: Types.ObjectId;
+  userId: User;
+  name: string;
 };
 
 const CategorySchema = new Schema({
+  name: {
+    type: String,
+    required: true
+  },
   userId: {
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'User'
-  },
-  entries: {
-    type: [{
-      name: {
-        type: String,
-        required: true
-      }
-    }],
-    required: true,
-    default: [
-      {name: 'Gym'},
-      {name: 'School'}
-    ]
-  },
-  dateUpdated: {
-    type: Date,
-    required: true
   }
-}, {
-  toObject: {versionKey: false}
 });
-
-CategorySchema.index({userId: 1});
 
 const CategoryModel = model<Category>('Category', CategorySchema);
 export default CategoryModel;

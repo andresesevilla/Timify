@@ -107,20 +107,12 @@ export default {
   },
   methods: {
     async submit() {
-      if (!this.content.trim()) {
-        this.$store.commit('alert', {
-          message: 'Goal content must be at least one character long.', status: 'error'
-        });
-        return;
-      }
-
       const options = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin'
       };
       const fields = {
-        name: this.content,
         hours: this.hours,
         type: this.type
       }
