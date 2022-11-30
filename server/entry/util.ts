@@ -35,7 +35,6 @@ const constructEntryResponse = (entry: HydratedDocument<Entry>): EntryResponse =
 
   const { username } = entryCopy.authorId;
   const { name } = entryCopy.category;
-  console.log(name)
   delete entryCopy.authorId;
   delete entryCopy.category;
   return {
@@ -48,6 +47,44 @@ const constructEntryResponse = (entry: HydratedDocument<Entry>): EntryResponse =
   };
 };
 
+const checkTimeMatchesConstraint = (timePeriodStart: Date, timePeriodEnd: Date, constraintStart: Date, constraintEnd: Date): boolean => {
+
+  // no constraint
+  if (isNaN(constraintStart.getTime()) && isNaN(constraintEnd.getTime())) {
+    return true;
+  }
+
+  // only start constraint
+  if (!isNaN(constraintStart.getTime()) && isNaN(constraintEnd.getTime())) {
+    return timePeriodEnd.getTime() - constraintStart.getTime() >= 0;
+  }
+
+  // only end constraint
+  if (isNaN(constraintStart.getTime()) && !isNaN(constraintEnd.getTime())) {
+    return constraintEnd.getTime() - timePeriodStart.getTime() >= 0;
+  }
+
+  // both constraints
+
+  // start in between
+  if (timePeriodStart.getTime() - constraintStart.getTime() >= 0 && constraintEnd.getTime() - timePeriodStart.getTime() >= 0) {
+    return true;
+  }
+
+  // end in between
+  if (timePeriodEnd.getTime() - constraintStart.getTime() >= 0 && constraintEnd.getTime() - timePeriodEnd.getTime() >= 0) {
+    return true;
+  }
+
+  // time period contains constraint
+  if (constraintStart.getTime() - timePeriodStart.getTime() >= 0 && timePeriodEnd.getTime() - constraintEnd.getTime() >= 0) {
+    return true;
+  }
+
+  return false;
+}
+
 export {
-  constructEntryResponse
+  constructEntryResponse,
+  checkTimeMatchesConstraint
 };

@@ -292,6 +292,10 @@ The following backend routes are implemented.
 **Throws**
 
 - `403` if the user is not logged in
+- `404` if category with given name is not found
+- `400` if start is incorrect format
+- `400` if end is incorrect format
+- `400` if the time period from start to end is not a valid non zero time period
 
 ## `POST /api/entries` - Create a new time entry
 

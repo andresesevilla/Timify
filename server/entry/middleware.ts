@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 import EntryCollection from './collection';
 import UserCollection from '../user/collection';
 import CategoryCollection from '../category/collection';
+import * as util from './util';
 import { FriendCollection } from '../friend/collection';
 
 /**
@@ -21,10 +22,6 @@ const isEntryExists = async (req: Request, res: Response, next: NextFunction) =>
   next();
 };
 
-/**
- * Checks if the content of the entry in req.body is valid, i.e not a stream of empty
- * spaces and not more than 70 characters
- */
 const isValidEntryContent = async (req: Request, res: Response, next: NextFunction) => {
   const userId = (req.session.userId as string) ?? '';
 
@@ -62,6 +59,64 @@ const isValidEntryContent = async (req: Request, res: Response, next: NextFuncti
     return;
   }
 
+  const existingEntries = await EntryCollection.findAll(userId, undefined, undefined, undefined);
+  if (existingEntries.some((entry) => {return util.checkTimeMatchesConstraint(new Date(entry.start), new Date(entry.end), start, end)})) {
+    res.status(409).json({
+      error: 'Time entry conflicts with existing time entry.'
+    });
+    return;
+  }
+
+  next();
+};
+
+const isValidEntryQuery = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = (req.session.userId as string) ?? '';
+
+  const categoryName = req.query.category as string;
+  if (categoryName) {
+    const category = await CategoryCollection.findByNameAndUserId(userId, categoryName);
+    if (!category) {
+      res.status(404).json({
+        error: 'Must provide a valid category.'
+      });
+      return;
+    }
+  }
+
+  const startString = req.query.startTime as string;
+  if (startString) {
+    const start = new Date(startString);
+    if (isNaN(start.getTime())) {
+      res.status(400).json({
+        error: 'Must provide valid start time.'
+      });
+      return;
+    }
+  }
+
+  const endString = req.query.endTime as string;
+  if (endString) {
+    const end = new Date(endString);
+    if (isNaN(end.getTime())) {
+      res.status(400).json({
+        error: 'Must provide valid end time.'
+      });
+      return;
+    }
+  }
+
+  if (startString && endString) {
+    const start = new Date(startString);
+    const end = new Date(endString);
+    if (end.getTime() - start.getTime() <= 0) {
+      res.status(400).json({
+        error: 'Must be a valid positive length time period'
+      });
+      return;
+    }
+  }
+
 
   next();
 };
@@ -86,4 +141,5 @@ export {
   isValidEntryContent,
   isEntryExists,
   isValidEntryModifier,
+  isValidEntryQuery
 };

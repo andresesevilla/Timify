@@ -1,8 +1,8 @@
 import type { HydratedDocument, Types } from 'mongoose';
 import type { Entry } from './model';
 import EntryModel from './model';
-import UserCollection from '../user/collection';
 import CategoryCollection from '../category/collection';
+import * as util from './util';
 
 class EntryCollection {
   /**
@@ -40,8 +40,24 @@ class EntryCollection {
    * @param {string} userId - The username of author of the entries
    * @return {Promise<HydratedDocument<Entry>[]>} - An array of all of the entries
    */
-  static async findAllByUserId(userId: string): Promise<Array<HydratedDocument<Entry>>> {
-    const entries = await EntryModel.find({ authorId: userId }).populate(['authorId', 'category']);
+  static async findAll(userId: string, categoryName: string, start:Date, end:Date): Promise<HydratedDocument<Entry>[]> {
+    let query:{} = { authorId: userId };
+    if (categoryName) {
+      const category = await CategoryCollection.findByNameAndUserId(userId, categoryName);
+      query = { authorId: userId, category: category.id }
+    }
+
+    let entries = await EntryModel.find(query).populate(['authorId', 'category']);
+
+    if (!start) {
+      start = new Date("")
+    }
+    if (!end) {
+      end = new Date("")
+    }
+
+    entries = entries.filter((entry) => {return util.checkTimeMatchesConstraint(new Date(entry.start), new Date(entry.end), start, end)});
+
     return entries;
   }
 

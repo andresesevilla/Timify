@@ -35,7 +35,6 @@ const constructGoalResponse = (goal: HydratedDocument<Goal>): GoalResponse => {
 
   const { username } = goalCopy.authorId;
   const { name } = goalCopy.category;
-  console.log(name)
   delete goalCopy.authorId;
   delete goalCopy.category;
   return {
