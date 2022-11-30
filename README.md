@@ -349,4 +349,8 @@ The following backend routes are implemented.
 **Throws**
 
 - `403` if the user is not logged in
-- `400` if name is in the wrong format
+- `400` if start is incorrect format
+- `400` if end is incorrect format
+- `400` if the time period from start to end is not a valid non zero time period
+- `404` if category with given name is not found
+- `409` if this time entry would conflict with another

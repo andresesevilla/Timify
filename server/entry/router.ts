@@ -2,7 +2,6 @@ import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import EntryCollection from './collection';
 import * as userValidator from '../user/middleware';
-import * as friendValidator from '../friend/middleware';
 import * as entryValidator from './middleware';
 import * as util from './util';
 
@@ -65,6 +64,27 @@ router.delete(
     await EntryCollection.deleteOne(req.params.entryId);
     res.status(200).json({
       message: 'Your entry was deleted successfully.'
+    });
+  }
+);
+
+/**
+ * Create a new entry.
+ */
+ router.put(
+  '/:entryId?',
+  [
+    userValidator.isUserLoggedIn,
+    entryValidator.isValidEntryEdit,
+  ],
+  async (req: Request, res: Response) => {
+    const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
+
+    const entryId = req.params.entryId as string;
+    const entry = await EntryCollection.updateOne(userId, entryId, req.body.category, req.body.start, req.body.end, req.body.tag);    
+    res.status(201).json({
+      message: 'Your entry was updated successfully.',
+      entry: util.constructEntryResponse(entry)
     });
   }
 );

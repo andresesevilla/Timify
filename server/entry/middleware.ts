@@ -60,7 +60,66 @@ const isValidEntryContent = async (req: Request, res: Response, next: NextFuncti
   }
 
   const existingEntries = await EntryCollection.findAll(userId, undefined, undefined, undefined);
-  if (existingEntries.some((entry) => {return util.checkTimeMatchesConstraint(new Date(entry.start), new Date(entry.end), start, end)})) {
+  if (existingEntries.some((entry) => { return util.checkTimeMatchesConstraint(new Date(entry.start), new Date(entry.end), start, end) })) {
+    res.status(409).json({
+      error: 'Time entry conflicts with existing time entry.'
+    });
+    return;
+  }
+
+  next();
+};
+
+const isValidEntryEdit = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = (req.session.userId as string) ?? '';
+  const entryId = req.params.entryId as string;
+
+  const entry = await EntryCollection.findOneById(entryId);
+  if (!entry) {
+    res.status(404).json({
+      error: 'Must provide a valid entry.'
+    });
+    return;
+  }
+
+  const categoryName = req.body.category as string;
+  const category = await CategoryCollection.findByNameAndUserId(userId, categoryName);
+  if (!category) {
+    res.status(404).json({
+      error: 'Must provide a valid category.'
+    });
+    return;
+  }
+
+  const startString = req.body.start as string;
+  const start = new Date(startString);
+  if (isNaN(start.getTime())) {
+    res.status(400).json({
+      error: 'Must provide valid start time.'
+    });
+    return;
+  }
+
+  const endString = req.body.end as string;
+  const end = new Date(endString);
+  if (isNaN(end.getTime())) {
+    res.status(400).json({
+      error: 'Must provide valid end time.'
+    });
+    return;
+  }
+
+  if (end.getTime() - start.getTime() <= 0) {
+    res.status(400).json({
+      error: 'Must be a valid positive length time period'
+    });
+    return;
+  }
+
+  const existingEntries = await EntryCollection.findAll(userId, undefined, undefined, undefined);
+  if (existingEntries.some((entry) => {
+    return entry.id !== entryId && util.checkTimeMatchesConstraint(new Date(entry.start), new Date(entry.end), start, end)
+  })) {
     res.status(409).json({
       error: 'Time entry conflicts with existing time entry.'
     });
@@ -141,5 +200,6 @@ export {
   isValidEntryContent,
   isEntryExists,
   isValidEntryModifier,
-  isValidEntryQuery
+  isValidEntryQuery,
+  isValidEntryEdit
 };

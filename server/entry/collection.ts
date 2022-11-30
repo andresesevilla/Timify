@@ -34,6 +34,20 @@ class EntryCollection {
     return EntryModel.findOne({ _id: entryId }).populate(['authorId', 'category']);
   }
 
+  static async updateOne(userId: Types.ObjectId | string, entryId: Types.ObjectId | string, categoryName: string, start: string, end: string, tag: string): Promise<HydratedDocument<Entry>> {
+    const entry = await EntryModel.findOne({ _id: entryId }).populate(['authorId', 'category']);
+
+    const category = await CategoryCollection.findByNameAndUserId(userId, categoryName);
+    
+    entry.category = category.id;
+    entry.start = new Date(start);
+    entry.end = new Date(end);
+    entry.tag = tag;
+
+    await entry.save()
+    return entry.populate(['authorId', 'category']);
+  }
+
   /**
    * Get all the entries in by given author
    *
