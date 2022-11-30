@@ -4,9 +4,8 @@
   <main>
     <section v-if="$store.state.username">
       <header>
-        <h2>Welcome @{{ $store.state.username }}</h2>
+        <h2>Welcome {{ $store.state.username }}</h2>
       </header>
-      <ManageCategoriesComponent />
       <CreateGoalForm />
       <header>
         <h2>Your Goals</h2>
