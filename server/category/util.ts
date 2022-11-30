@@ -1,5 +1,11 @@
 import type {HydratedDocument} from 'mongoose';
-import type {Category, CategoryT} from './model';
+import type {Category, PopulatedCategory} from './model';
+
+type CategoryResponse = {
+  _id: string;
+  userId: string;
+  name: string;
+};
 
 /**
  * Transform a raw Category object from the database into an object
@@ -8,7 +14,21 @@ import type {Category, CategoryT} from './model';
  * @param {HydratedDocument<Category>} category - A Category object
  * @returns {CategoryT} - The Category object
  */
-const constructCategoryResponse = (category: HydratedDocument<Category>): CategoryT => category.entries;
+
+const constructCategoryResponse = (category: HydratedDocument<Category>): CategoryResponse => {
+  const categoryCopy: PopulatedCategory = {
+    ...category.toObject({
+      versionKey: false // Cosmetics; prevents returning of __v property
+    })
+  };
+  const {username} = categoryCopy.userId;
+  delete categoryCopy.userId;
+  return {
+    ...categoryCopy,
+    _id: categoryCopy._id.toString(),
+    userId: username
+  };
+};
 
 export {
   constructCategoryResponse

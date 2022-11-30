@@ -1,60 +1,46 @@
-import type {HydratedDocument, Types} from 'mongoose';
-import type {Category, CategoryT} from './model';
+import type { HydratedDocument, Types } from 'mongoose';
+import type { Category, PopulatedCategory } from './model';
 import CategoryModel from './model';
+import UserCollection from '../user/collection';
 
 class CategoryCollection {
-  /**
-   * Find a Category by userId. If does not exist, creates one and returns that.
-   *
-   * @param userId - The _id to look for an entry for
-   * @returns The entry with the given id, if any
-   */
-  static async findOneByUserId(userId: Types.ObjectId | string): Promise<HydratedDocument<Category>> {
-    const one = await CategoryModel.findOne({userId});
-    if (!one) {
-      const populate = new CategoryModel({userId, dateUpdated: new Date()});
-      await populate.save();
-      return populate;
-    }
-
-    return one;
+  static async findAllByUserId(userId: Types.ObjectId | string): Promise<Array<HydratedDocument<Category>>> {
+    const user = await UserCollection.findOneByUserId(userId);
+    const categories = await CategoryModel.find({ userId: user._id }).populate('userId');
+    return categories;
   }
 
-  /**
-   * Find a Category by categoryId.
-   *
-   * @param categoryId - The _id to look for an entry for
-   * @returns The entry with the given id, if any
-   */
-  static async findOneByCategoryId(categoryId: Types.ObjectId | string): Promise<HydratedDocument<Category>> {
-    return CategoryModel.findOne({_id: categoryId});
+  static async findById(id: Types.ObjectId | string): Promise<HydratedDocument<Category>> {
+    const category = await CategoryModel.findOne({ id: id }).populate('userId');
+    return category;
   }
 
-  /**
-   * Update by categoryId.
-   *
-   * @param categoryId - The _id of Category entry to update
-   * @param categoryEntries - Category entries
-   * @returns - The updated Category entry.
-   */
-  static async updateOneByCategoryId(categoryId: Types.ObjectId | string, categoryEntries: CategoryT): Promise<HydratedDocument<Category>> {
-    const category = await CategoryModel.findOne({_id: categoryId});
-    category.entries = categoryEntries;
-    category.dateUpdated = new Date();
+  static async findByNameAndUserId(userId: Types.ObjectId | string, name: string): Promise<HydratedDocument<Category>> {
+    const category = await CategoryModel.findOne({ userId: userId, name: name }).populate('userId');
+    return category;
+  }
+
+  static async addOne(userId: Types.ObjectId | string, name: string): Promise<HydratedDocument<Category>> {
+    const category = new CategoryModel({
+      userId,
+      name
+    });
+    await category.save(); // Saves goal to MongoDB
+    return category.populate('userId');
+  }
+
+  static async deleteOne(userId: Types.ObjectId | string, name: string): Promise<boolean> {
+    const user = await UserCollection.findOneByUserId(userId);
+    const category = await CategoryModel.deleteOne({ userId: user._id, name: name });
+    return category !== null;
+  }
+
+  static async renameOne(userId: Types.ObjectId | string, oldName: string, newName: string): Promise<HydratedDocument<Category>> {
+    const user = await UserCollection.findOneByUserId(userId);
+    const category = await CategoryModel.findOne({ userId: user._id, name: oldName });
+    category.name = newName;
     await category.save();
-    return category;
-  }
-
-  /**
-   * Update by userId.
-   *
-   * @param userId - The _id of Category entry to update
-   * @param categoryEntries - Category entries
-   * @returns - The updated Category entry.
-   */
-  static async updateOneByUserId(userId: Types.ObjectId | string, categoryEntries: CategoryT): Promise<HydratedDocument<Category>> {
-    const category = await CategoryModel.findOneAndUpdate({userId}, {entries: categoryEntries, dateUpdated: new Date()});
-    return category;
+    return category.populate('userId');
   }
 }
 

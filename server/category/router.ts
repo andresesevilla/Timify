@@ -9,28 +9,62 @@ const router = express.Router();
 
 router.get(
   '/',
+  [
+    userValidator.isUserLoggedIn,
+  ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? '';
-    if (!userId) {
-      return res.status(401).json({message: 'Unauthorized'});
-    }
-
-    const category = await CategoryCollection.findOneByUserId(userId);
-    res.status(200).json(constructCategoryResponse(category));
+    const categories = await CategoryCollection.findAllByUserId(userId);
+    res.status(200).json(categories.map(constructCategoryResponse));
   }
 );
 
-router.put(
+router.post(
   '/',
   [
     userValidator.isUserLoggedIn,
-    categoryValidator.isValidEntries
+    categoryValidator.isValidCategoryName
   ],
   async (req: Request, res: Response) => {
     const userId = req.session.userId as string;
-    await CategoryCollection.updateOneByUserId(userId, req.body);
+    const newCategory = await CategoryCollection.addOne(userId, req.body.name);
+
+    res.status(201).json({
+      message: 'Your category was created successfully.',
+      category: constructCategoryResponse(newCategory)
+    });
+  }
+);
+
+router.delete(
+  '/:categoryName?',
+  [
+    userValidator.isUserLoggedIn,
+    categoryValidator.isCategoryExists
+  ],
+  async (req: Request, res: Response) => {
+    const userId = req.session.userId as string;
+    await CategoryCollection.deleteOne(userId, req.params.categoryName);
     res.status(200).json({
-      message: 'Categories successfully updated'
+      message: 'Your category was deleted successfully.'
+    });
+  }
+);
+
+router.patch(
+  '/:categoryName?',
+  [
+    userValidator.isUserLoggedIn,
+    categoryValidator.isValidCategoryName,
+    categoryValidator.isCategoryExists
+  ],
+  async (req: Request, res: Response) => {
+    const userId = req.session.userId as string;
+    const updatedCategory = await CategoryCollection.renameOne(userId, req.params.categoryName, req.body.name);
+
+    res.status(200).json({
+      message: 'Your category was updated successfully.',
+      category: constructCategoryResponse(updatedCategory)
     });
   }
 );
