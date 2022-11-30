@@ -13,8 +13,8 @@ const routes = [
   { path: '/', name: 'Home', component: HomeWrapper },
   { path: '/feed', name: 'Feed', component: FeedPage },
   { path: '/settings', name: 'Settings', component: SettingsPage },
-  { path: '/@:username', name: 'Profile', component: ProfilePage },
-  { path: '/@:username/friends', name: 'Friends', component: FriendPage },
+  { path: '/user/:username', name: 'Profile', component: ProfilePage },
+  { path: '/friends', name: 'Friends', component: FriendPage },
   { path: '*', name: 'Not Found', component: NotFound }
 ];
 
