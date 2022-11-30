@@ -3,9 +3,6 @@
 <template>
   <form @submit.prevent="submit">
     <section>
-      <textarea name="content" v-model="content" id="content" placeholder="What's your goal?"
-        maxlength="70"></textarea>
-      <p class="info">{{ content.length }}/70 characters</p>
 
       <label for="hours">Hours:</label>
       <input type='number' name="hours" min="1" v-model="hours">
@@ -27,27 +24,18 @@
 export default {
   data() {
     return {
-      content: '',
       hours: 1,
       type: 'goal'
     };
   },
   methods: {
     async submit() {
-      if (!this.content.trim()) {
-        this.$store.commit('alert', {
-          message: 'Goal content must be at least one character long.', status: 'error'
-        });
-        return;
-      }
-
       const options = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin'
       };
       const fields = {
-        name: this.content,
         hours: this.hours,
         type: this.type
       }

@@ -23,23 +23,10 @@ const isGoalExists = async (req: Request, res: Response, next: NextFunction) => 
  * spaces and not more than 70 characters
  */
 const isValidGoalContent = (req: Request, res: Response, next: NextFunction) => {
-  const { name } = req.body as { name: string };
   const { hours } = req.body as { hours: number };
-  if (!name.trim()) {
-    res.status(400).json({
-      error: 'Goal name must be at least one character long.'
-    });
-    return;
-  }
   if (!hours) {
     res.status(400).json({
       error: 'Hours must be a valid number.'
-    });
-    return;
-  }
-  if (name.length > 70) {
-    res.status(413).json({
-      error: 'Goal name must be no more than 70 characters.'
     });
     return;
   }

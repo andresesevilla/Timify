@@ -4,7 +4,6 @@ import type {Goal, PopulatedGoal} from '../goal/model';
 
 type GoalResponse = {
   _id: string;
-  name: string;
   hours: number;
   author: string;
   dateCreated: string;

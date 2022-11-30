@@ -20,12 +20,11 @@ class GoalCollection {
    * @param {string} content - The id of the content of the goal
    * @return {Promise<HydratedDocument<Goal>>} - The newly created goal
    */
-  static async addOne(authorId: Types.ObjectId | string, name: string, hours: number, type: string): Promise<HydratedDocument<Goal>> {
+  static async addOne(authorId: Types.ObjectId | string, hours: number, type: string): Promise<HydratedDocument<Goal>> {
     const date = new Date();
     const goal = new GoalModel({
       authorId,
       dateCreated: date,
-      name,
       hours,
       type
     });

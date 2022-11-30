@@ -10,9 +10,6 @@
         </router-link>
       </h3>
     </header>
-    <p class="content">
-      {{ goal.name }}
-    </p>
     <p class="info">
       Hours: {{ goal.hours }}
     </p>
