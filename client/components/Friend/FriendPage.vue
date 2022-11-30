@@ -12,7 +12,7 @@
       <ul v-else>
         <li v-for="friend in friends" :key="friend.username">
           <span>
-            <router-link :to="{ name: 'FriendPage', params: { username: friend.username } }">
+            <router-link :to="{ name: 'Profile', params: { username: friend.username } }">
               {{ friend.username }}
             </router-link>
           </span>
