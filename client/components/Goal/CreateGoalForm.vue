@@ -64,7 +64,7 @@
           <template #footer>
             <a><span> Add a category... </span></a>
           </template>
-          <template #empty>No results for {{category}}</template>
+          <template #empty>No results {{category ? "for" : ""}} {{category}}</template>
         </b-autocomplete>
       </b-field>
     </section>
@@ -107,38 +107,7 @@ export default {
   },
   methods: {
     async submit() {
-      const options = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin'
-      };
-      const fields = {
-        hours: this.hours,
-        type: this.type
-      }
-      options.body = JSON.stringify(fields);
-
-      try {
-        const r = await fetch('/api/goals', options);
-        if (!r.ok) {
-          const res = await r.json();
-          throw new Error(res.error);
-        }
-
-        this.$store.commit('refreshGoals');
-
-        this.content = '';
-        this.hours = 1;
-
-        this.$store.commit('alert', {
-          message: 'Successfully created a goal!', status: 'success'
-        });
-
-      } catch (e) {
-        this.$store.commit('alert', {
-          message: e, status: 'error'
-        });
-      }
+      console.log("submitted");
     }
   }
 };
