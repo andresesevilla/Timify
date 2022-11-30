@@ -25,3 +25,11 @@ export default {
   components: { ManageCategoriesComponent, CreateGoalForm, GoalFeedComponent }
 };
 </script>
+
+<style lang="scss" scoped>
+@import '@/public/variables.scss';
+main {
+  max-width: 60em;
+  margin: 0 auto;
+}
+</style>

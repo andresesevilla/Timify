@@ -52,16 +52,20 @@
       </b-select>
       <b-field><b-numberinput class="hours" v-model="hours" controls-position="compact" controls-rounded :min="1" :max="999"></b-numberinput></b-field>
       <span>hours on</span>
-      <b-field>
-      <b-autocomplete 
-        v-model="category" 
-        placeholder="Choose a category"
-        :data="categories"
-        :open-on-focus="true"
-        :clearable="true"
-        :loading="loading"
-        required="true"
-      />
+      <b-field :type="{'is-danger': !isCategoryValid}" :message="{'Please choose one of your categories': !isCategoryValid}">
+        <b-autocomplete 
+          v-model="category" 
+          placeholder="Choose a category"
+          :data="filteredCategories"
+          :open-on-focus="true"
+          :clearable="true"
+          :loading="loading"
+          required="true">
+          <template #footer>
+            <a><span> Add a category... </span></a>
+          </template>
+          <template #empty>No results for {{category}}</template>
+        </b-autocomplete>
       </b-field>
     </section>
 
@@ -81,6 +85,16 @@ export default {
       isFriends: false,
       loading: true
     };
+  },
+  computed: {
+    filteredCategories() {
+      return this.categories.filter((category) => {
+        return category.toLowerCase().includes(this.category === null ? "" : this.category.toLowerCase());
+      });
+    },
+    isCategoryValid() {
+      return this.category === null || !this.categories || this.categories.includes(this.category);
+    }
   },
   mounted() {
     this.loading = true;
