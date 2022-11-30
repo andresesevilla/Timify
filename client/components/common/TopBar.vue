@@ -6,21 +6,13 @@
         <h2>Timify</h2>
       </b-navbar-item>
     </template>
-
-    <template #start>
+    <template #end v-if="$store.state.username">
       <b-navbar-item tag="div">
         <div class="buttons">
           <b-button tag="router-link" to="/">
             <b-icon icon="home" size="is-small" />
             Home
           </b-button>
-        </div>
-      </b-navbar-item>
-    </template>
-
-    <template #end v-if="$store.state.username">
-      <b-navbar-item tag="div">
-        <div class="buttons">
           <b-button tag="router-link" to="/feed" class="button is-primary">
             <b-icon icon="view-list" size="is-small" />
             Feed
