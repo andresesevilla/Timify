@@ -206,12 +206,17 @@ export default {
         return;
       }
       const url = `api/friends/status/${profileUsername}`;
-      const r = await fetch(url);
-      const res = await r.json();
-      if (!r.ok) {
-        return;
+      try {
+        const r = await fetch(url);
+        const res = await r.json();
+        if (!r.ok) {
+          throw new Error(res.error);
+        }
+        this.isValidUsername = true;
+        this.friendStatus = res.status;
+      } catch (e) {
+        this.isValidUsername = false;
       }
-      this.friendStatus = res.status;
     },
     async getGoals() {
       const username = this.$route.params.username
@@ -222,11 +227,12 @@ export default {
         if (!r.ok) {
           throw new Error(res.error);
         }
-        this.isValidUsername = true;
         this.$store.commit('updateFilter', username);
         this.$store.commit('updateGoals', res);
       } catch (e) {
-        this.isValidUsername = false;
+        this.$store.commit('alert', {
+          message: e, status: 'error'
+        });
       }
     }
   }
