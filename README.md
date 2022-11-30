@@ -82,6 +82,27 @@ The following backend routes are implemented.
 
 - `403` if the user is not logged in
 
+## `GET /api/goals?feed` - Get logged in user’s goal feed
+
+**Returns**
+
+- An array of goals representing the goal feed
+
+**Throws**
+
+- `403` if the user is not logged in
+
+## `GET /api/goals?author=username` - Get goals of given user
+
+**Returns**
+
+- An array of the goals of the given user
+
+**Throws**
+
+- `403` if the user is not logged in
+- `403` if user is not friends with given user
+
 ## `POST /api/goals` - Create a new goal
 
 **Body**
@@ -105,7 +126,7 @@ The following backend routes are implemented.
 - `404` if category does not exist
 - `400` if type is invalid
 
-## `DELETE /api/goals/:goalName?` - Delete an existing goal
+## `DELETE /api/goals/:categoryName?` - Delete an existing goal
 
 **Returns**
 

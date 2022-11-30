@@ -1,5 +1,4 @@
 import type {Request, Response, NextFunction} from 'express';
-import {Types} from 'mongoose';
 import {FriendCollection, FriendRequestCollection} from './collection';
 import UserCollection from '../user/collection';
 
@@ -51,26 +50,6 @@ const isFriend = async (req: Request, res: Response, next: NextFunction) => {
   if (!friend) {
     return res.status(400).json({
       error: `You are not friends with ${friendUsername}.`
-    });
-  }
-
-  next();
-};
-
-const isViewAllowed = async (req: Request, res: Response, next: NextFunction) => {
-  const userId = req.session.userId as string;
-  const friendUsername = getFriendUsername(req.params);
-  if (!friendUsername) {
-    return res.status(400).json({
-      error: 'Username not provided.'
-    });
-  }
-
-  const friendId = (await UserCollection.findOneByUsername(friendUsername))._id;
-  const friend = await FriendCollection.findOneFriend(userId, friendId);
-  if (!friend) {
-    return res.status(403).json({
-      error: `You are not friends with ${friendUsername}. Only friends can view this resource.`
     });
   }
 
@@ -188,5 +167,4 @@ export {
   isFriendRequestNotExists,
   isValidRequestee,
   isValidResponse,
-  isViewAllowed
 };

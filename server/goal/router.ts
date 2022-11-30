@@ -2,9 +2,9 @@ import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import GoalCollection from './collection';
 import * as userValidator from '../user/middleware';
+import * as friendValidator from '../friend/middleware';
 import * as goalValidator from '../goal/middleware';
 import * as util from './util';
-import UserCollection from '../user/collection';
 
 const router = express.Router();
 
@@ -37,26 +37,24 @@ router.get(
       next();
       return;
     }
-
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    const user = await UserCollection.findOneByUserId(userId);
     // Check if feed query parameter was supplied
     if (req.query.feed !== undefined) {
       const feedGoals = await GoalCollection.findAllInFeed(userId);
       const response = feedGoals.map(util.constructGoalResponse);
       res.status(200).json(response);
     } else {
-      const allGoals = await GoalCollection.findAll(userId);
+      const allGoals = await GoalCollection.findAllByUserId(userId);
       const response = allGoals.map(util.constructGoalResponse);
       res.status(200).json(response);
     }
   },
   [
-    userValidator.isAuthorExists
+    userValidator.isAuthorExists,
+    goalValidator.isViewAllowed
   ],
   async (req: Request, res: Response) => {
-    const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    const authorGoals = await GoalCollection.findAllByUsername(userId, req.query.author as string);
+    const authorGoals = await GoalCollection.findAllByUsername(req.query.author as string);
     const response = authorGoals.map(util.constructGoalResponse);
     res.status(200).json(response);
   }

@@ -47,7 +47,7 @@ class GoalCollection {
    *
    * @return {Promise<HydratedDocument<Goal>[]>} - An array of all of the goals
    */
-  static async findAll(userId: string): Promise<Array<HydratedDocument<Goal>>> {
+  static async findAll(): Promise<Array<HydratedDocument<Goal>>> {
     // Retrieves goals and sorts them from most to least recent
     const allGoals = await GoalModel.find({}).sort({ dateCreated: -1 }).populate('authorId');
     return allGoals;
@@ -59,11 +59,22 @@ class GoalCollection {
    * @param {string} username - The username of author of the goals
    * @return {Promise<HydratedDocument<Goal>[]>} - An array of all of the goals
    */
-  static async findAllByUsername(userId: string, username: string): Promise<Array<HydratedDocument<Goal>>> {
+  static async findAllByUsername(username: string): Promise<Array<HydratedDocument<Goal>>> {
     const author = await UserCollection.findOneByUsername(username);
     const goals = await GoalModel.find({ authorId: author._id }).sort({ dateCreated: -1 }).populate('authorId');
     return goals;
   }
+
+  /**
+   * Get all the goals in by given author
+   *
+   * @param {string} userId - The username of author of the goals
+   * @return {Promise<HydratedDocument<Goal>[]>} - An array of all of the goals
+   */
+     static async findAllByUserId(userId: string): Promise<Array<HydratedDocument<Goal>>> {
+      const goals = await GoalModel.find({ authorId: userId }).sort({ dateCreated: -1 }).populate('authorId');
+      return goals;
+    }
 
   /**
    * Get all goals written by an author friends with the user

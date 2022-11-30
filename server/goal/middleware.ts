@@ -1,6 +1,8 @@
 import type { Request, Response, NextFunction } from 'express';
 import { Types } from 'mongoose';
 import GoalCollection from '../goal/collection';
+import UserCollection from '../user/collection';
+import { FriendCollection } from '../friend/collection';
 
 /**
  * Checks if a goal with goalId is req.params exists
@@ -57,8 +59,30 @@ const isValidGoalModifier = async (req: Request, res: Response, next: NextFuncti
   next();
 };
 
+const isViewAllowed = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.session.userId as string;
+  const friendUsername = req.query.author as string;
+  if (!friendUsername) {
+    return res.status(400).json({
+      error: 'Username not provided.'
+    });
+  }
+
+  const friend = await UserCollection.findOneByUsername(friendUsername)
+  const friendship = await FriendCollection.findOneFriend(userId, friend._id);
+  
+  if (!friendship && friend.id !== userId) {
+    return res.status(403).json({
+      error: `You are not friends with ${friendUsername}. Only friends can view this resource.`
+    });
+  }
+
+  next();
+};
+
 export {
   isValidGoalContent as isValidGoalContent,
   isGoalExists,
-  isValidGoalModifier
+  isValidGoalModifier,
+  isViewAllowed
 };
