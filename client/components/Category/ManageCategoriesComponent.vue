@@ -40,7 +40,8 @@ export default {
       editing: null,
       draft: {},
       categories: null,
-      isLoading: true
+      isLoading: true,
+      lastActionMethod: null,
     };
   },
   mounted() {
@@ -54,23 +55,24 @@ export default {
           this.categories = categories;
         });
     },
-    saveCategories() {
-      fetch("/api/categories", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(this.categories),
-      });
-    },
     addCategory() {
-      this.categories.unshift({ name: this.getUniqueName("Category") });
-      if (!this.editing) {
-        this.startEdit(this.categories[0]);
+      if (this.editing) {
+        this.$buefy.toast.open({
+          message: "Finish editing the category you're currently editing first.",
+          type: "is-warning",
+          position: "is-bottom",
+          duration: 3000,
+        });
+        return;
       }
-      this.saveCategories();
+      this.categories.unshift({ name: this.getUniqueName("Category") });
+      this.lastActionMethod = "POST";
+      this.startEdit(this.categories[0]);
     },
     startEdit(category) {
+      if (!this.lastActionMethod) {
+        this.lastActionMethod = "PATCH";
+      }
       this.editing = category;
       this.draft = Object.assign({}, category);
       const index = this.categories.indexOf(category);
@@ -82,11 +84,46 @@ export default {
       });
     },
     saveEdit(category) {
-      this.editing = null;
-      this.categories[this.categories.indexOf(category)] = this.draft;
-      this.saveCategories();
+      // make patch request to /api/categories/category.name and send draft name in the body
+      if (this.lastActionMethod !== "POST" && category.name === this.draft.name) {
+        this.$buefy.toast.open({
+          message: "No changes made.",
+          type: "is-warning",
+          duration: 1000,
+        });
+        this.discardEdit(category);
+        return;
+      }
+      const url = this.lastActionMethod === "POST" ? "/api/categories" : `/api/categories/${category.name}`;
+      fetch(url, {
+        method: this.lastActionMethod,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(this.draft),
+      }).then(res => res.json()).then(res => {
+        if (res.error) {
+          this.$buefy.toast.open({
+            message: res.error,
+            type: "is-danger",
+            duration: 3000,
+          });
+        } else {
+          this.$buefy.toast.open({
+            message: res.message,
+            type: "is-success",
+            duration: 2000,
+          });
+          this.editing = null;
+          this.categories[this.categories.indexOf(category)] = this.draft;
+          this.lastActionMethod = null;
+        }
+      });
     },
     discardEdit(category) {
+      if (this.lastActionMethod === "POST") {
+        this.categories.splice(this.categories.indexOf(category), 1);
+      }
       this.editing = null;
       this.draft = {};
     },
@@ -99,8 +136,24 @@ export default {
         type: "is-danger",
         hasIcon: true,
         onConfirm: () => {
-          this.categories.splice(this.categories.indexOf(category), 1);
-          this.saveCategories();
+          fetch(`/api/categories/${category.name}`, {
+            method: "DELETE",
+          }).then(res => res.json()).then(res => {
+            if (res.error) {
+              this.$buefy.toast.open({
+                message: res.error,
+                type: "is-danger",
+                duration: 3000,
+              });
+            } else {
+              this.$buefy.toast.open({
+                message: res.message,
+                type: "is-success",
+                duration: 2000,
+              });
+              this.categories.splice(this.categories.indexOf(category), 1);
+            }
+          });
         },
       });
     },
