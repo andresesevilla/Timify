@@ -325,7 +325,8 @@ The following backend routes are implemented.
 **Throws**
 
 - `403` if the user is not logged in
-- `404` If the logged in user doesn’t have a time entry with the given ID
+- `403` if the user is not the owner of this time entry
+- `404` If time entry does not exist
 
 ## `PUT /api/entries/:entryId?` - Update a time entry
 

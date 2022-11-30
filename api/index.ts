@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import * as userValidator from '../server/user/middleware';
 import {userRouter} from '../server/user/router';
 import {goalRouter} from '../server/goal/router';
+import {entryRouter} from '../server/entry/router';
 import {friendRouter} from '../server/friend/router';
 import {categoryRouter} from '../server/category/router';
 import MongoStore from 'connect-mongo';
@@ -74,6 +75,7 @@ app.use('/api/users', userRouter);
 app.use('/api/goals', goalRouter);
 app.use('/api/friends', friendRouter);
 app.use('/api/categories', categoryRouter);
+app.use('/api/entries', entryRouter);
 
 // Catch all the other routes and display error message
 app.all('*', (req: Request, res: Response) => {
