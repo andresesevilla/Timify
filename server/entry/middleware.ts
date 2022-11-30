@@ -26,37 +26,42 @@ const isEntryExists = async (req: Request, res: Response, next: NextFunction) =>
  * spaces and not more than 70 characters
  */
 const isValidEntryContent = async (req: Request, res: Response, next: NextFunction) => {
-  // const { hours } = req.body as { hours: number };
-  // if (!hours) {
-  //   res.status(400).json({
-  //     error: 'Hours must be a valid number.'
-  //   });
-  //   return;
-  // }
-  // const type = req.body.type;
-  // if (type !== 'entry' && type !== 'budget') {
-  //   res.status(400).json({
-  //     error: 'Entry type is invalid.'
-  //   });
-  //   return;
-  // }
+  const userId = (req.session.userId as string) ?? '';
 
-  // const userId = (req.session.userId as string) ?? '';
-  // const category = await CategoryCollection.findByNameAndUserId(userId, req.body.category);
-  // if (!category) {
-  //   res.status(404).json({
-  //     error: 'Given category does not exist.'
-  //   });
-  //   return;
-  // }
+  const categoryName = req.body.category as string;
+  const category = await CategoryCollection.findByNameAndUserId(userId, categoryName);
+  if (!category) {
+    res.status(404).json({
+      error: 'Must provide a valid category.'
+    });
+    return;
+  }
 
-  // const entry = await EntryCollection.findOneByCategoryId(category.id);
-  // if (entry) {
-  //   res.status(409).json({
-  //     error: 'This category already has a entry.'
-  //   });
-  //   return;
-  // }
+  const startString = req.body.start as string;
+  const start = new Date(startString);
+  if (isNaN(start.getTime())) {
+    res.status(400).json({
+      error: 'Must provide valid start time.'
+    });
+    return;
+  }
+
+  const endString = req.body.end as string;
+  const end = new Date(endString);
+  if (isNaN(end.getTime())) {
+    res.status(400).json({
+      error: 'Must provide valid end time.'
+    });
+    return;
+  }
+
+  if (end.getTime() - start.getTime() <= 0) {
+    res.status(400).json({
+      error: 'Must be a valid positive length time period'
+    });
+    return;
+  }
+
 
   next();
 };

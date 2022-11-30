@@ -54,7 +54,7 @@ const EntrySchema = new Schema<Entry>({
   },
   tag: {
     type: String,
-    required: true
+    required: false
   },
 });
 

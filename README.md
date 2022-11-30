@@ -300,7 +300,7 @@ The following backend routes are implemented.
 - `start` *{string}* - ISO start time
 - `end` *{string}* - ISO end time
 - `category` *{string} -* The name of the category associated with this time entry
-- `tag` *{string}* - The tag for this time entry
+- `tag` *{string}* - The tag for this time entry (not required)
 
 **Returns**
 
@@ -335,7 +335,7 @@ The following backend routes are implemented.
 - `start` *{string}* - ISO start time
 - `end` *{string}* - ISO end time
 - `category` *{string} -* The name of the category associated with this time entr
-- `tag` *{string}* - The tag for this time entry
+- `tag` *{string}* - The tag for this time entry (not required)
 
 **Returns**
 

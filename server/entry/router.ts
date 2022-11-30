@@ -36,7 +36,9 @@ router.post(
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
+
     const entry = await EntryCollection.addOne(userId, req.body.category, req.body.start, req.body.end, req.body.tag);
+    
     res.status(201).json({
       message: 'Your entry was created successfully.',
       entry: util.constructEntryResponse(entry)
