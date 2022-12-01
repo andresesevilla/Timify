@@ -10,7 +10,7 @@
       <header>
         <h2>Your Goals</h2>
       </header>
-      <GoalListComponent :goals="goals" />
+      <GoalListComponent :fetchGoals="fetchGoals" />
     </section>
   </main>
 </template>
@@ -24,16 +24,14 @@ export default {
   name: "HomeComponent",
   components: { ManageCategoriesComponent, CreateGoalForm, GoalListComponent },
   data() {
-    return {
-      goals: [],
-    };
+    return {};
   },
   mounted() {
-    this.fetchGoals();
+    
   },
   methods: {
-    async fetchGoals() {
-      this.goals = [
+    fetchGoals() {
+      return [
         { author: "elonmusk", hours: 10, category: "Twitter", progress: 3, type: "budget", visibility: "friends" },
         { author: "elonmusk", hours: 5, category: "Firing", progress: 10, type: "goal", visibility: "private" },
         { author: "elonmusk", hours: 8, category: "Tesla", progress: 7, type: "goal", visibility: "private" },

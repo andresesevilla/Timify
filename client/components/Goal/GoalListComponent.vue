@@ -1,6 +1,6 @@
 <template>
   <section v-if="goals.length">
-    <GoalComponent v-for="goal in goals" :key="goal.id" :goal="goal" />
+    <GoalComponent v-for="goal in goals" :key="goal.id" :goal="goal" @delete="deleteGoal(goal)" />
   </section>
   <article v-else>
     <h3>No goals found.</h3>
@@ -14,13 +14,23 @@ export default {
   name: 'GoalListComponent',
   components: { GoalComponent },
   props: {
-    goals: {
-      type: Array,
-      required: true
-    }
+    fetchGoals: {
+      type: Function,
+      required: true,
+    },
   },
-  mounted() {
-    console.log("HI", this.goals);
+  data() {
+    return {
+      goals: [],
+    };
+  },
+  async mounted() {
+    this.goals = await this.fetchGoals();
+  },
+  methods: {
+    deleteGoal(goal) {
+      this.goals = this.goals.filter((g) => g !== goal);
+    },
   }
 };
 </script>

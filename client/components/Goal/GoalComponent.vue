@@ -98,12 +98,14 @@ export default {
   },
   methods: {
     startEdit() {
-      this.editing = this.goal;
-      this.draft = { ...this.goal };
+      this.$buefy.toast.open({
+        message: 'Editing is not yet implemented, delete and create a new goal instead. lol.',
+        type: 'is-warning',
+        duration: 3000,
+      });
     },
     deleteCategory() {
-      this.editing = null;
-      this.draft = {};
+      this.$emit("delete");
     },
   }
 };
