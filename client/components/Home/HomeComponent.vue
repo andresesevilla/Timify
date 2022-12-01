@@ -8,8 +8,9 @@
     <section class="column goals">
       <header>
         <h2>Your Goals</h2>
+        <router-link to="/my"><b-button>Manage goals</b-button></router-link>
       </header>
-      <GoalListComponent :fetchGoals="fetchGoals" />
+      <GoalListComponent :fetchGoals="fetchGoals" :allowEdit="false" />
     </section>
   </main>
 </template>
@@ -52,4 +53,9 @@ main {
   max-height: 90vh;
   overflow-y: auto;
 }
+.goals header {
+  display: flex;
+  justify-content: space-between;
+}
+
 </style>

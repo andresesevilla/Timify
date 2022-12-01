@@ -8,7 +8,7 @@
       </h3>
       <span class="visibility"> <b-icon :icon="goal.visibility === 'friends' ? 'account-multiple' : 'lock'" /> {{ goal.visibility }} </span>
       <span class="goal-sentence"> Spend {{ goal.type === 'goal' ? 'at least' : 'at most'}} {{ goal.hours }} hours on {{ goal.category }} </span>
-      <span class="goal-actions">
+      <span class="goal-actions" v-if="allowEdit">
           <b-tooltip label="Edit"><a @click="startEdit"><b-icon icon="pencil" /></a></b-tooltip>
           <b-tooltip label="Delete"><a @click="deleteCategory"><b-icon icon="delete" /></a></b-tooltip>
         </span>
@@ -30,7 +30,11 @@ export default {
     goal: {
       type: Object,
       required: true
-    }
+    },
+    allowEdit: {
+      type: Boolean,
+      default: true
+    },
   },
   data() {
     return {

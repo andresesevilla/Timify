@@ -31,6 +31,10 @@ router.beforeEach((to, from, next) => {
       next({ name: 'Home' }); // Go to Home page if user navigates to any other page and are not signed in
       return;
     }
+    if (to.path === '/my' && router.app.$store.state.username) {
+      next({ name: 'Profile', params: { username: router.app.$store.state.username } });
+      return;
+    }
   }
 
   next();

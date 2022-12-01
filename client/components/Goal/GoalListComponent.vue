@@ -1,6 +1,6 @@
 <template>
   <section v-if="goals.length">
-    <GoalComponent v-for="goal in goals" :key="goal.id" :goal="goal" @delete="deleteGoal(goal)" />
+    <GoalComponent v-for="goal in goals" :key="goal.id" :goal="goal" :allowEdit="allowEdit" @delete="deleteGoal(goal)" />
   </section>
   <article v-else>
     <h3>No goals found.</h3>
@@ -17,6 +17,10 @@ export default {
     fetchGoals: {
       type: Function,
       required: true,
+    },
+    allowEdit: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {
