@@ -101,7 +101,7 @@ export default {
       this.editing = this.goal;
       this.draft = { ...this.goal };
     },
-    discardEdit() {
+    deleteCategory() {
       this.editing = null;
       this.draft = {};
     },
