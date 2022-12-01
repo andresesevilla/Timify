@@ -41,11 +41,12 @@ router.get(
     // Check if feed query parameter was supplied
     if (req.query.feed !== undefined) {
       const feedGoals = await GoalCollection.findAllInFeed(userId);
-      const response = feedGoals.map(util.constructGoalResponse);
+      const response = await Promise.all(feedGoals.map(util.constructGoalResponse));
       res.status(200).json(response);
     } else {
       const allGoals = await GoalCollection.findAllByUserId(userId);
-      const response = allGoals.map(util.constructGoalResponse);
+      const response = await Promise.all(allGoals.map(util.constructGoalResponse));
+
       res.status(200).json(response);
     }
   },
@@ -56,7 +57,7 @@ router.get(
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
     const authorGoals = await GoalCollection.findAllByUsername(userId, req.query.author as string);
-    const response = authorGoals.map(util.constructGoalResponse);
+    const response = await Promise.all(authorGoals.map(util.constructGoalResponse));
     res.status(200).json(response);
   }
 );
@@ -75,7 +76,7 @@ router.post(
     const goal = await GoalCollection.addOne(userId, req.body.category, req.body.hours, req.body.type, req.body.private);
     res.status(201).json({
       message: 'Your goal was created successfully.',
-      goal: util.constructGoalResponse(goal)
+      goal: await util.constructGoalResponse(goal)
     });
   }
 );
