@@ -34,8 +34,10 @@ export default {
   methods: {
     async fetchGoals() {
       this.goals = [
-        { author: "elonmusk", hours: 10, category: "Twitter", progress: 10, type: "budget", visibility: "friends" },
-        { author: "elonmusk", hours: 5, category: "Firing", progress: 80, type: "goal", visibility: "private" },
+        { author: "elonmusk", hours: 10, category: "Twitter", progress: 3, type: "budget", visibility: "friends" },
+        { author: "elonmusk", hours: 5, category: "Firing", progress: 10, type: "goal", visibility: "private" },
+        { author: "elonmusk", hours: 8, category: "Tesla", progress: 7, type: "goal", visibility: "private" },
+        { author: "elonmusk", hours: 5, category: "Family", progress: 4, type: "budget", visibility: "friends" },
       ];
     },
   },
