@@ -3,7 +3,7 @@
 <template>
   <main class="columns">
     <section class="column time-input">
-      <p>Input time here</p>
+      <DailyCalendar />
     </section>
     <section class="column goals">
       <header>
@@ -16,13 +16,14 @@
 </template>
 
 <script>
+import DailyCalendar from '@/components/Calendar/DailyCalendar.vue';
 import CreateGoalForm from "@/components/Goal/CreateGoalForm.vue";
 import GoalListComponent from "@/components/Goal/GoalListComponent.vue";
 import ManageCategoriesComponent from "../Category/ManageCategoriesComponent.vue";
 
 export default {
   name: "HomeComponent",
-  components: { ManageCategoriesComponent, CreateGoalForm, GoalListComponent },
+  components: { DailyCalendar, ManageCategoriesComponent, CreateGoalForm, GoalListComponent },
   data() {
     return {};
   },
