@@ -1,27 +1,17 @@
-<!-- Reusable component representing a single goal and its actions -->
-<!-- We've tagged some elements with classes; consider writing CSS using those classes to style them... -->
-
 <template>
   <article>
     <header>
       <h3>
         <router-link :to="{ name: 'Profile', params: { username: goal.author } }">
-          @{{ goal.author }}
+          {{ goal.author }}
         </router-link>
       </h3>
+      <span class="visibility"> <b-icon :icon="goal.visibility === 'friends' ? 'account-multiple' : 'lock'" /> {{ goal.visibility }} </span>
+      <span> Spend {{ goal.type === 'goal' ? 'at least' : 'at most'}} {{ goal.hours }} hours on {{ goal.category }} </span>
     </header>
-    <p class="info">
-      Hours: {{ goal.hours }}
-    </p>
-    <p class="info">
-      Type: {{ goal.type }}
-    </p>
-
-    <div class="button-row">
-      <button @click="deleteGoal" v-if="$store.state.username === goal.author">
-        <span class="material-symbols-outlined">Delete</span> Delete
-      </button>
-    </div>
+    <section>
+      <b-progress :value="goal.progress" size="is-large" format="percent" type="is-success" show-value />
+    </section>
   </article>
 </template>
 
@@ -36,85 +26,35 @@ export default {
     }
   },
   methods: {
-    deleteGoal() {
-      /**
-       * Deletes this goal.
-       */
-      const params = {
-        method: 'DELETE',
-        callback: () => {
-          this.$store.commit('alert', {
-            message: 'Successfully deleted goal!', status: 'success'
-          });
-        }
-      };
-      this.request(params);
-    },
-    async request(params) {
-      /**
-       * Submits a request to the goal's endpoint
-       * @param params - Options for the request
-       * @param params.body - Body for the request, if it exists
-       * @param params.callback - Function to run if the the request succeeds
-       */
-      const options = {
-        method: params.method, headers: { 'Content-Type': 'application/json' }
-      };
-      if (params.body) {
-        options.body = params.body;
-      }
-
-      try {
-        const r = await fetch(`/api/goals/${this.goal._id}`, options);
-        if (!r.ok) {
-          const res = await r.json();
-          throw new Error(res.error);
-        }
-
-        this.$store.commit('refreshGoals');
-
-        params.callback();
-      } catch (e) {
-        this.$store.commit('alert', {
-          message: e, status: 'error'
-        });
-      }
-    }
+  
   }
 };
 </script>
 
-<style scoped>
-.no-style {
-  text-decoration: none;
-  color: inherit;
+<style lang="scss" scoped>
+@import '@/public/variables.scss';
+
+article {
+  background-color: $oc-gray-4;
+  border-radius: 0.5em;
+  box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.1);
+  margin: 1em 0;
+  padding: 1em;
 }
 
 header {
   display: flex;
+  // justify-content: space-between;
   align-items: center;
-  justify-content: space-between;
+  gap: 2em;
+  margin-bottom: 1em;
+
+  .visibility {
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+  }
 }
 
-ul {
-  margin-top: -10px;
-}
 
-.content {
-  margin: 20px 0 20px 0;
-}
-
-form {
-  background-color: inherit;
-  position: inherit;
-  box-shadow: inherit;
-  margin: 0 0 20px 0;
-  border-radius: inherit;
-  padding: 0;
-
-  display: grid;
-  grid-auto-flow: column;
-  align-items: center;
-  box-shadow: none;
-}
 </style>
