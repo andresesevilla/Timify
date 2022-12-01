@@ -40,18 +40,17 @@ const constructGoalResponse = async (goal: HydratedDocument<Goal>): Promise<Goal
   const { username } = goalCopy.authorId;
   const { name } = goalCopy.category;
 
-  const d = new Date();
-  d.setDate(d.getDate() + 1 - (d.getDay() || 7)); 
-  d.setHours(0);
-  d.setMinutes(0);
-  d.setSeconds(0);
+  const mondayTime = new Date();
+  mondayTime.setDate(mondayTime.getDate() + 1 - (mondayTime.getDay() || 7)); 
+  mondayTime.setHours(0);
+  mondayTime.setMinutes(0);
+  mondayTime.setSeconds(0);
 
-  const entriesAfterMonday = await EntryCollection.findAll(goal.authorId._id.toString(), name, d, undefined);
+  const entriesAfterMonday = await EntryCollection.findAll(goal.authorId._id.toString(), name, mondayTime, undefined);
 
   let progress = 0
   for (const entry of entriesAfterMonday) {
-    console.log(`${entry.end} and ${entry.start}`)
-    progress += entry.end.getTime() - entry.start.getTime();
+    progress += entry.end.getTime() - Math.max(entry.start.getTime(), mondayTime.getTime());
   }
   progress /= 3600000;
 

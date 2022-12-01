@@ -27,7 +27,6 @@ const isCategoryExists = async (req: Request, res: Response, next: NextFunction)
   const name = req.params.categoryName;
   const userId = (req.session.userId as string) ?? '';
   const category = await CategoryCollection.findByNameAndUserId(userId, name);
-  console.log(category);
   if (!category) {
     res.status(404).json({
       error: 'Given category name does not exist.'

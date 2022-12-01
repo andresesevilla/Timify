@@ -19,8 +19,6 @@ class GoalCollection {
     const priv = goal.private;
     const ownerId = goal.authorId._id.toString();
 
-    console.log(`${ownerId} and ${userId} which are equal?: ${ownerId === userId}`)
-
     // user is the owner of the goal
     if (ownerId === userId) {
       return true;
