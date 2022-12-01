@@ -41,6 +41,14 @@ const isValidGoalContent = async (req: Request, res: Response, next: NextFunctio
     return;
   }
 
+  const priv = req.body.private;
+  if (priv !== false && priv !== true) {
+    res.status(400).json({
+      error: 'Privacy is not valid.'
+    });
+    return;
+  }
+
   const userId = (req.session.userId as string) ?? '';
   const category = await CategoryCollection.findByNameAndUserId(userId, req.body.category);
   if (!category) {

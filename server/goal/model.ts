@@ -15,6 +15,7 @@ export type Goal = {
   authorId: Types.ObjectId;
   dateCreated: Date;
   type: string;
+  private: boolean;
 };
 
 export type PopulatedGoal = {
@@ -24,6 +25,7 @@ export type PopulatedGoal = {
   authorId: User;
   dateCreated: Date;
   type: string;
+  private: boolean;
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table
@@ -54,6 +56,10 @@ const GoalSchema = new Schema<Goal>({
   },
   type: {
     type: String,
+    required: true
+  },
+  private: {
+    type: Boolean,
     required: true
   },
 });

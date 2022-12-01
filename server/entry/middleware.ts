@@ -54,7 +54,17 @@ const isValidEntryContent = async (req: Request, res: Response, next: NextFuncti
 
   if (end.getTime() - start.getTime() <= 0) {
     res.status(400).json({
-      error: 'Must be a valid positive length time period'
+      error: 'Must be a valid positive length time period.'
+    });
+    return;
+  }
+
+  const now = new Date();
+  now.setHours(now.getHours() + 12);
+
+  if (now.getTime() - end.getTime() < 0) {
+    res.status(400).json({
+      error: 'Time period must not end more than 12 hours in the future.'
     });
     return;
   }
