@@ -14,6 +14,33 @@ import { FriendCollection, FriendRequestCollection } from '../friend/collection'
  * and contains all the information in Goal. https://mongoosejs.com/docs/typescript.html
  */
 class GoalCollection {
+
+  static async checkAccess(userId: Types.ObjectId | string, goal: Goal): Promise<Boolean> {
+    const priv = goal.private;
+    const ownerId = goal.authorId._id.toString();
+
+    console.log(`${ownerId} and ${userId} which are equal?: ${ownerId === userId}`)
+
+    // user is the owner of the goal
+    if (ownerId === userId) {
+      return true;
+    }
+
+    // if private, no one except owner can see
+    if (priv) {
+      return false;
+    }
+
+    // user is a friend
+    const friendship = await FriendCollection.findOneFriend(ownerId, userId)
+    if (friendship) {
+      return true;
+    }
+
+    // anyone else can't see
+    return false;
+  }
+
   /**
    * Add a goal to the collection
    *
@@ -21,7 +48,7 @@ class GoalCollection {
    * @param {string} content - The id of the content of the goal
    * @return {Promise<HydratedDocument<Goal>>} - The newly created goal
    */
-  static async addOne(authorId: Types.ObjectId | string, categoryName: string, hours: number, type: string): Promise<HydratedDocument<Goal>> {
+  static async addOne(authorId: Types.ObjectId | string, categoryName: string, hours: number, type: string, priv: boolean): Promise<HydratedDocument<Goal>> {
 
     const category = await CategoryCollection.findByNameAndUserId(authorId, categoryName);
 
@@ -31,14 +58,15 @@ class GoalCollection {
       category: category.id,
       dateCreated: date,
       hours,
-      type
+      type,
+      private: priv,
     });
     await goal.save(); // Saves goal to MongoDB
     return goal.populate(['authorId', 'category']);
   }
 
   /**
-   * Find a goal by goalId
+   * Find a goal by goalId (used by middleware)
    *
    * @param {string} goalId - The id of the goal to find
    * @return {Promise<HydratedDocument<Goal>> | Promise<null> } - The goal with the given goalId, if any
@@ -48,51 +76,40 @@ class GoalCollection {
   }
 
   /**
-   * Find a goal by categoryId
+   * Find a goal by categoryId (used by middleware)
    */
-     static async findOneByCategoryId(goalId: Types.ObjectId | string): Promise<HydratedDocument<Goal>> {
-      return GoalModel.findOne({ category: goalId }).populate(['authorId', 'category']);
-    }
-
-  /**
-   * Get all the goals in the database
-   *
-   * @return {Promise<HydratedDocument<Goal>[]>} - An array of all of the goals
-   */
-  static async findAll(): Promise<Array<HydratedDocument<Goal>>> {
-    // Retrieves goals and sorts them from most to least recent
-    const allGoals = await GoalModel.find({}).sort({ dateCreated: -1 }).populate(['authorId', 'category']);
-    return allGoals;
+  static async findOneByCategoryId(goalId: Types.ObjectId | string): Promise<HydratedDocument<Goal>> {
+    return GoalModel.findOne({ category: goalId }).populate(['authorId', 'category']);
   }
 
   /**
    * Get all the goals in by given author
-   *
-   * @param {string} username - The username of author of the goals
-   * @return {Promise<HydratedDocument<Goal>[]>} - An array of all of the goals
    */
-  static async findAllByUsername(username: string): Promise<Array<HydratedDocument<Goal>>> {
+  static async findAllByUsername(userId: string, username: string): Promise<Array<HydratedDocument<Goal>>> {
     const author = await UserCollection.findOneByUsername(username);
     const goals = await GoalModel.find({ authorId: author._id }).sort({ dateCreated: -1 }).populate(['authorId', 'category']);
+
+    const result = [];
+    for (const goal of goals) {
+      const accessGranted = await this.checkAccess(userId, goal);
+      if (accessGranted) {
+        result.push(goal);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Get all the goals in by given author
+   * Used EXCLUSIVELY for requesting logged in user's goals - doesn't do any access checking
+   */
+  static async findAllByUserId(userId: string): Promise<Array<HydratedDocument<Goal>>> {
+    const goals = await GoalModel.find({ authorId: userId }).sort({ dateCreated: -1 }).populate(['authorId', 'category']);
     return goals;
   }
 
   /**
-   * Get all the goals in by given author
-   *
-   * @param {string} userId - The username of author of the goals
-   * @return {Promise<HydratedDocument<Goal>[]>} - An array of all of the goals
-   */
-     static async findAllByUserId(userId: string): Promise<Array<HydratedDocument<Goal>>> {
-      const goals = await GoalModel.find({ authorId: userId }).sort({ dateCreated: -1 }).populate(['authorId', 'category']);
-      return goals;
-    }
-
-  /**
    * Get all goals written by an author friends with the user
-   *
-   * @param {string} userId - The username of the user
-   * @return {Promise<HydratedDocument<Goal>[]>} - An array of all of the goals made by friend users
    */
   static async findAllInFeed(userId: string): Promise<Array<HydratedDocument<Goal>>> {
     // Get all of the users that this user is friends with
@@ -107,7 +124,14 @@ class GoalCollection {
     }
 
     const goals = await GoalModel.find({ $or: friendIds }).sort({ dateCreated: -1 }).populate(['authorId', 'category']);
-    return goals;
+    const result = [];
+    for (const goal of goals) {
+      const accessGranted = await this.checkAccess(userId, goal);
+      if (accessGranted) {
+        result.push(goal);
+      }
+    }
+    return result;
   }
 
   /**

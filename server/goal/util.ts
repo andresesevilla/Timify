@@ -9,6 +9,7 @@ type GoalResponse = {
   author: string;
   dateCreated: string;
   type: string;
+  private: boolean;
 };
 
 /**

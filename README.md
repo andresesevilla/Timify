@@ -111,6 +111,7 @@ The following backend routes are implemented.
 - `hours` *{number}* - The number of hours
 - `category` *{string}* - The name of the category associated with the goal
 - `type` *{string}* - The type of the goal (”goal” or “budget”)
+- `private` *{boolean}* - true if goal is private, false if goal is not private
 
 **Returns**
 
