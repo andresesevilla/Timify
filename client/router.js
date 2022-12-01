@@ -6,6 +6,7 @@ import SettingsPage from './components/Settings/SettingsPage.vue';
 import ProfilePage from './components/Profile/ProfilePage.vue';
 import FriendPage from './components/Friend/FriendPage.vue';
 import CategoriesPage from './components/Category/CategoriesPage.vue';
+import DashboardPage from './components/Dashboard/DashboardPage.vue';
 import NotFound from './NotFound.vue';
 
 Vue.use(VueRouter);
@@ -17,6 +18,7 @@ const routes = [
   { path: '/user/:username', name: 'Profile', component: ProfilePage },
   { path: '/friends', name: 'Friends', component: FriendPage },
   { path: '/categories', name: 'Categories', component: CategoriesPage },
+  { path: '/dashboard', name: 'Dashboard', component: DashboardPage },
   { path: '*', name: 'Not Found', component: NotFound }
 ];
 

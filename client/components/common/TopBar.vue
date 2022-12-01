@@ -13,6 +13,10 @@
             <b-icon icon="home" size="is-small" />
             Home
           </b-button>
+          <b-button tag="router-link" to="/dashboard" class="button is-primary">
+            <b-icon icon="apps" size="is-small" />
+            Dashboard
+          </b-button>
           <b-button tag="router-link" to="/categories" class="button is-primary">
             <b-icon icon="shape" size="is-small" />
             Categories
