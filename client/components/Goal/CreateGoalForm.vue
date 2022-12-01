@@ -52,7 +52,7 @@
       </b-select>
       <b-field><b-numberinput class="hours" v-model="hours" controls-position="compact" controls-rounded :min="1" :max="999"></b-numberinput></b-field>
       <span>hours on</span>
-      <b-field :type="{'is-danger': !isCategoryValid}" :message="{'Please choose one of your categories': !isCategoryValid}">
+      <b-field :type="{'is-danger': !isCategoryValid}" :message="{'Please choose one of your categories': !isCategoryValid}" class="autocomplete-field">
         <b-autocomplete 
           v-model="category" 
           placeholder="Choose a category"
@@ -113,7 +113,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 form {
   display: flex;
@@ -134,9 +134,13 @@ form h2 {
 .goal-sentence {
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
   gap: 0.5em;
+
+  .field {
+    margin: 0;
+  }
 }
+
 .hours {
   width: 10em;
 }

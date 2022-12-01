@@ -10,6 +10,10 @@
         "dev": "nodemon --ignore 'client/' api/index.ts -e js,ts,json"
     },
     "dependencies": {
+        "@fullcalendar/core": "^5.11.3",
+        "@fullcalendar/interaction": "^5.11.3",
+        "@fullcalendar/timegrid": "^5.11.3",
+        "@fullcalendar/vue": "^5.11.3",
         "buefy": "^0.9.22",
         "connect-history-api-fallback": "^1.6.0",
         "connect-mongo": "^4.6.0",
@@ -98,7 +102,7 @@
                     "**/*.vue"
                 ],
                 "extends": [
-                    "eslint:recommended"                
+                    "eslint:recommended"
                 ]
             }
         ]

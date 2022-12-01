@@ -1,27 +1,24 @@
-<!-- Reusable component representing a single goal and its actions -->
-<!-- We've tagged some elements with classes; consider writing CSS using those classes to style them... -->
-
 <template>
   <article>
     <header>
       <h3>
         <router-link :to="{ name: 'Profile', params: { username: goal.author } }">
-          @{{ goal.author }}
+          {{ goal.author }}
         </router-link>
       </h3>
+      <span class="visibility"> <b-icon :icon="goal.visibility === 'friends' ? 'account-multiple' : 'lock'" /> {{ goal.visibility }} </span>
+      <span class="goal-sentence"> Spend {{ goal.type === 'goal' ? 'at least' : 'at most'}} {{ goal.hours }} hours on {{ goal.category }} </span>
+      <span class="goal-actions" v-if="allowEdit">
+          <b-tooltip label="Edit"><a @click="startEdit"><b-icon icon="pencil" /></a></b-tooltip>
+          <b-tooltip label="Delete"><a @click="deleteCategory"><b-icon icon="delete" /></a></b-tooltip>
+        </span>
     </header>
-    <p class="info">
-      Hours: {{ goal.hours }}
-    </p>
-    <p class="info">
-      Type: {{ goal.type }}
-    </p>
-
-    <div class="button-row">
-      <button @click="deleteGoal" v-if="$store.state.username === goal.author">
-        <span class="material-symbols-outlined">Delete</span> Delete
-      </button>
-    </div>
+    <p>{{ infoMessage }}</p>
+    <section>
+      <b-progress :value="progress" size="is-large" format="percent" :type="goal.type === 'goal' ? 'is-success' : 'is-info'" show-value>
+        {{progress}}% {{progressMessage}}
+      </b-progress>
+    </section>
   </article>
 </template>
 
@@ -33,88 +30,125 @@ export default {
     goal: {
       type: Object,
       required: true
+    },
+    allowEdit: {
+      type: Boolean,
+      default: true
+    },
+  },
+  data() {
+    return {
+      editing: null,
+      draft: {},
+    };
+  },
+  computed: {
+    // The goal's progress as a percentage
+    progress() {
+      return Math.round(this.goal.progress / this.goal.hours * 100);
+    },
+    progressMessage() {
+      if (this.goal.type === 'goal') {
+        if (this.progress >= 100) {
+          return "Amazing!";
+        }
+        if (this.progress >= 85) {
+          return "So close!";
+        }
+        if (this.progress >= 50) {
+          return "More than halfway there!";
+        }
+        if (this.progress >= 25) {
+          return "Keep it up!";
+        }
+        if (this.progress >= 0) {
+          return "You can do it!";
+        }
+      } else {
+        if (this.progress >= 100) {
+          return "Limit reached!";
+        }
+        if (this.progress >= 85) {
+          return "Be careful with your limit!";
+        }
+        if (this.progress >= 50) {
+          return "Less than half of your limit left!";
+        }
+        if (this.progress >= 25) {
+          return "You're doing great!";
+        }
+        if (this.progress >= 0) {
+          return "Good luck!";
+        }
+      }
+    },
+    infoMessage() {
+      let message = `You have spent ${this.goal.progress} hours on ${this.goal.category} so far. `;
+      if (this.goal.type === 'goal') {
+        if (this.goal.progress >= this.goal.hours) {
+          message += `You have reached your goal!`;
+        } else {
+          message += `Only ${this.goal.hours - this.goal.progress} hours left to reach your goal!`;
+        }
+      } else {
+        if (this.goal.progress >= this.goal.hours) {
+          message += `You have reached your limit! Try to spend less time on this.`;
+        } else {
+          message += `Just ${this.goal.hours - this.goal.progress} hours this week left to reach your limit, use it wisely!`;
+        }
+      }
+      return message;
     }
   },
   methods: {
-    deleteGoal() {
-      /**
-       * Deletes this goal.
-       */
-      const params = {
-        method: 'DELETE',
-        callback: () => {
-          this.$store.commit('alert', {
-            message: 'Successfully deleted goal!', status: 'success'
-          });
-        }
-      };
-      this.request(params);
+    startEdit() {
+      this.$buefy.toast.open({
+        message: 'Editing is not yet implemented, delete and create a new goal instead. lol.',
+        type: 'is-warning',
+        duration: 3000,
+      });
     },
-    async request(params) {
-      /**
-       * Submits a request to the goal's endpoint
-       * @param params - Options for the request
-       * @param params.body - Body for the request, if it exists
-       * @param params.callback - Function to run if the the request succeeds
-       */
-      const options = {
-        method: params.method, headers: { 'Content-Type': 'application/json' }
-      };
-      if (params.body) {
-        options.body = params.body;
-      }
-
-      try {
-        const r = await fetch(`/api/goals/${this.goal._id}`, options);
-        if (!r.ok) {
-          const res = await r.json();
-          throw new Error(res.error);
-        }
-
-        this.$store.commit('refreshGoals');
-
-        params.callback();
-      } catch (e) {
-        this.$store.commit('alert', {
-          message: e, status: 'error'
-        });
-      }
-    }
+    deleteCategory() {
+      this.$emit("delete");
+    },
   }
 };
 </script>
 
-<style scoped>
-.no-style {
-  text-decoration: none;
-  color: inherit;
+<style lang="scss" scoped>
+@import '@/public/variables.scss';
+
+article {
+  background-color: $oc-gray-4;
+  border-radius: 0.5em;
+  box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.1);
+  margin: 1em 0;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
 }
 
 header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 2em;
+
+  .visibility {
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+  }
+  .goal-sentence {
+    font-size: 1.2em;
+  }
+
+  .goal-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 1em;
+  }
 }
 
-ul {
-  margin-top: -10px;
-}
 
-.content {
-  margin: 20px 0 20px 0;
-}
-
-form {
-  background-color: inherit;
-  position: inherit;
-  box-shadow: inherit;
-  margin: 0 0 20px 0;
-  border-radius: inherit;
-  padding: 0;
-
-  display: grid;
-  grid-auto-flow: column;
-  align-items: center;
-  box-shadow: none;
-}
 </style>
