@@ -7,23 +7,23 @@
         <h2>Profile: @{{ $route.params.username }}</h2>
       </header>
       <section class="button-row">
-        <button @click="sendRequest"
+        <b-button @click="sendRequest"
           v-if="$route.params.username != $store.state.username && friendStatus === 'no'">Send
-          Friend Request</button>
-        <button @click="cancelRequest"
+          Friend Request</b-button>
+        <b-button @click="cancelRequest"
           v-if="$route.params.username != $store.state.username && friendStatus === 'request sent'">Cancel Friend
-          Request</button>
-        <button @click="acceptRequest"
+          Request</b-button>
+        <b-button @click="acceptRequest"
           v-if="$route.params.username != $store.state.username && friendStatus === 'request received'">Accept Friend
-          Request</button>
-        <button @click="rejectRequest"
+          Request</b-button>
+        <b-button @click="rejectRequest"
           v-if="$route.params.username != $store.state.username && friendStatus === 'request received'">Reject Friend
-          Request</button>
-        <button @click="removeFriend"
-          v-if="$route.params.username != $store.state.username && friendStatus === 'friends'">Remove Friend</button>
+          Request</b-button>
+        <b-button @click="removeFriend"
+          v-if="$route.params.username != $store.state.username && friendStatus === 'friends'">Remove Friend</b-button>
 
-        <router-link :to="{ name: 'Friends', params: { username: $route.params.username } }"><button>View
-            Friends</button>
+        <router-link :to="{ name: 'Friends', params: { username: $route.params.username } }"><b-button>View
+            Friends</b-button>
         </router-link>
 
       </section>
@@ -36,12 +36,11 @@
       <section v-if="friendStatus === 'request received'">
         <p class="info">@{{ $route.params.username }} has sent you a friend request.</p>
       </section>
-      <section v-if="$store.state.goals.length">
-        <GoalComponent v-for="goal in $store.state.goals" :key="goal.id" :goal="goal" />
-      </section>
-      <article v-else>
-        <h3>No goals found.</h3>
-      </article>
+      <CreateGoalForm />
+      <header>
+        <h2>Your Goals</h2>
+      </header>
+      <GoalListComponent :fetchGoals="fetchGoals" />
     </section>
   </main>
   <NotFound v-else />
@@ -49,11 +48,12 @@
 
 <script>
 import NotFound from '../../NotFound.vue';
-import GoalComponent from '@/components/Goal/GoalComponent.vue';
+import CreateGoalForm from '@/components/Goal/CreateGoalForm.vue';
+import GoalListComponent from '@/components/Goal/GoalListComponent.vue';
 
 export default {
   name: 'ProfilePage',
-  components: { NotFound, GoalComponent },
+  components: { NotFound, CreateGoalForm, GoalListComponent },
   async mounted() {
     const getGoals = this.getGoals();
     const getFriendStatus = this.getFriendStatus();
@@ -76,6 +76,14 @@ export default {
     }
   },
   methods: {
+    fetchGoals() {
+      return [
+        { author: "elonmusk", hours: 10, category: "Twitter", progress: 3, type: "budget", visibility: "friends" },
+        { author: "elonmusk", hours: 5, category: "Firing", progress: 10, type: "goal", visibility: "private" },
+        { author: "elonmusk", hours: 8, category: "Tesla", progress: 7, type: "goal", visibility: "private" },
+        { author: "elonmusk", hours: 5, category: "Family", progress: 4, type: "budget", visibility: "friends" },
+      ];
+    },
     async sendRequest() {
       const url = `api/friends/requests/${this.$route.params.username}`;
       const options = {
@@ -238,3 +246,11 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+@import "@/public/variables.scss";
+main {
+  max-width: 60em;
+  margin: 0 auto;
+}
+</style>
