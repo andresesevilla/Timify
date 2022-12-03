@@ -36,11 +36,13 @@ class CategoryCollection {
     const category = await CategoryCollection.findByNameAndUserId(userId, name);
 
     // Delete corresponding goal if it exists
-    const goal = await GoalCollection.findOneByCategoryId(category.id);
-    await GoalCollection.deleteOne(goal.id);
+    const goal = await GoalCollection.findOneByCategoryId(category._id);
+    if (goal) {
+      await GoalCollection.deleteOne(goal._id);
+    }
 
     // Delete all time entries with this category
-    await EntryCollection.deleteAllInCategory(category.id);
+    await EntryCollection.deleteAllInCategory(category._id);
 
     const deletedCategory = await CategoryModel.deleteOne({userId: user._id, name});
     return deletedCategory !== null;
