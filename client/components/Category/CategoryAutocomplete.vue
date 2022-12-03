@@ -9,6 +9,7 @@
       :loading="loading"
       required="true"
       @input="$emit('select', category)"
+      ref="autocomplete"
       >
       <template #footer>
         <a><span> Add a category... </span></a>
@@ -50,6 +51,11 @@ export default {
     isCategoryValid() {
       return this.category === null || !this.categories || this.categories.includes(this.category);
     },
+  },
+  methods: {
+    focus() {
+      this.$refs.autocomplete.focus();
+    }
   }
 }
 
