@@ -110,7 +110,6 @@ export default {
       },
       eventSelected: null,
       editingSelected: false,
-      currentEvents: this.fakeEvents,
       eventDraft: null,
 
       categories: [],
@@ -149,6 +148,9 @@ export default {
             };
           });
         });
+      this.eventSelected = null;
+      this.editingSelected = false;
+      this.eventDraft = null;
     },
     hmTime(date) {
       return date.toLocaleTimeString("en-US", {
