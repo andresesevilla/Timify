@@ -58,8 +58,8 @@
             </div>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item" @click="saveSelected">Save</a>
             <a class="card-footer-item" @click="cancelSelected">Cancel</a>
+            <a class="card-footer-item" @click="saveSelected">Save</a>
           </footer>
         </div>
       </nav>
