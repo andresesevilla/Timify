@@ -60,11 +60,11 @@ const isValidEntryContent = async (req: Request, res: Response, next: NextFuncti
   }
 
   const now = new Date();
-  now.setHours(now.getHours() + 12);
+  now.setHours(now.getHours() + 36);
 
   if (now.getTime() - end.getTime() < 0) {
     res.status(400).json({
-      error: 'Time period must not end more than 12 hours in the future.'
+      error: 'Time period must not end more than 36 hours in the future.'
     });
     return;
   }

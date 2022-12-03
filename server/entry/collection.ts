@@ -38,7 +38,7 @@ class EntryCollection {
     const entry = await EntryModel.findOne({ _id: entryId }).populate(['authorId', 'category']);
 
     const category = await CategoryCollection.findByNameAndUserId(userId, categoryName);
-    
+
     entry.category = category.id;
     entry.start = new Date(start);
     entry.end = new Date(end);
@@ -54,8 +54,8 @@ class EntryCollection {
    * @param {string} userId - The username of author of the entries
    * @return {Promise<HydratedDocument<Entry>[]>} - An array of all of the entries
    */
-  static async findAll(userId: string, categoryName: string, start:Date, end:Date): Promise<HydratedDocument<Entry>[]> {
-    let query:{} = { authorId: userId };
+  static async findAll(userId: string, categoryName: string, start: Date, end: Date): Promise<HydratedDocument<Entry>[]> {
+    let query: {} = { authorId: userId };
     if (categoryName) {
       const category = await CategoryCollection.findByNameAndUserId(userId, categoryName);
       query = { authorId: userId, category: category.id }
@@ -70,7 +70,7 @@ class EntryCollection {
       end = new Date("")
     }
 
-    entries = entries.filter((entry) => {return util.checkTimeMatchesConstraint(new Date(entry.start), new Date(entry.end), start, end)});
+    entries = entries.filter((entry) => { return util.checkTimeMatchesConstraint(new Date(entry.start), new Date(entry.end), start, end) });
 
     return entries;
   }
@@ -83,6 +83,12 @@ class EntryCollection {
    */
   static async deleteOne(entryId: Types.ObjectId | string): Promise<boolean> {
     const entry = await EntryModel.deleteOne({ _id: entryId });
+    return entry !== null;
+  }
+
+  // Delete all entries of given category
+  static async deleteAllInCategory(categoryId: Types.ObjectId | string): Promise<boolean> {
+    const entry = await EntryModel.deleteMany({ category: categoryId });
     return entry !== null;
   }
 }
