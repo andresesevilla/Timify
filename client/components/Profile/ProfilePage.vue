@@ -22,7 +22,7 @@
         <b-button @click="removeFriend"
           v-if="$route.params.username != $store.state.username && friendStatus === 'friends'">Remove Friend</b-button>
 
-        <router-link :to="{ name: 'Friends', params: { username: $route.params.username } }"><b-button>View
+        <router-link v-if="$route.params.username === $store.state.username" :to="{ name: 'Friends' }"><b-button>View
             Friends</b-button>
         </router-link>
 
@@ -36,9 +36,9 @@
       <section v-if="friendStatus === 'request received'">
         <p class="info">@{{ $route.params.username }} has sent you a friend request.</p>
       </section>
-      <CreateGoalForm />
+      <CreateGoalForm v-if="$route.params.username === $store.state.username" />
       <header>
-        <h2>Your Goals</h2>
+        <h2>{{$route.params.username}}'s Goals</h2>
       </header>
       <GoalListComponent :allowEdit="true" :fetchOptions="{url: `/api/goals?author=${$route.params.username}`}" />
     </section>

@@ -83,7 +83,7 @@ export default {
       }
     },
     infoMessage() {
-      let message = `You have spent ${this.goal.progress} hours on ${this.goal.category} so far. `;
+      let message = `You have spent ${Math.round(this.goal.progress * 10) / 10} hours on ${this.goal.category} so far. `;
       if (this.goal.type === 'goal') {
         if (this.goal.progress >= this.goal.hours) {
           message += `You have reached your goal!`;

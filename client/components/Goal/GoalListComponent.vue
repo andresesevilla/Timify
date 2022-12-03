@@ -1,6 +1,12 @@
 <template>
   <section v-if="goals.length">
-    <GoalComponent v-for="goal in goals" :key="goal.id" :goal="goal" :allowEdit="allowEdit" @delete="deleteGoal(goal)" />
+    <GoalComponent
+      v-for="goal in goals"
+      :key="goal.id"
+      :goal="goal"
+      :allowEdit="allowEdit"
+      @delete="deleteGoal(goal)"
+    />
   </section>
   <article v-else>
     <h3>No goals found. Create some and track your progress!</h3>
@@ -8,10 +14,10 @@
 </template>
 
 <script>
-import GoalComponent from '@/components/Goal/GoalComponent.vue';
+import GoalComponent from "@/components/Goal/GoalComponent.vue";
 
 export default {
-  name: 'GoalListComponent',
+  name: "GoalListComponent",
   components: { GoalComponent },
   props: {
     allowEdit: {
@@ -20,7 +26,9 @@ export default {
     },
     fetchOptions: {
       type: Object,
-      default: () => {return {url: '/api/goals'}},
+      default: () => {
+        return { url: "/api/goals" };
+      },
     },
   },
   data() {
@@ -30,19 +38,26 @@ export default {
   },
   mounted() {
     fetch(this.fetchOptions.url, {
-        method: this.fetchOptions.method || 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then(res => res.json()).then(goals => {
-        this.goals = goals;
+      method: this.fetchOptions.method || "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((goals) => {
+        this.goals = goals.map((goal) => {
+          return {
+            ...goal,
+            visibility: goal.private ? "private" : "friends",
+          };
+        });
       });
   },
   methods: {
     deleteGoal(goal) {
       this.goals = this.goals.filter((g) => g !== goal);
     },
-  }
+  },
 };
 </script>
 
