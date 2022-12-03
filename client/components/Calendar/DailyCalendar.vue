@@ -67,3 +67,14 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+
+.fc-event-dragging .fc-event-main {
+  cursor: move;
+}
+// TODO that will probably take me absurd amount of time later: make resizer smoother
+</style>
+
+<style lang="scss" scoped>
+</style>
