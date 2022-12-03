@@ -195,10 +195,6 @@ export default {
     isValidEvent(event) {
       return true;
     },
-
-    handleEvents(events) {
-      this.currentEvents = events;
-    },
     editSelected() {
       this.editingSelected = true;
       this.eventDraft = {

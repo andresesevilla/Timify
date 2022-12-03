@@ -5,7 +5,7 @@
     "scripts": {
         "serve": "cd client && vue-cli-service serve main.js",
         "build": "cd client && vue-cli-service build main.js",
-        "lint": "eslint . --fix --ext=.ts,.vue",
+        "lint": "eslint . --fix --ext=.ts",
         "start": "ts-node api/index.ts",
         "dev": "nodemon --ignore 'client/' api/index.ts -e js,ts,json"
     },
