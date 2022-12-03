@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from 'express';
+import type {Request, Response, NextFunction} from 'express';
 import express from 'express';
 import UserCollection from './collection';
 import * as userValidator from '../user/middleware';
@@ -155,4 +155,4 @@ router.patch(
   }
 );
 
-export { router as userRouter };
+export {router as userRouter};

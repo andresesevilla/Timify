@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from 'express';
+import type {NextFunction, Request, Response} from 'express';
 import express from 'express';
 import GoalCollection from './collection';
 import * as userValidator from '../user/middleware';
@@ -29,7 +29,7 @@ const router = express.Router();
 router.get(
   '/',
   [
-    userValidator.isUserLoggedIn,
+    userValidator.isUserLoggedIn
   ],
   async (req: Request, res: Response, next: NextFunction) => {
     // Check if author query parameter was supplied
@@ -37,6 +37,7 @@ router.get(
       next();
       return;
     }
+
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
     // Check if feed query parameter was supplied
     if (req.query.feed !== undefined) {
@@ -69,7 +70,7 @@ router.post(
   '/',
   [
     userValidator.isUserLoggedIn,
-    goalValidator.isValidGoalContent,
+    goalValidator.isValidGoalContent
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
@@ -106,4 +107,4 @@ router.delete(
   }
 );
 
-export { router as goalRouter };
+export {router as goalRouter};

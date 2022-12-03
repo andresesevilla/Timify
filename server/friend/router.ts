@@ -35,7 +35,7 @@ router.delete(
     const {friend} = req.params;
     const friendId = (await UserCollection.findOneByUsername(friend))._id;
     await Promise.all([
-      FriendCollection.deleteOneFriend(userId, friendId),
+      FriendCollection.deleteOneFriend(userId, friendId)
     ]);
 
     res.status(200).json({
@@ -163,12 +163,13 @@ router.put(
     const {requester} = req.params;
     const response = req.body.response as string;
     const requesterId = (await UserCollection.findOneByUsername(requester))._id.toString();
-    await FriendRequestCollection.deleteOneFriendRequest(requesterId, userId)
+    await FriendRequestCollection.deleteOneFriendRequest(requesterId, userId);
     if (response === 'accept') {
       await FriendCollection.addOneFriend(userId, requesterId);
     }
+
     res.status(200).json({
-      message: `You ${response}ed a friend request from ${requester}.`,
+      message: `You ${response}ed a friend request from ${requester}.`
     });
   }
 );

@@ -19,7 +19,7 @@ class FriendCollection {
     return FriendModel.find({friendship: userId}).sort({dateFriends: -1}).populate('friendship');
   }
 
-  static async findAllFriendUsernames(userId: MongoId): Promise<String[]> {
+  static async findAllFriendUsernames(userId: MongoId): Promise<string[]> {
     const friends = await FriendCollection.findAllFriends(userId);
     const friendUsernames = friends.map(friend => friend.friendship.find(user => user._id.toString() !== userId.toString()).username);
     return friendUsernames;

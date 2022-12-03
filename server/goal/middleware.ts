@@ -1,9 +1,9 @@
-import type { Request, Response, NextFunction } from 'express';
-import { Types } from 'mongoose';
+import type {Request, Response, NextFunction} from 'express';
+import {Types} from 'mongoose';
 import GoalCollection from '../goal/collection';
 import UserCollection from '../user/collection';
 import CategoryCollection from '../category/collection';
-import { FriendCollection } from '../friend/collection';
+import {FriendCollection} from '../friend/collection';
 
 /**
  * Checks if a goal with goalId is req.params exists
@@ -26,14 +26,15 @@ const isGoalExists = async (req: Request, res: Response, next: NextFunction) => 
  * spaces and not more than 70 characters
  */
 const isValidGoalContent = async (req: Request, res: Response, next: NextFunction) => {
-  const { hours } = req.body as { hours: number };
+  const {hours} = req.body as {hours: number};
   if (!hours) {
     res.status(400).json({
       error: 'Hours must be a valid number.'
     });
     return;
   }
-  const type = req.body.type;
+
+  const {type} = req.body;
   if (type !== 'goal' && type !== 'budget') {
     res.status(400).json({
       error: 'Goal type is invalid.'
@@ -94,7 +95,7 @@ const isViewAllowed = async (req: Request, res: Response, next: NextFunction) =>
     });
   }
 
-  const friend = await UserCollection.findOneByUsername(friendUsername)
+  const friend = await UserCollection.findOneByUsername(friendUsername);
   const friendship = await FriendCollection.findOneFriend(userId, friend._id);
 
   if (!friendship && friend.id !== userId) {
@@ -107,7 +108,7 @@ const isViewAllowed = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 export {
-  isValidGoalContent as isValidGoalContent,
+  isValidGoalContent,
   isGoalExists,
   isValidGoalModifier,
   isViewAllowed

@@ -1,6 +1,6 @@
-import type { HydratedDocument } from 'mongoose';
+import type {HydratedDocument} from 'mongoose';
 import moment from 'moment';
-import type { Entry, PopulatedEntry } from './model';
+import type {Entry, PopulatedEntry} from './model';
 
 type EntryResponse = {
   _id: string;
@@ -33,8 +33,8 @@ const constructEntryResponse = (entry: HydratedDocument<Entry>): EntryResponse =
     })
   };
 
-  const { username } = entryCopy.authorId;
-  const { name } = entryCopy.category;
+  const {username} = entryCopy.authorId;
+  const {name} = entryCopy.category;
   delete entryCopy.authorId;
   delete entryCopy.category;
   return {
@@ -43,46 +43,45 @@ const constructEntryResponse = (entry: HydratedDocument<Entry>): EntryResponse =
     category: name,
     author: username,
     start: formatDate(entry.start),
-    end: formatDate(entry.end),
+    end: formatDate(entry.end)
   };
 };
 
 const checkTimeMatchesConstraint = (timePeriodStart: Date, timePeriodEnd: Date, constraintStart: Date, constraintEnd: Date): boolean => {
-
-  // no constraint
+  // No constraint
   if (isNaN(constraintStart.getTime()) && isNaN(constraintEnd.getTime())) {
     return true;
   }
 
-  // only start constraint
+  // Only start constraint
   if (!isNaN(constraintStart.getTime()) && isNaN(constraintEnd.getTime())) {
     return timePeriodEnd.getTime() - constraintStart.getTime() >= 0;
   }
 
-  // only end constraint
+  // Only end constraint
   if (isNaN(constraintStart.getTime()) && !isNaN(constraintEnd.getTime())) {
     return constraintEnd.getTime() - timePeriodStart.getTime() >= 0;
   }
 
-  // both constraints
+  // Both constraints
 
   // start in between
   if (timePeriodStart.getTime() - constraintStart.getTime() >= 0 && constraintEnd.getTime() - timePeriodStart.getTime() >= 0) {
     return true;
   }
 
-  // end in between
+  // End in between
   if (timePeriodEnd.getTime() - constraintStart.getTime() >= 0 && constraintEnd.getTime() - timePeriodEnd.getTime() >= 0) {
     return true;
   }
 
-  // time period contains constraint
+  // Time period contains constraint
   if (constraintStart.getTime() - timePeriodStart.getTime() >= 0 && timePeriodEnd.getTime() - constraintEnd.getTime() >= 0) {
     return true;
   }
 
   return false;
-}
+};
 
 export {
   constructEntryResponse,

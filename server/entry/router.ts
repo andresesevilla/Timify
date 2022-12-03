@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from 'express';
+import type {NextFunction, Request, Response} from 'express';
 import express from 'express';
 import EntryCollection from './collection';
 import * as userValidator from '../user/middleware';
@@ -18,7 +18,7 @@ router.get(
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-  
+
     const categoryName = req.query.category as string;
     const start = new Date(req.query.startTime as string);
     const end = new Date(req.query.endTime as string);
@@ -36,13 +36,13 @@ router.post(
   '/',
   [
     userValidator.isUserLoggedIn,
-    entryValidator.isValidEntryContent,
+    entryValidator.isValidEntryContent
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
 
     const entry = await EntryCollection.addOne(userId, req.body.category, req.body.start, req.body.end, req.body.tag);
-    
+
     res.status(201).json({
       message: 'Your entry was created successfully.',
       entry: util.constructEntryResponse(entry)
@@ -71,17 +71,17 @@ router.delete(
 /**
  * Create a new entry.
  */
- router.put(
+router.put(
   '/:entryId?',
   [
     userValidator.isUserLoggedIn,
-    entryValidator.isValidEntryEdit,
+    entryValidator.isValidEntryEdit
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
 
-    const entryId = req.params.entryId as string;
-    const entry = await EntryCollection.updateOne(userId, entryId, req.body.category, req.body.start, req.body.end, req.body.tag);    
+    const {entryId} = req.params;
+    const entry = await EntryCollection.updateOne(userId, entryId, req.body.category, req.body.start, req.body.end, req.body.tag);
     res.status(201).json({
       message: 'Your entry was updated successfully.',
       entry: util.constructEntryResponse(entry)
@@ -89,4 +89,4 @@ router.delete(
   }
 );
 
-export { router as entryRouter };
+export {router as entryRouter};

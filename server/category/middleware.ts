@@ -1,8 +1,8 @@
-import type { Request, Response, NextFunction } from 'express';
+import type {Request, Response, NextFunction} from 'express';
 import CategoryCollection from './collection';
 
 const isValidCategoryName = async (req: Request, res: Response, next: NextFunction) => {
-  const { name } = req.body as { name: string };
+  const {name} = req.body as {name: string};
   if (!name || !name.trim()) {
     res.status(400).json({
       error: 'Category name must be at least one character long.'

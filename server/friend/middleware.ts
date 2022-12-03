@@ -166,5 +166,5 @@ export {
   isFriendRequestExists,
   isFriendRequestNotExists,
   isValidRequestee,
-  isValidResponse,
+  isValidResponse
 };

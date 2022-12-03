@@ -1,9 +1,9 @@
-import type { HydratedDocument, Types } from 'mongoose';
-import type { Goal } from './model';
+import type {HydratedDocument, Types} from 'mongoose';
+import type {Goal} from './model';
 import GoalModel from './model';
 import UserCollection from '../user/collection';
 import CategoryCollection from '../category/collection';
-import { FriendCollection, FriendRequestCollection } from '../friend/collection';
+import {FriendCollection, FriendRequestCollection} from '../friend/collection';
 
 /**
  * This files contains a class that has the functionality to explore goals
@@ -14,28 +14,27 @@ import { FriendCollection, FriendRequestCollection } from '../friend/collection'
  * and contains all the information in Goal. https://mongoosejs.com/docs/typescript.html
  */
 class GoalCollection {
-
-  static async checkAccess(userId: Types.ObjectId | string, goal: Goal): Promise<Boolean> {
+  static async checkAccess(userId: Types.ObjectId | string, goal: Goal): Promise<boolean> {
     const priv = goal.private;
     const ownerId = goal.authorId._id.toString();
 
-    // user is the owner of the goal
+    // User is the owner of the goal
     if (ownerId === userId) {
       return true;
     }
 
-    // if private, no one except owner can see
+    // If private, no one except owner can see
     if (priv) {
       return false;
     }
 
-    // user is a friend
-    const friendship = await FriendCollection.findOneFriend(ownerId, userId)
+    // User is a friend
+    const friendship = await FriendCollection.findOneFriend(ownerId, userId);
     if (friendship) {
       return true;
     }
 
-    // anyone else can't see
+    // Anyone else can't see
     return false;
   }
 
@@ -47,7 +46,6 @@ class GoalCollection {
    * @return {Promise<HydratedDocument<Goal>>} - The newly created goal
    */
   static async addOne(authorId: Types.ObjectId | string, categoryName: string, hours: number, type: string, priv: boolean): Promise<HydratedDocument<Goal>> {
-
     const category = await CategoryCollection.findByNameAndUserId(authorId, categoryName);
 
     const date = new Date();
@@ -57,7 +55,7 @@ class GoalCollection {
       dateCreated: date,
       hours,
       type,
-      private: priv,
+      private: priv
     });
     await goal.save(); // Saves goal to MongoDB
     return goal.populate(['authorId', 'category']);
@@ -70,14 +68,14 @@ class GoalCollection {
    * @return {Promise<HydratedDocument<Goal>> | Promise<null> } - The goal with the given goalId, if any
    */
   static async findOneById(goalId: Types.ObjectId | string): Promise<HydratedDocument<Goal>> {
-    return GoalModel.findOne({ _id: goalId }).populate(['authorId', 'category']);
+    return GoalModel.findOne({_id: goalId}).populate(['authorId', 'category']);
   }
 
   /**
    * Find a goal by categoryId (used by middleware)
    */
   static async findOneByCategoryId(goalId: Types.ObjectId | string): Promise<HydratedDocument<Goal>> {
-    return GoalModel.findOne({ category: goalId }).populate(['authorId', 'category']);
+    return GoalModel.findOne({category: goalId}).populate(['authorId', 'category']);
   }
 
   /**
@@ -85,7 +83,7 @@ class GoalCollection {
    */
   static async findAllByUsername(userId: string, username: string): Promise<Array<HydratedDocument<Goal>>> {
     const author = await UserCollection.findOneByUsername(username);
-    const goals = await GoalModel.find({ authorId: author._id }).sort({ dateCreated: -1 }).populate(['authorId', 'category']);
+    const goals = await GoalModel.find({authorId: author._id}).sort({dateCreated: -1}).populate(['authorId', 'category']);
 
     const result = [];
     for (const goal of goals) {
@@ -94,6 +92,7 @@ class GoalCollection {
         result.push(goal);
       }
     }
+
     return result;
   }
 
@@ -102,7 +101,7 @@ class GoalCollection {
    * Used EXCLUSIVELY for requesting logged in user's goals - doesn't do any access checking
    */
   static async findAllByUserId(userId: string): Promise<Array<HydratedDocument<Goal>>> {
-    const goals = await GoalModel.find({ authorId: userId }).sort({ dateCreated: -1 }).populate(['authorId', 'category']);
+    const goals = await GoalModel.find({authorId: userId}).sort({dateCreated: -1}).populate(['authorId', 'category']);
     return goals;
   }
 
@@ -113,15 +112,13 @@ class GoalCollection {
     // Get all of the users that this user is friends with
     const friendIdsRaw = await FriendCollection.findAllFriendIds(userId);
 
-    const friendIds = friendIdsRaw.map(id => {
-      return { authorId: id };
-    });
+    const friendIds = friendIdsRaw.map(id => ({authorId: id}));
 
     if (friendIds.length === 0) {
       return [];
     }
 
-    const goals = await GoalModel.find({ $or: friendIds }).sort({ dateCreated: -1 }).populate(['authorId', 'category']);
+    const goals = await GoalModel.find({$or: friendIds}).sort({dateCreated: -1}).populate(['authorId', 'category']);
     const result = [];
     for (const goal of goals) {
       const accessGranted = await this.checkAccess(userId, goal);
@@ -129,6 +126,7 @@ class GoalCollection {
         result.push(goal);
       }
     }
+
     return result;
   }
 
@@ -139,7 +137,7 @@ class GoalCollection {
    * @return {Promise<Boolean>} - true if the goal has been deleted, false otherwise
    */
   static async deleteOne(goalId: Types.ObjectId | string): Promise<boolean> {
-    const goal = await GoalModel.deleteOne({ _id: goalId });
+    const goal = await GoalModel.deleteOne({_id: goalId});
     return goal !== null;
   }
 }

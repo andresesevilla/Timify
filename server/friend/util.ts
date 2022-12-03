@@ -35,7 +35,7 @@ const constructFriendRequestResponse = (friendRequest: HydratedDocument<FriendRe
     _id: friendRequestCopy._id.toString(),
     requesterUsername,
     requesteeUsername,
-    dateRequested: friendRequestCopy.dateRequested,
+    dateRequested: friendRequestCopy.dateRequested
   };
 };
 

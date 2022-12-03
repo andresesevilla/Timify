@@ -1,10 +1,10 @@
-import type { Request, Response, NextFunction } from 'express';
-import { Types } from 'mongoose';
+import type {Request, Response, NextFunction} from 'express';
+import {Types} from 'mongoose';
 import EntryCollection from './collection';
 import UserCollection from '../user/collection';
 import CategoryCollection from '../category/collection';
 import * as util from './util';
-import { FriendCollection } from '../friend/collection';
+import {FriendCollection} from '../friend/collection';
 
 /**
  * Checks if a entry with entryId is req.params exists
@@ -70,7 +70,7 @@ const isValidEntryContent = async (req: Request, res: Response, next: NextFuncti
   }
 
   const existingEntries = await EntryCollection.findAll(userId, undefined, undefined, undefined);
-  if (existingEntries.some((entry) => { return util.checkTimeMatchesConstraint(new Date(entry.start), new Date(entry.end), start, end) })) {
+  if (existingEntries.some(entry => util.checkTimeMatchesConstraint(new Date(entry.start), new Date(entry.end), start, end))) {
     res.status(409).json({
       error: 'Time entry conflicts with existing time entry.'
     });
@@ -82,7 +82,7 @@ const isValidEntryContent = async (req: Request, res: Response, next: NextFuncti
 
 const isValidEntryEdit = async (req: Request, res: Response, next: NextFunction) => {
   const userId = (req.session.userId as string) ?? '';
-  const entryId = req.params.entryId as string;
+  const {entryId} = req.params;
 
   const entry = await EntryCollection.findOneById(entryId);
   if (!entry) {
@@ -127,9 +127,7 @@ const isValidEntryEdit = async (req: Request, res: Response, next: NextFunction)
   }
 
   const existingEntries = await EntryCollection.findAll(userId, undefined, undefined, undefined);
-  if (existingEntries.some((entry) => {
-    return entry.id !== entryId && util.checkTimeMatchesConstraint(new Date(entry.start), new Date(entry.end), start, end)
-  })) {
+  if (existingEntries.some(entry => entry.id !== entryId && util.checkTimeMatchesConstraint(new Date(entry.start), new Date(entry.end), start, end))) {
     res.status(409).json({
       error: 'Time entry conflicts with existing time entry.'
     });
@@ -185,7 +183,6 @@ const isValidEntryQuery = async (req: Request, res: Response, next: NextFunction
       return;
     }
   }
-
 
   next();
 };

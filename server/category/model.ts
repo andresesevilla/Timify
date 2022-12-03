@@ -1,6 +1,6 @@
 import type {Types} from 'mongoose';
 import {Schema, model} from 'mongoose';
-import type { User } from '../user/model';
+import type {User} from '../user/model';
 
 export type Category = {
   _id: Types.ObjectId;

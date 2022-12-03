@@ -1,7 +1,7 @@
-import type { Types } from 'mongoose';
-import { Schema, model } from 'mongoose';
-import { Category } from 'server/category/model';
-import type { User } from '../user/model';
+import type {Types} from 'mongoose';
+import {Schema, model} from 'mongoose';
+import type {Category} from 'server/category/model';
+import type {User} from '../user/model';
 
 /**
  * This file defines the properties stored in an Entry
@@ -55,7 +55,7 @@ const EntrySchema = new Schema<Entry>({
   tag: {
     type: String,
     required: false
-  },
+  }
 });
 
 const EntryModel = model<Entry>('Entry', EntrySchema);
