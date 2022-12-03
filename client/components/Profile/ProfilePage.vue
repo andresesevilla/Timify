@@ -40,7 +40,7 @@
       <header>
         <h2>Your Goals</h2>
       </header>
-      <GoalListComponent :fetchGoals="fetchGoals" />
+      <GoalListComponent :allowEdit="true" :fetchOptions="{url: `/api/goals?author=${$route.params.username}`}" />
     </section>
   </main>
   <NotFound v-else />
@@ -54,11 +54,8 @@ import GoalListComponent from '@/components/Goal/GoalListComponent.vue';
 export default {
   name: 'ProfilePage',
   components: { NotFound, CreateGoalForm, GoalListComponent },
-  async mounted() {
-    const getGoals = this.getGoals();
-    const getFriendStatus = this.getFriendStatus();
-    await getGoals;
-    await getFriendStatus;
+  mounted() {
+    this.getFriendStatus();
   },
   data() {
     return {
@@ -67,23 +64,12 @@ export default {
     };
   },
   watch: {
-    async '$route'() {
+    '$route'() {
       this.friendStatus = undefined;
-      const getGoals = this.getGoals();
-      const getFriendStatus = this.getFriendStatus();
-      await getGoals;
-      await getFriendStatus;
+      this.getFriendStatus();
     }
   },
   methods: {
-    fetchGoals() {
-      return [
-        { author: "elonmusk", hours: 10, category: "Twitter", progress: 3, type: "budget", visibility: "friends" },
-        { author: "elonmusk", hours: 5, category: "Firing", progress: 10, type: "goal", visibility: "private" },
-        { author: "elonmusk", hours: 8, category: "Tesla", progress: 7, type: "goal", visibility: "private" },
-        { author: "elonmusk", hours: 5, category: "Family", progress: 4, type: "budget", visibility: "friends" },
-      ];
-    },
     async sendRequest() {
       const url = `api/friends/requests/${this.$route.params.username}`;
       const options = {
@@ -226,23 +212,6 @@ export default {
         this.isValidUsername = false;
       }
     },
-    async getGoals() {
-      const username = this.$route.params.username
-      const url = `/api/goals?author=${username}`;
-      try {
-        const r = await fetch(url);
-        const res = await r.json();
-        if (!r.ok) {
-          throw new Error(res.error);
-        }
-        this.$store.commit('updateFilter', username);
-        this.$store.commit('updateGoals', res);
-      } catch (e) {
-        this.$store.commit('alert', {
-          message: e, status: 'error'
-        });
-      }
-    }
   }
 };
 </script>

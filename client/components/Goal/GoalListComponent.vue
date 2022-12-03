@@ -3,7 +3,7 @@
     <GoalComponent v-for="goal in goals" :key="goal.id" :goal="goal" :allowEdit="allowEdit" @delete="deleteGoal(goal)" />
   </section>
   <article v-else>
-    <h3>No goals found.</h3>
+    <h3>No goals found. Create some and track your progress!</h3>
   </article>
 </template>
 
@@ -14,13 +14,13 @@ export default {
   name: 'GoalListComponent',
   components: { GoalComponent },
   props: {
-    fetchGoals: {
-      type: Function,
-      required: true,
-    },
     allowEdit: {
       type: Boolean,
       default: true,
+    },
+    fetchOptions: {
+      type: Object,
+      default: () => {return {url: '/api/goals'}},
     },
   },
   data() {
@@ -28,8 +28,15 @@ export default {
       goals: [],
     };
   },
-  async mounted() {
-    this.goals = await this.fetchGoals();
+  mounted() {
+    fetch(this.fetchOptions.url, {
+        method: this.fetchOptions.method || 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then(res => res.json()).then(goals => {
+        this.goals = goals;
+      });
   },
   methods: {
     deleteGoal(goal) {
@@ -38,3 +45,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+article {
+  margin-top: 1em;
+}
+</style>

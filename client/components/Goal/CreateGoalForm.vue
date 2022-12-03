@@ -1,5 +1,3 @@
-<!-- Form for creating goals (based on BlockForm) -->
-
 <template>
   <form @submit.prevent="submit">
     <section class="form-header">
@@ -106,8 +104,33 @@ export default {
       });
   },
   methods: {
-    async submit() {
-      console.log("submitted");
+    submit() {
+      fetch('/api/goals', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: this.type,
+          hours: this.hours,
+          category: this.category,
+          visibility: this.isFriends ? 'friends' : 'private',
+        }),
+      }).then(res => res.json())
+        .then(res => {
+          if (res.error) {
+            this.$buefy.toast.open({
+              message: res.error,
+              type: 'is-danger',
+            });
+          } else {
+            this.$buefy.toast.open({
+              message: 'Goal created!',
+              type: 'is-success',
+            });
+            this.$emit('refreshGoals');
+          }
+        })
     }
   }
 };

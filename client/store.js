@@ -20,24 +20,6 @@ export function getDefaultState() {
  */
 const store = new Vuex.Store({
   state: getDefaultState(),
-  actions: {
-    fetchCategories: async function({ commit }) {
-      return fetch('/api/categories')
-        .then(response => response.json())
-        .then(categories => commit('setCategories', categories));
-    },
-    updateCategories: async function({ commit }, categories) {
-      return fetch('/api/categories', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(categories)
-      });
-        // .then(response => response.json())
-        // .then(categories => commit('setCategories', categories));
-    }
-  },
   mutations: {
     alert(state, payload) {
       /**
