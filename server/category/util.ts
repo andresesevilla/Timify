@@ -1,11 +1,15 @@
 import type {HydratedDocument} from 'mongoose';
 import type {Category, PopulatedCategory} from './model';
+import moment from 'moment';
 
 type CategoryResponse = {
   _id: string;
   userId: string;
   name: string;
+  dateCreated: string;
 };
+
+const formatDate = (date: Date): string => moment(date).format('MMMM Do YYYY, h:mm a');
 
 /**
  * Transform a raw Category object from the database into an object
@@ -26,7 +30,8 @@ const constructCategoryResponse = (category: HydratedDocument<Category>): Catego
   return {
     ...categoryCopy,
     _id: categoryCopy._id.toString(),
-    userId: username
+    userId: username,
+    dateCreated: formatDate(category.dateCreated),
   };
 };
 

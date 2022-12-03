@@ -8,7 +8,7 @@ import EntryCollection from '../entry/collection';
 class CategoryCollection {
   static async findAllByUserId(userId: Types.ObjectId | string): Promise<Array<HydratedDocument<Category>>> {
     const user = await UserCollection.findOneByUserId(userId);
-    const categories = await CategoryModel.find({userId: user._id}).populate('userId');
+    const categories = await CategoryModel.find({userId: user._id}).sort({dateCreated: -1}).populate('userId');
     return categories;
   }
 
@@ -23,9 +23,11 @@ class CategoryCollection {
   }
 
   static async addOne(userId: Types.ObjectId | string, name: string): Promise<HydratedDocument<Category>> {
+    const date = new Date();
     const category = new CategoryModel({
       userId,
-      name
+      name,
+      dateCreated: date,
     });
     await category.save(); // Saves goal to MongoDB
     return category.populate('userId');
