@@ -131,7 +131,7 @@ export default {
       this.$buefy.dialog.confirm({
         title: "Deleting category",
         message:
-          "Are you sure you want to delete this category? It will also remove all the timelogs associated with it.",
+          "Are you sure you want to delete this category? It will also remove all the time logs and goals associated with it.",
         confirmText: "Delete category",
         type: "is-danger",
         hasIcon: true,
