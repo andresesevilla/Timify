@@ -11,7 +11,7 @@
       @input="$emit('select', category)"
       ref="autocomplete"
       >
-      <template #footer>
+      <template #header>
         <a @click="addCategoryHandler"><span> Add a category... </span></a>
       </template>
       <template #empty>No results {{category ? "for" : ""}} {{category}}</template>
