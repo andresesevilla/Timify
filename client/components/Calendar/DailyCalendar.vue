@@ -243,6 +243,9 @@ export default {
               message: response.error,
               type: "is-danger",
             });
+            this.eventSelected.remove();
+            this.eventSelected = null;
+            this.editingSelected = false;
             this.fetchEvents();
             return;
           }
