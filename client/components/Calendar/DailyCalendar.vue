@@ -189,13 +189,29 @@ export default {
       this.tryUpdateEvent(eventDragInfo.event);
     },
     tryUpdateEvent(event) {
-      if (!this.isValidEvent(event)) {
+      if (!this.validateEvent(event)) {
         return;
       }
       this.eventSelected = event;
       this.saveSelected();
     },
-    isValidEvent(event) {
+    validateEvent(event) {
+      // check if event overlaps with another event
+      const calendarApi = this.$refs.fullCalendar.getApi();
+      const events = calendarApi.getEvents();
+      for (let i = 0; i < events.length; i++) {
+        if (events[i].id === event.id) {
+          continue;
+        }
+        if (event.start < events[i].end && event.end > events[i].start || event.start < events[i].start && event.end > events[i].start) {
+          this.$buefy.toast.open({
+            message: "Events cannot overlap",
+            type: "is-danger",
+          });
+          this.cancelSelected(); // TODO maybe do better without canceling? (reason this exists: if you make popup disappear, it will appear on the calendar)
+          return false;
+        }
+      }
       return true;
     },
     editSelected() {
@@ -225,6 +241,9 @@ export default {
         });
     },
     saveSelected() {
+      if (!this.validateEvent(this.eventSelected)) {
+        return;
+      }
       const url = this.eventSelected.draft
         ? "/api/entries"
         : `/api/entries/${this.eventSelected.id}`;
