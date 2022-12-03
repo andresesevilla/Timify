@@ -12,7 +12,7 @@
       ref="autocomplete"
       >
       <template #footer>
-        <a><span> Add a category... </span></a>
+        <a @click="addCategoryHandler"><span> Add a category... </span></a>
       </template>
       <template #empty>No results {{category ? "for" : ""}} {{category}}</template>
     </b-autocomplete>
@@ -55,8 +55,44 @@ export default {
   methods: {
     focus() {
       this.$refs.autocomplete.focus();
-    }
+    },
+    addCategoryHandler() {
+      this.$buefy.dialog.prompt({
+        message: `Add a new category:`,
+        inputAttrs: {
+          placeholder: 'Category name',
+        },
+        trapFocus: true,
+        onConfirm: (value) => this.addCategory(value)
+      });
+    },
+    addCategory(category) {
+      fetch("/api/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: category }),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.error) {
+            this.$buefy.toast.open({
+              message: res.error,
+              type: "is-danger",
+            });
+            return;
+          }
+          this.$emit("add-category", category);
+        });
+    },
   }
 }
 
 </script>
+
+<style>
+.modal {
+  z-index: 9999;
+}
+</style>

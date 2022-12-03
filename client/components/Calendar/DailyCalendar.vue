@@ -33,6 +33,7 @@
                 :categories="categories"
                 :loading="categoriesLoading"
                 @select="updateEventSelected({ title: $event })"
+                @add-category="(category) => {this.categories.push(category);}"
                 ref="categoryAutocomplete"
               />
             </p>
@@ -296,7 +297,7 @@ export default {
 }
 
 .event-control {
-  z-index: 1000;
+  z-index: 20;
   position: absolute;
   top: 6em;
   right: 1em;

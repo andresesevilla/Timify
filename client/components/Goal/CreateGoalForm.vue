@@ -60,28 +60,14 @@
         ></b-numberinput
       ></b-field>
       <span>hours on</span>
-      <b-field
-        :type="{ 'is-danger': !isCategoryValid }"
-        :message="{ 'Please choose one of your categories': !isCategoryValid }"
-        class="autocomplete-field"
-      >
-        <b-autocomplete
-          v-model="category"
-          placeholder="Choose a category"
-          :data="filteredCategories"
-          :open-on-focus="true"
-          :clearable="true"
-          :loading="loading"
-          required="true"
-        >
-          <template #footer>
-            <a><span> Add a category... </span></a>
-          </template>
-          <template #empty
-            >No results {{ category ? "for" : "" }} {{ category }}</template
-          >
-        </b-autocomplete>
-      </b-field>
+      
+      <CategoryAutocomplete 
+        :value="category"
+        :categories="categories"
+        :loading="loading"
+        @select="(c) => {category = c;}"
+        @add-category="(category) => {this.categories.push(category);}"
+      />
     </section>
 
     <b-button type="submit" @click="submit">Create goal</b-button>
@@ -89,7 +75,13 @@
 </template>
 
 <script>
+import CategoryAutocomplete from "@/components/Category/CategoryAutocomplete.vue";
+
 export default {
+  name: "CreateGoalForm",
+  components: {
+    CategoryAutocomplete,
+  },
   data() {
     return {
       type: "goal",
