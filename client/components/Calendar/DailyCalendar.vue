@@ -221,6 +221,7 @@ export default {
           }
           this.eventSelected.remove();
           this.eventSelected = null;
+          this.$emit("refreshGoals");
         });
     },
     saveSelected() {
@@ -254,6 +255,7 @@ export default {
           this.eventSelected.setProp("id", response.entry._id);
           this.eventSelected = null;
           this.editingSelected = false;
+          this.$emit("refreshGoals");
         });
     },
     cancelSelected() {

@@ -3,14 +3,14 @@
 <template>
   <main class="columns">
     <section class="column time-input">
-      <DailyCalendar />
+      <DailyCalendar @refreshGoals="refreshGoals ^= 1" />
     </section>
     <section class="column goals">
       <header>
         <h2>Your Goals</h2>
         <router-link to="/my"><b-button>Manage goals</b-button></router-link>
       </header>
-      <GoalListComponent :allowEdit="false" :motivatingMessage="'Create some goals and start keeping track of your progress!'" />
+      <GoalListComponent :allowEdit="false" :motivatingMessage="'Create some goals and start keeping track of your progress!'" :key="refreshGoals" />
     </section>
   </main>
 </template>
@@ -24,6 +24,11 @@ import ManageCategoriesComponent from "../Category/ManageCategoriesComponent.vue
 export default {
   name: "HomeComponent",
   components: { DailyCalendar, ManageCategoriesComponent, CreateGoalForm, GoalListComponent },
+  data() {
+    return {
+      refreshGoals: 0,
+    };
+  },
 };
 </script>
 
