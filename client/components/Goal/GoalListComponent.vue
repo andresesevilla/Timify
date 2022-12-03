@@ -1,16 +1,23 @@
 <template>
-  <section v-if="goals.length">
-    <GoalComponent
-      v-for="goal in goals"
-      :key="goal.id"
-      :goal="goal"
-      :allowEdit="allowEdit"
-      @delete="deleteGoal(goal)"
-    />
-  </section>
-  <article v-else>
-    <h3>No goals found. Create some and track your progress!</h3>
-  </article>
+  <div v-if="loading" class="loading">
+    <b-skeleton active :animated="true" height="3em" />
+    <b-skeleton active :animated="true" height="3em" />
+    <b-skeleton active :animated="true" height="3em" />
+  </div>
+  <div v-else>
+    <section v-if="goals.length">
+      <GoalComponent
+        v-for="goal in goals"
+        :key="goal.id"
+        :goal="goal"
+        :allowEdit="allowEdit"
+        @delete="deleteGoal(goal)"
+      />
+    </section>
+    <article v-else>
+      <h3>No goals found. {{ this.motivatingMessage }} </h3>
+    </article>
+  </div>
 </template>
 
 <script>
@@ -30,10 +37,15 @@ export default {
         return { url: "/api/goals" };
       },
     },
+    motivatingMessage: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
       goals: [],
+      loading: true,
     };
   },
   mounted() {
@@ -44,8 +56,16 @@ export default {
       },
     })
       .then((res) => res.json())
-      .then((goals) => {
-        this.goals = goals.map((goal) => {
+      .then((res) => {
+        this.loading = false;
+        if (res.error) {
+          this.$buefy.toast.open({
+            message: res.error,
+            type: "is-danger",
+          });
+          return;
+        }
+        this.goals = res.map((goal) => {
           return {
             ...goal,
             visibility: goal.private ? "private" : "friends",
@@ -64,5 +84,11 @@ export default {
 <style scoped>
 article {
   margin-top: 1em;
+}
+.loading {
+  margin-top: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
 }
 </style>

@@ -68,6 +68,7 @@ export default {
     '$route'() {
       this.friendStatus = undefined;
       this.getFriendStatus();
+      this.refreshGoals ^= 1;
     }
   },
   methods: {
