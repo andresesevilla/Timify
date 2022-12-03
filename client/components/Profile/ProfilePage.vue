@@ -36,11 +36,11 @@
       <section v-if="friendStatus === 'request received'">
         <p class="info">@{{ $route.params.username }} has sent you a friend request.</p>
       </section>
-      <CreateGoalForm v-if="$route.params.username === $store.state.username" />
+      <CreateGoalForm v-if="$route.params.username === $store.state.username" @refreshGoals="refreshGoals ^= 1"/>
       <header>
         <h2>{{$route.params.username}}'s Goals</h2>
       </header>
-      <GoalListComponent :allowEdit="true" :fetchOptions="{url: `/api/goals?author=${$route.params.username}`}" />
+      <GoalListComponent :allowEdit="true" :fetchOptions="{url: `/api/goals?author=${$route.params.username}`}" :key="refreshGoals" />
     </section>
   </main>
   <NotFound v-else />
@@ -61,6 +61,7 @@ export default {
     return {
       isValidUsername: true,
       friendStatus: undefined,
+      refreshGoals: 0
     };
   },
   watch: {
