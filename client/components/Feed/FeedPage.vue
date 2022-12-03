@@ -2,22 +2,19 @@
   <main>
     <section>
       <header class="freet-header">
-        <h2>Your Feed</h2>
-        <SearchComponent />
+        <h2>Friends' goals</h2>
       </header>
-      <GoalFeedComponent/>
+      <GoalListComponent :fetchOptions="{url: '/api/goals?feed=true'}" :allowEdit="false" />
     </section>
   </main>
 </template>
 
 <script>
-import GoalComponent from '@/components/Goal/GoalComponent.vue';
-import GoalFeedComponent from '@/components/Goal/GoalFeedComponent.vue';
-import SearchComponent from '@/components/common/SearchComponent.vue';
+import GoalListComponent from '@/components/Goal/GoalListComponent.vue';
 
 export default {
   name: 'Feedpage',
-  components: { GoalComponent, SearchComponent, GoalFeedComponent },
+  components: { GoalListComponent },
 };
 </script>
 
@@ -26,5 +23,9 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+main {
+  max-width: 60em;
+  margin: 0 auto;
 }
 </style>
