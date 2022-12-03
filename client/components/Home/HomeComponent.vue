@@ -51,7 +51,8 @@ main {
   margin: 0 auto;
 }
 .column {
-  max-height: 90vh;
+  // set so that there's no vertical scroll
+  height: calc(100vh - 3.5em - 2em); // nav = 3.5em, padding = 2em
   overflow-y: auto;
 }
 .goals header {
