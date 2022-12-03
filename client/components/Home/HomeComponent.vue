@@ -7,7 +7,7 @@
     </section>
     <section class="column goals">
       <header>
-        <h2>Your Goals</h2>
+        <span><h2>Your Goals</h2> <h4>weekly progress of {{thisMonday}} to {{thisSunday}} </h4></span>
         <router-link to="/my"><b-button>Manage goals</b-button></router-link>
       </header>
       <GoalListComponent :allowEdit="false" :motivatingMessage="'Create some goals and start keeping track of your progress!'" :key="refreshGoals" />
@@ -29,6 +29,22 @@ export default {
       refreshGoals: 0,
     };
   },
+  computed: {
+    thisMonday() {
+      // calculate the date of the monday of this week
+      let today = new Date();
+      let day = today.getDay();
+      let diff = today.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
+      return new Date(today.setDate(diff)).toLocaleDateString();
+    },
+    thisSunday() {
+      // calculate the date of the sunday of this week
+      let today = new Date();
+      let day = today.getDay();
+      let diff = today.getDate() - day + (day == 0 ? 0 : 7); // adjust when day is sunday
+      return new Date(today.setDate(diff)).toLocaleDateString();
+    },
+  }
 };
 </script>
 
@@ -45,6 +61,12 @@ main {
 .goals header {
   display: flex;
   justify-content: space-between;
+
+  span {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+  }
 }
 
 </style>
