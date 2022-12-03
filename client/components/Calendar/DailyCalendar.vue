@@ -164,7 +164,7 @@ export default {
     handleDateSelect(selectionInfo) {
       const calendarApi = this.$refs.fullCalendar.getApi();
       this.eventSelected = calendarApi.addEvent({
-        id: "",
+        id: "", // needs to be falsy value!
         title: "",
         start: selectionInfo.startStr,
         end: selectionInfo.endStr,
@@ -183,9 +183,11 @@ export default {
       }
     },
     handleEventResize(eventResizeInfo) {
+      if (this.eventSelected && !this.eventSelected.id) return;
       this.tryUpdateEvent(eventResizeInfo.event);
     },
     handleEventDrag(eventDragInfo) {
+      if (this.eventSelected && !this.eventSelected.id) return;
       this.tryUpdateEvent(eventDragInfo.event);
     },
     tryUpdateEvent(event) {
@@ -240,22 +242,23 @@ export default {
           this.$emit("refreshGoals");
         });
     },
-    saveSelected() {
-      if (!this.validateEvent(this.eventSelected)) {
+    saveSelected(event) {
+      if (!event.start) event = this.eventSelected; // hack. TODO fix this. if not given, event will be some default vue thingy
+      if (!this.validateEvent(event)) {
         return;
       }
-      const url = this.eventSelected.draft
+      const url = !event.id
         ? "/api/entries"
-        : `/api/entries/${this.eventSelected.id}`;
+        : `/api/entries/${event.id}`;
       fetch(url, {
-        method: this.eventSelected.draft ? "POST" : "PUT",
+        method: !event.id ? "POST" : "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          category: this.eventSelected.title,
-          start: this.eventSelected.start,
-          end: this.eventSelected.end,
+          category: event.title,
+          start: event.start,
+          end: event.end,
         }),
       })
         .then((response) => response.json())
@@ -265,20 +268,20 @@ export default {
               message: response.error,
               type: "is-danger",
             });
-            this.eventSelected.remove();
-            this.eventSelected = null;
+            event.remove();
+            event = null;
             this.editingSelected = false;
             this.fetchEvents();
             return;
           }
-          this.eventSelected.setProp("id", response.entry._id);
-          this.eventSelected = null;
+          event.setProp("id", response.entry._id);
+          event = null;
           this.editingSelected = false;
           this.$emit("refreshGoals");
         });
     },
     cancelSelected() {
-      if (this.eventSelected.draft) {
+      if (!this.eventSelected.id) {
         this.eventSelected.remove();
       }
       this.eventSelected = null;
@@ -312,7 +315,11 @@ export default {
     },
   },
   watch: {
-    eventSelected(newVal) {
+    eventSelected(newVal, oldVal) {
+      if (oldVal && this.editingSelected && !oldVal.id) {
+        this.saveSelected(oldVal);
+      }
+      console.log("eventSelected changed", JSON.stringify(newVal), JSON.stringify(oldVal));
       if (newVal && this.editingSelected) {
         this.$nextTick(() => {
           this.$refs.categoryAutocomplete.focus();

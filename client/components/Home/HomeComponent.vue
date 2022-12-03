@@ -29,22 +29,6 @@ export default {
       refreshGoals: 0,
     };
   },
-  computed: {
-    thisMonday() {
-      // calculate the date of the monday of this week
-      let today = new Date();
-      let day = today.getDay();
-      let diff = today.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
-      return new Date(today.setDate(diff)).toLocaleDateString();
-    },
-    thisSunday() {
-      // calculate the date of the sunday of this week
-      let today = new Date();
-      let day = today.getDay();
-      let diff = today.getDate() - day + (day == 0 ? 0 : 7); // adjust when day is sunday
-      return new Date(today.setDate(diff)).toLocaleDateString();
-    },
-  }
 };
 </script>
 
