@@ -53,17 +53,16 @@ export default {
   methods: {
     async getFriends() {
       const username = this.$route.params.username;
-      // fetch(`/api/friends/list`)
-      //   .then((response) => response.json())
-      //   .then((friends) => {
-      //     this.friends = friends.map(friend => friend.friendship.filter(friend => friend.username === username)[0]);
-      //   });
-      this.friends = [
-        {username: 'elonmusk', since: moment(new Date()).format("D MMM YYYY")},
-        {username: 'melonusk', since: moment(new Date()).format("D MMM YYYY")},
-        {username: 'muelonsk', since: moment(new Date()).format("D MMM YYYY")},
-        {username: 'muselonk', since: moment(new Date()).format("D MMM YYYY")},
-      ]
+      fetch(`/api/friends/list`)
+        .then((response) => response.json())
+        .then((friends) => {
+          this.friends = friends.map(friend => {
+            return {
+              username: friend.friendship.filter(friend => friend.username === username)[0],
+              since: moment(friend.dateFriends).format("D MMM YYYY")
+            }
+          });
+        });
     },
     async unfriend(friend) {
       fetch(`/api/friends/list/${friend.username}`, {
