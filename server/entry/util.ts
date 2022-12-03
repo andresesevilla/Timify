@@ -83,7 +83,33 @@ const checkTimeMatchesConstraint = (timePeriodStart: Date, timePeriodEnd: Date, 
   return false;
 };
 
+const isConflict = (start1: Date, end1: Date, start2: Date, end2: Date): boolean => {
+
+  // legal instantaneous overlap
+  if (start1.getTime() === end2.getTime() || start2.getTime() === end1.getTime()) {
+    return false;
+  }
+
+  // start in between
+  if (start1.getTime() - start2.getTime() >= 0 && end2.getTime() - start1.getTime() >= 0) {
+    return true;
+  }
+
+  // End in between
+  if (end1.getTime() - start2.getTime() >= 0 && end2.getTime() - end1.getTime() >= 0) {
+    return true;
+  }
+
+  // Time period contains constraint
+  if (start2.getTime() - start1.getTime() >= 0 && end1.getTime() - end2.getTime() >= 0) {
+    return true;
+  }
+
+  return false;
+};
+
 export {
   constructEntryResponse,
-  checkTimeMatchesConstraint
+  checkTimeMatchesConstraint,
+  isConflict
 };
