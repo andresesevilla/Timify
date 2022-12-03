@@ -11,7 +11,7 @@
         :key="goal.id"
         :goal="goal"
         :allowEdit="allowEdit"
-        @delete="deleteGoal(goal)"
+        @delete="handleDeleteGoal(goal)"
       />
     </section>
     <article v-else>
@@ -74,9 +74,36 @@ export default {
       });
   },
   methods: {
-    deleteGoal(goal) {
-      this.goals = this.goals.filter((g) => g !== goal);
+    handleDeleteGoal(goal) {
+      this.$buefy.dialog.confirm({
+        title: 'Deleting goal',
+        message: 'Are you sure you want to delete this goal?',
+        confirmText: 'Delete goal',
+        type: 'is-warning',
+        hasIcon: true,
+        onConfirm: () => this.deleteGoal(goal)
+      });
     },
+    deleteGoal(goal) {
+      fetch(`/api/goals/${goal._id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.error) {
+            this.$buefy.toast.open({
+              message: res.error,
+              type: "is-danger",
+            });
+            return;
+          }
+          this.goals = this.goals.filter((g) => g._id !== goal._id);
+        });
+    }
+
   },
 };
 </script>
