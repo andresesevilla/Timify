@@ -134,6 +134,8 @@ export default {
         this.categoriesLoading = false;
       });
     this.fetchEvents();
+
+    document.addEventListener("keydown", this.handleKeyDown);
   },
   methods: {
     fetchEvents() {
@@ -264,6 +266,27 @@ export default {
     updateEventSelected(update) {
       if (update.title) {
         this.eventSelected.setProp("title", update.title);
+      }
+    },
+
+    handleKeyDown(event) {
+      if (this.eventSelected) {
+        if (event.key === "Escape") {
+          this.cancelSelected();
+          return;
+        }
+
+        if (this.editingSelected) {
+          if (event.key === "Enter") {
+            this.saveSelected();
+          }
+        } else {
+          if (event.key === "Delete") {
+            this.deleteSelected();
+          } else if (event.key === "Enter") {
+            this.editSelected();
+          }
+        }
       }
     },
   },
