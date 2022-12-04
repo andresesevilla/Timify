@@ -89,7 +89,7 @@ export default {
 
         this.timeSpentSeconds = 0;
         this.startDate = new Date();
-        setInterval(this.incrementTime, 1000);
+        this.interval = setInterval(this.incrementTime, 1000);
         this.$store.commit("setPlaying", {title: this.category, start: this.startDate});
       } else {
         this.endDate = new Date();
