@@ -40,21 +40,21 @@
           </header>
           <div class="card-content">
             <div class="content">
-              <span>
+              <b-field class="time-input" :type="{'is-danger': eventDraft.start >= eventDraft.end}" :message="{'Please input correct time range': eventDraft.start >= eventDraft.end}">
                 <b-timepicker
                   v-model="eventDraft.start"
                   @input="eventSelected.setStart(eventDraft.start)"
                   inline
                   :increment-minutes="5"
                 ></b-timepicker>
-                to
+                <span>to</span>
                 <b-timepicker
                   v-model="eventDraft.end"
                   @input="eventSelected.setEnd(eventDraft.end)"
                   inline
                   :increment-minutes="5"
                 ></b-timepicker
-              ></span>
+              ></b-field>
             </div>
           </div>
           <footer class="card-footer">
@@ -367,5 +367,16 @@ export default {
   display: flex;
   gap: 0.5em;
   font-size: 1.2em;
+}
+
+</style>
+
+<style>
+.field.time-input .field.has-addons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
 }
 </style>
