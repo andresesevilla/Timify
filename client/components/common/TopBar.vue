@@ -7,7 +7,7 @@
       </b-navbar-item>
     </template>
 
-    <template #start v-id="$store.state.username">
+    <template #start v-if="$store.state.username">
       <PlayButton />
     </template>
     
