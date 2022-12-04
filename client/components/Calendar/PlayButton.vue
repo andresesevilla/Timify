@@ -13,12 +13,14 @@
       </div>
     </div>
     <div v-else>Working on {{ category }} for {{ timeSpentReadable }}.</div>
+    <b-tooltip :label="playing ? 'Stop' : 'Start'" position="is-bottom">
     <a @click="togglePlaying()"
       ><b-icon
-        :icon="playing ? 'pause-circle' : 'play-circle'"
+        :icon="playing ? 'stop-circle' : 'play-circle'"
         class="play-icon"
         size="is-medium"
     /></a>
+    </b-tooltip>
   </section>
 </template>
 
