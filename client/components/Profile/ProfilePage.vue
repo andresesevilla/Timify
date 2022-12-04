@@ -25,8 +25,8 @@
         <router-link v-if="$route.params.username === $store.state.username" :to="{ name: 'Friends' }"><b-button>View
             Friends</b-button>
         </router-link>
-
       </section>
+
       <section v-if="friendStatus === 'friends'">
         <p class="info">You are friends.</p>
       </section>

@@ -173,10 +173,6 @@ export default {
 <style lang="scss" scoped>
 @import "@/public/variables.scss";
 
-section {
-  max-width: 35em;
-  margin: auto;
-}
 ul {
   display: flex;
   flex-direction: column;
