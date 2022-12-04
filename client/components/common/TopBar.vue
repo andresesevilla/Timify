@@ -13,6 +13,7 @@
     
     <template #end v-if="$store.state.username">
       <b-navbar-item tag="div">
+        <SearchComponent />
         <div class="buttons">
           <b-button tag="router-link" to="/">
             <b-icon icon="home" size="is-small" />
@@ -43,10 +44,11 @@
 <script>
 import { getDefaultState } from "@/store";
 import PlayButton from "@/components/Calendar/PlayButton.vue";
+import SearchComponent from "@/components/common/SearchComponent.vue";
 
 export default {
   name: "TopBar",
-  components: { PlayButton },
+  components: { PlayButton, SearchComponent },
   methods: {
     logout() {
       fetch('/api/users/session', {

@@ -1,61 +1,68 @@
-<!-- Search bar -->
-
 <template>
-    <form @submit.prevent="search" v-if="$store.state.username">
-        <input type="text" placeholder="Search for a user..." v-model="usernameToSearch">
-        <button type="submit"><span class="material-symbols-outlined">search</span></button>
-    </form>
+  <form @submit.prevent="submit">
+    <b-input v-model="username" placeholder="Search for a user" />
+    <b-tooltip label="Search" position="is-bottom"><a @click="submit"><b-icon icon="account-search" /></a></b-tooltip>
+
+    <input type="submit" style="display: none" />
+  </form>
 </template>
   
   
 <script>
 export default {
-    data() {
-        return {
-            usernameToSearch: ''
-        }
+  name: "SearchComponent",
+  data() {
+    return {
+      username: "",
+    };
+  },
+  methods: {
+    submit() {
+      if (!this.username) {
+        return;
+      }
+      const url = `/api/friends/status/${this.username}`;
+      const username = this.username;
+      fetch(url)
+        .then((response) => {
+          if (response.status === 404) {
+            this.$buefy.toast.open({
+              message: "User not found",
+              type: "is-warning",
+            });
+          } else {
+            this.$router.push({
+              name: "Profile",
+              params: { username: username },
+            });
+          }
+        });
+      this.username = "";
     },
-    methods: {
-        search() {
-            let username = this.usernameToSearch;
-            if (username.length > 0) {
-                if (username.startsWith('@')) {
-                    username = username.slice(1);
-                }
-                this.$router.push({ name: 'Profile', params: { username: username } });
-                this.usernameToSearch = '';
-            }
-        }
-    }
+  },
 };
 </script>
   
-<style scoped>
-button {
-    padding: 5px 25px;
-    height: 100%;
-}
+<style lang="scss" scoped>
+@import "@/public/variables.scss";
 
 form {
-    background-color: inherit;
-    position: inherit;
-    box-shadow: inherit;
-    margin: 0;
-    border-radius: inherit;
-    padding: 0;
-
-    display: grid;
-    grid-auto-flow: column;
-    align-items: center;
-
-    box-shadow: var(--content-shadow);
-    margin-left: 20px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  background: none;
+  
+  align-items: center;
+  gap: 1em;
+  margin-right: 2em;
+  box-shadow: none;
+}
+.icon {
+  color: $oc-gray-0;
+  :hover {
+    color: $oc-gray-4;
+  }
 }
 
-input {
-    padding: 15px;
-    height: 45px;
-    width: 250px;
-}
 </style>
   
