@@ -7,6 +7,7 @@
           :categories="categories"
           :loading="categoriesLoading"
           @select="(c) => (category = c)"
+          @add-category="(category) => {this.categories.push(category);}"
           class="autocomplete"
         />
       </div>
