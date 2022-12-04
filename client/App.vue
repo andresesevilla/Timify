@@ -28,8 +28,8 @@ export default {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
-
+ @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+  
 :root {
   --background-color: rgb(247, 247, 247);
   --content-color: rgb(253, 253, 253);

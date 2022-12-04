@@ -2,7 +2,7 @@
   <b-navbar>
     <template #brand>
       <b-navbar-item tag="router-link" :to="{ path: '/' }">
-        <img src="@/public/logo-accent.svg" />
+        <img src="@/public/logo.svg" />
         <h2>Timify</h2>
       </b-navbar-item>
     </template>
@@ -61,16 +61,20 @@ export default {
 @import '@/public/variables.scss';
 
 nav {
-  background-color: $secondary;
+  background-color: $oc-cyan-9;
+  > :first-child {
+    margin-left: 1em;
+  }
 }
 h2 {
   margin-left: 10px;
   font-size: 1.5rem;
   font-weight: 300;
+  color: $oc-gray-0;
 }
 
 img {
-  height: 2.5rem;
+  height: 3rem;
 }
 .icon {
   margin-right: 0 !important;
