@@ -10,7 +10,7 @@
     </FullCalendar>
     <transition name="fade">
       <nav class="card event-control" v-if="eventSelected">
-        <div class="card-wrapper" v-if="!editingSelected">
+        <div class="card-wrapper" v-if="!eventSelected.editing">
           <header class="card-header">
             <p class="card-header-title">{{ eventSelected.title }}</p>
           </header>
@@ -58,8 +58,8 @@
             </div>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item" @click="cancelSelected">Cancel</a>
-            <a class="card-footer-item" @click="saveSelected">Save</a>
+            <a class="card-footer-item" @click="() => { cancelSelected(); eventSelected = eventDraft = null; }">Cancel</a>
+            <a class="card-footer-item" @click="() => { saveSelected(); eventSelected = eventDraft = null; }">Save</a>
           </footer>
         </div>
       </nav>
@@ -97,10 +97,8 @@ export default {
         eventClick: this.handleEventClick,
         eventsSet: this.handleEvents,
 
-        eventResizeStart: this.handleEventResizeStart,
-        eventResize: this.handleEventResize,
-        eventDragStart: this.handleEventDragStart,
-        eventDrop: this.handleEventDrag,
+        eventResize: this.handleEventDragOrResize,
+        eventDrop: this.handleEventDragOrResize,
 
         eventShortHeight: 15,
         slotDuration: "00:15:00",
@@ -110,8 +108,8 @@ export default {
         eventOverlap: false,
       },
       eventSelected: null,
-      editingSelected: false,
       eventDraft: null,
+      beforeEdit: null,
 
       categories: [],
       categoriesLoading: true,
@@ -124,6 +122,9 @@ export default {
     endEventSelected() {
       return this.eventSelected ? this.hmTime(this.eventSelected.end) : null;
     },
+    isEventDraft() {
+      return this.eventSelected && !this.eventSelected.id;
+    }
   },
   mounted() {
     // get categories
@@ -151,9 +152,7 @@ export default {
             };
           });
         });
-      this.eventSelected = null;
-      this.editingSelected = false;
-      this.eventDraft = null;
+      this.eventSelected = this.eventDraft = null;
     },
     hmTime(date) {
       return date.toLocaleTimeString("en-US", {
@@ -162,6 +161,13 @@ export default {
       });
     },
     handleDateSelect(selectionInfo) {
+      if (this.isEventDraft) {
+        if (this.validateEvent(this.eventSelected)) {
+          this.saveSelected(this.eventSelected);
+        } else {
+          this.eventSelected.remove();
+        }
+      }
       const calendarApi = this.$refs.fullCalendar.getApi();
       this.eventSelected = calendarApi.addEvent({
         id: "", // needs to be falsy value!
@@ -170,32 +176,43 @@ export default {
         end: selectionInfo.endStr,
         allDay: selectionInfo.allDay,
       });
-      this.eventSelected.draft = true;
+
+      this.$nextTick(() => {
+        this.$refs.categoryAutocomplete.reset();
+      });
+
       this.editSelected();
       calendarApi.unselect();
     },
     handleEventClick(clickInfo) {
       if (this.eventSelected && this.eventSelected.id === clickInfo.event.id) {
-        this.eventSelected = null;
-        this.editingSelected = false;
+        this.eventSelected = this.eventDraft = null;
       } else {
         this.eventSelected = clickInfo.event;
       }
     },
-    handleEventResize(eventResizeInfo) {
-      if (this.eventSelected && !this.eventSelected.id) return;
-      this.tryUpdateEvent(eventResizeInfo.event);
-    },
-    handleEventDrag(eventDragInfo) {
-      if (this.eventSelected && !this.eventSelected.id) return;
-      this.tryUpdateEvent(eventDragInfo.event);
+    handleEventDragOrResize(info) {
+      if (this.isEventDraft) {
+        this.eventDraft = {start: info.event.start, end: info.event.end};
+        const oldTitle = this.eventSelected.title;
+        this.eventSelected = info.event;
+        this.eventSelected.setProp("title", oldTitle);
+        this.eventSelected.editing = true;
+        return;
+      }
+      let wasEditing = false;
+      if (this.eventSelected && this.eventSelected.editing) {
+        wasEditing = true;
+      }
+      this.eventSelected = info.event;
+      if (wasEditing) this.editSelected();
+      this.tryUpdateEvent(info.event);
     },
     tryUpdateEvent(event) {
       if (!this.validateEvent(event)) {
         return;
       }
-      this.eventSelected = event;
-      this.saveSelected();
+      this.saveSelected(event);
     },
     validateEvent(event) {
       // check if event overlaps with another event
@@ -217,11 +234,12 @@ export default {
       return true;
     },
     editSelected() {
-      this.editingSelected = true;
+      this.$set(this.eventSelected, "editing", true);
       this.eventDraft = {
         start: this.eventSelected.start,
         end: this.eventSelected.end,
       };
+      this.beforeEdit = {...this.eventDraft};
     },
     deleteSelected() {
       fetch(`/api/entries/${this.eventSelected.id}`, {
@@ -242,8 +260,7 @@ export default {
           this.$emit("refreshGoals");
         });
     },
-    saveSelected(event) {
-      if (!event.start) event = this.eventSelected; // hack. TODO fix this. if not given, event will be some default vue thingy
+    saveSelected(event = this.eventSelected) {
       if (!this.validateEvent(event)) {
         return;
       }
@@ -270,13 +287,10 @@ export default {
             });
             event.remove();
             event = null;
-            this.editingSelected = false;
             this.fetchEvents();
             return;
           }
           event.setProp("id", response.entry._id);
-          event = null;
-          this.editingSelected = false;
           this.$emit("refreshGoals");
         });
     },
@@ -284,8 +298,12 @@ export default {
       if (!this.eventSelected.id) {
         this.eventSelected.remove();
       }
-      this.eventSelected = null;
-      this.editingSelected = false;
+      if (this.beforeEdit) {
+        this.eventSelected.setStart(this.beforeEdit.start);
+        this.eventSelected.setEnd(this.beforeEdit.end);
+        this.beforeEdit = null;
+      }
+      this.eventSelected = this.eventDraft = null;
     },
     updateEventSelected(update) {
       if (update.title) {
@@ -300,9 +318,10 @@ export default {
           return;
         }
 
-        if (this.editingSelected) {
+        if (this.eventSelected.editing) {
           if (event.key === "Enter") {
-            this.saveSelected();
+            this.saveSelected(this.eventSelected);
+            this.eventSelected = this.eventDraft = null;
           }
         } else {
           if (event.key === "Delete") {
@@ -313,19 +332,6 @@ export default {
         }
       }
     },
-  },
-  watch: {
-    eventSelected(newVal, oldVal) {
-      if (oldVal && this.editingSelected && !oldVal.id) {
-        this.saveSelected(oldVal);
-      }
-      console.log("eventSelected changed", JSON.stringify(newVal), JSON.stringify(oldVal));
-      if (newVal && this.editingSelected) {
-        this.$nextTick(() => {
-          this.$refs.categoryAutocomplete.focus();
-        });
-      }
-    }
   }
 };
 </script>

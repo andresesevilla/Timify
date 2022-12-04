@@ -56,6 +56,10 @@ export default {
     focus() {
       this.$refs.autocomplete.focus();
     },
+    reset() {
+      this.category = null;
+      this.focus();
+    },
     addCategoryHandler() {
       this.$buefy.dialog.prompt({
         message: `Add a new category:`,
