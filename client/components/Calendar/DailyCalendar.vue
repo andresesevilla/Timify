@@ -237,6 +237,13 @@ export default {
           return false;
         }
       }
+      if (!this.categories.includes(event.title)) {
+        this.$buefy.toast.open({
+          message: "Category does not exist",
+          type: "is-danger",
+        });
+        return false;
+      }
       return true;
     },
     editSelected() {
