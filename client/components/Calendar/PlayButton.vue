@@ -70,6 +70,21 @@ export default {
     },
     togglePlaying() {
       if (!this.playing) {
+        if (!this.category) {
+          this.$buefy.toast.open({
+            message: "Please select a category first.",
+            type: "is-danger",
+          });
+          return;
+        }
+        if (!this.categories.includes(this.category)) {
+          this.$buefy.toast.open({
+            message: "Please select a valid category.",
+            type: "is-danger",
+          });
+          return;
+        }
+
         this.timeSpentSeconds = 0;
         this.startDate = new Date();
         setInterval(this.incrementTime, 1000);
