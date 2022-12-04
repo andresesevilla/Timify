@@ -66,9 +66,9 @@ export default {
         inputAttrs: {
           placeholder: 'Category name',
         },
-        trapFocus: true,
-        onConfirm: (value) => this.addCategory(value)
+        onConfirm: value => this.addCategory(value)
       });
+
     },
     addCategory(category) {
       fetch("/api/categories", {
@@ -88,6 +88,7 @@ export default {
             return;
           }
           this.$emit("add-category", category);
+          this.reset();
         });
     },
   }

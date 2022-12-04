@@ -66,7 +66,7 @@
         :categories="categories"
         :loading="loading"
         @select="(c) => {category = c;}"
-        @add-category="(category) => {this.categories.push(category);}"
+        @add-category="(category) => {this.categories.unshift(category);}"
       />
     </section>
 

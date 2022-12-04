@@ -33,7 +33,7 @@
                 :categories="categories"
                 :loading="categoriesLoading"
                 @select="updateEventSelected({ title: $event })"
-                @add-category="(category) => {this.categories.push(category);}"
+                @add-category="(category) => {this.categories.unshift(category);}"
                 ref="categoryAutocomplete"
               />
             </p>
@@ -325,7 +325,8 @@ export default {
     },
 
     handleKeyDown(event) {
-      if (this.isPlaying) return;
+      if (this.isPlaying || document.querySelector(".dialog.modal.is-active")) return;
+
 
       if (this.eventSelected) {
         if (event.key === "Escape") {
@@ -335,6 +336,9 @@ export default {
 
         if (this.eventSelected.editing) {
           if (event.key === "Enter") {
+            console.log(JSON.stringify(this.eventSelected))
+            if (!this.eventSelected.title) return;
+
             this.saveSelected(this.eventSelected);
             this.eventSelected = this.eventDraft = null;
           }
@@ -350,8 +354,7 @@ export default {
   },
   watch: {
     "$store.state.playing": function (playing) {
-      console.log(JSON.stringify(playing));
-      const calApi = this.$refs.fullCalendar.getApi();
+      const calApi = this.$refs.fullCalendar.getApi();  
 
       if (playing === null) { // playing is bad event, just skip over it
         calApi.getEventById("playing").remove();
