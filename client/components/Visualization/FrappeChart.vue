@@ -10,7 +10,12 @@ export default {
   props: {
     data: {
       type: Object,
-      required: true,
+      default: () => {
+        return {
+          labels: [],
+          datasets: [],
+        };
+      },
     },
     width: {
       type: Number,
@@ -36,12 +41,11 @@ export default {
       type: this.type,
       height: this.height,
       width: this.width,
-      pieSliceText: "value",
     });
   },
-  watch: {
-    data() {
-      this.chart.update(this.data);
+  methods: {
+    update(data) {
+      this.chart.update(data);
     },
   },
 };

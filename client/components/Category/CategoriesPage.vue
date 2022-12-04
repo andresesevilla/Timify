@@ -1,10 +1,22 @@
 <template>
   <main class="columns">
-    <ManageCategoriesComponent class="column manage-categories" />
+    <ManageCategoriesComponent
+      class="column manage-categories"
+      @update-categories="fetchEntries"
+    />
     <div class="column">
       <h3>Time spent by categories</h3>
-      <h4>from {{ thisMonday.toLocaleDateString() }} to {{ thisSunday.toLocaleDateString() }}</h4>
-      <FrappeChart class="column" :type="'pie'" :width="500" :height="500" :data="data" :key="updateChart" />
+      <h4>
+        from {{ thisMonday.toLocaleDateString() }} to
+        {{ thisSunday.toLocaleDateString() }}
+      </h4>
+      <FrappeChart
+        class="column"
+        :type="'pie'"
+        :width="500"
+        :height="500"
+        ref="chart"
+      />
     </div>
   </main>
 </template>
@@ -18,10 +30,6 @@ export default {
   components: { ManageCategoriesComponent, FrappeChart },
   data() {
     return {
-      data: {
-        labels: [],
-        datasets: [],
-      },
       updateChart: 0,
     };
   },
@@ -46,31 +54,34 @@ export default {
   },
   methods: {
     fetchEntries() {
-      const start = this.thisMonday.toISOString(), end = this.thisSunday.toISOString();
+      const start = this.thisMonday.toISOString(),
+        end = this.thisSunday.toISOString();
       fetch(`/api/entries?start=${start}&end=${end}`)
         .then((response) => response.json())
         .then((entries) => {
           const categories = {};
           entries.forEach((entry) => {
             // calculate time spent for the category given start and end date in hours
-            const timeSpentHours = (new Date(entry.end) - new Date(entry.start)) / 1000 / 60 / 60;
+            const timeSpentHours =
+              (new Date(entry.end) - new Date(entry.start)) / 1000 / 60 / 60;
             if (entry.category in categories) {
               categories[entry.category] += timeSpentHours;
             } else {
               categories[entry.category] = timeSpentHours;
             }
           });
-          this.$set(this.data, "labels", Object.keys(categories));
-          this.$set(this.data, "datasets", [
-            {
-              name: "Time Spent (hours)",
-              values: Object.values(categories),
-            },
-          ]);
-          this.updateChart++;
+          this.$refs.chart.update({
+            labels: Object.keys(categories),
+            datasets: [
+              {
+                name: "Time spent by categories",
+                values: Object.values(categories),
+              },
+            ],
+          });
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -81,6 +92,4 @@ export default {
   align-items: center;
   justify-content: center;
 }
-
-
 </style>

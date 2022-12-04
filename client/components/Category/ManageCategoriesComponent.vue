@@ -117,6 +117,7 @@ export default {
           this.editing = null;
           this.categories[this.categories.indexOf(category)] = this.draft;
           this.lastActionMethod = null;
+          this.$emit("update-categories");
         }
       });
     },
@@ -151,6 +152,7 @@ export default {
                 type: "is-success",
                 duration: 2000,
               });
+              this.$emit("update-categories");
               this.categories.splice(this.categories.indexOf(category), 1);
             }
           });
