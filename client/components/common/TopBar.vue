@@ -6,6 +6,11 @@
         <h2>Timify</h2>
       </b-navbar-item>
     </template>
+
+    <template #start v-id="$store.state.username">
+      <PlayButton />
+    </template>
+    
     <template #end v-if="$store.state.username">
       <b-navbar-item tag="div">
         <div class="buttons">
@@ -37,9 +42,11 @@
 
 <script>
 import { getDefaultState } from "@/store";
+import PlayButton from "@/components/Calendar/PlayButton.vue";
 
 export default {
   name: "TopBar",
+  components: { PlayButton },
   methods: {
     logout() {
       fetch('/api/users/session', {
@@ -78,5 +85,11 @@ img {
 }
 .icon {
   margin-right: 0 !important;
+}
+</style>
+
+<style>
+.navbar-start {
+  margin-left: auto;
 }
 </style>

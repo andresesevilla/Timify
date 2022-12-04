@@ -73,10 +73,12 @@ import FullCalendar from "@fullcalendar/vue";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import CategoryAutocomplete from "@/components/Category/CategoryAutocomplete.vue";
+import PlayButton from "@/components/Calendar/PlayButton.vue";
 
 export default {
   name: "DailyCalendar",
   components: {
+    PlayButton,
     FullCalendar,
     CategoryAutocomplete,
   },
@@ -113,6 +115,8 @@ export default {
 
       categories: [],
       categoriesLoading: true,
+
+      isPlaying: false,
     };
   },
   computed: {
@@ -185,6 +189,8 @@ export default {
       calendarApi.unselect();
     },
     handleEventClick(clickInfo) {
+      if (this.isPlaying) return;
+
       if (this.eventSelected && this.eventSelected.id === clickInfo.event.id) {
         this.eventSelected = this.eventDraft = null;
       } else {
@@ -312,6 +318,8 @@ export default {
     },
 
     handleKeyDown(event) {
+      if (this.isPlaying) return;
+
       if (this.eventSelected) {
         if (event.key === "Escape") {
           this.cancelSelected();
@@ -331,6 +339,37 @@ export default {
           }
         }
       }
+    },
+  },
+  watch: {
+    "$store.state.playing": function (playing) {
+      console.log(JSON.stringify(playing));
+      const calApi = this.$refs.fullCalendar.getApi();
+
+      if (playing === null) { // playing is bad event, just skip over it
+        calApi.getEventById("playing").remove();
+        this.isPlaying = false;
+      } else if (playing.end) { // end of the event, add it to the calendar
+        calApi.getEventById("playing").remove();
+        calApi.addEvent({
+          id: playing.id,
+          title: playing.title,
+          start: playing.start,
+          end: playing.end,
+        });
+        this.isPlaying = false;
+      } else { // here it should have start, so just add it as playing
+        calApi.addEvent({
+          title: playing.title,
+          start: new Date(),
+          color: "green",
+          id: "playing",
+        });
+        this.isPlaying = true;
+      }
+
+      calApi.setOption("editable", !this.isPlaying);
+      calApi.setOption("selectable", !this.isPlaying);
     },
   }
 };

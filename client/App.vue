@@ -20,9 +20,8 @@ export default {
       const user = res.user;
       this.$store.commit('setUsername', user ? user.username : null);
     });
-    
-    // Clear alerts on page refresh
-    this.$store.state.alerts = {};
+
+    this.$store.commit('setPlaying', null);
   }
 };
 </script>
