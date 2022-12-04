@@ -3,6 +3,7 @@
     <ManageCategoriesComponent class="column manage-categories" />
     <div class="column">
       <h3>Time spent by categories</h3>
+      <h4>from {{ thisMonday.toLocaleDateString() }} to {{ thisSunday.toLocaleDateString() }}</h4>
       <FrappeChart class="column" :type="'pie'" :width="500" :height="500" :data="data" :key="updateChart" />
     </div>
   </main>
