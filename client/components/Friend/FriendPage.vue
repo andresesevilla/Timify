@@ -52,13 +52,12 @@ export default {
   },
   methods: {
     async getFriends() {
-      const username = this.$route.params.username;
       fetch(`/api/friends/list`)
         .then((response) => response.json())
         .then((friends) => {
           this.friends = friends.map(friend => {
             return {
-              username: friend.friendship.filter(friend => friend.username === username)[0],
+              username: friend.friendship.filter(friend => friend !== this.$store.state.username)[0],
               since: moment(friend.dateFriends).format("D MMM YYYY")
             }
           });
