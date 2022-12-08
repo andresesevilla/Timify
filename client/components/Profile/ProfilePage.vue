@@ -40,7 +40,7 @@
       <header>
         <h2>{{$route.params.username}}'s Goals</h2>
       </header>
-      <GoalListComponent :allowEdit="true" :fetchOptions="{url: `/api/goals?author=${$route.params.username}`}" :key="refreshGoals" />
+      <GoalListComponent :allowEdit="($route.params.username === $store.state.username)" :fetchOptions="{url: `/api/goals?author=${$route.params.username}`}" :key="refreshGoals" />
     </section>
   </main>
   <NotFound v-else />
