@@ -1,5 +1,5 @@
 <template>
-  <article>
+  <article v-if="isFeedUI">
     <header>
       <h3>
         <router-link :to="{ name: 'Profile', params: { username: goal.author } }">
@@ -12,6 +12,20 @@
           <b-tooltip label="Edit"><a @click="startEdit"><b-icon icon="pencil" /></a></b-tooltip>
           <b-tooltip label="Delete"><a @click="deleteCategory"><b-icon icon="delete" /></a></b-tooltip>
         </span>
+    </header>
+    <p>{{ infoMessage }}</p>
+    <section>
+      <b-progress :value="progress" size="is-large" format="percent" :type="goal.type === 'goal' ? 'is-success' : 'is-info'" show-value>
+        {{progress}}% {{progressMessage}}
+      </b-progress>
+    </section>
+  </article>
+  
+  <!-- For Home page UI -->
+  <article v-else>
+    <header style="justify-content:space-between">
+      <h3 style="color: #087f5b; fontWeight: 900">{{goal.category}}</h3>
+      <span class="goal-sentence"> {{ goal.type === 'goal' ? '>' : '<'}} {{ goal.hours }} hours </span>
     </header>
     <p>{{ infoMessage }}</p>
     <section>
@@ -35,6 +49,10 @@ export default {
       type: Boolean,
       default: true
     },
+    isFeedUI: {
+      type: Boolean,
+      default: true,      
+    }
   },
   data() {
     return {
@@ -119,9 +137,9 @@ export default {
 @import '@/public/variables.scss';
 
 article {
-  background-color: $oc-gray-4;
+  background-color: $oc-gray-1;
+  border: 2px solid $oc-gray-4;
   border-radius: 0.5em;
-  box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.1);
   margin: 1em 0;
   padding: 1em;
   display: flex;

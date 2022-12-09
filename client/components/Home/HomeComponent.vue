@@ -10,7 +10,7 @@
         <span><h2>Your Goals</h2></span>
         <router-link to="/my"><b-button>Manage goals</b-button></router-link>
       </header>
-      <GoalListComponent :allowEdit="false" :motivatingMessage="'Create some goals and start keeping track of your progress!'" :key="refreshGoals" />
+      <GoalListComponent :allowEdit="false" :isFeedUI="false" :motivatingMessage="'Create some goals and start keeping track of your progress!'" :key="refreshGoals" />
     </section>
   </main>
 </template>

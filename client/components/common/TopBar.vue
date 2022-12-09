@@ -70,7 +70,7 @@ export default {
 @import '@/public/variables.scss';
 
 nav {
-  background-color: $oc-cyan-9;
+  background-color: $oc-teal-7;
   > :first-child {
     margin-left: 1em;
   }

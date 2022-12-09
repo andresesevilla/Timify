@@ -108,6 +108,8 @@ export default {
 
         events: [],
         eventOverlap: false,
+
+        eventColor: "#087f5b",
       },
       eventSelected: null,
       eventDraft: null,
@@ -386,6 +388,10 @@ export default {
 </script>
 
 <style lang="scss">
+.fc .fc-col-header-cell-cushion {
+  color: #087f5b
+}
+
 .fc-event-dragging .fc-event-main {
   cursor: move;
 }
@@ -403,6 +409,7 @@ export default {
 
 .calendar-container {
   position: relative;
+  --fc-today-bg-color: #e6fcf5;  
 }
 
 .event-control {
@@ -428,4 +435,5 @@ export default {
   align-items: center;
   gap: 0.5em;
 }
+
 </style>

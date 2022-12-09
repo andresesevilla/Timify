@@ -14,6 +14,7 @@
         :key="goal.id"
         :goal="goal"
         :allowEdit="allowEdit"
+        :isFeedUI="isFeedUI"
         @delete="handleDeleteGoal(goal)"
       />
     </section>
@@ -31,6 +32,10 @@ export default {
   components: { GoalComponent },
   props: {
     allowEdit: {
+      type: Boolean,
+      default: true,
+    },
+    isFeedUI: {
       type: Boolean,
       default: true,
     },
