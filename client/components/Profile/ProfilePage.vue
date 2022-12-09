@@ -5,6 +5,9 @@
     <section>
       <header>
         <h2>Profile: @{{ $route.params.username }}</h2>
+        <router-link v-if="$route.params.username === $store.state.username" :to="{ name: 'Friends' }"><b-button>View
+          Friends</b-button>
+        </router-link>
       </header>
       <section class="button-row">
         <b-button @click="sendRequest"
@@ -21,10 +24,6 @@
           Request</b-button>
         <b-button @click="removeFriend"
           v-if="$route.params.username != $store.state.username && friendStatus === 'friends'">Remove Friend</b-button>
-
-        <router-link v-if="$route.params.username === $store.state.username" :to="{ name: 'Friends' }"><b-button>View
-            Friends</b-button>
-        </router-link>
       </section>
 
       <section v-if="friendStatus === 'friends'">
@@ -40,7 +39,7 @@
       <header>
         <h2>{{$route.params.username}}'s Goals</h2>
       </header>
-      <GoalListComponent :allowEdit="($route.params.username === $store.state.username)" :fetchOptions="{url: `/api/goals?author=${$route.params.username}`}" :key="refreshGoals" />
+      <GoalListComponent :isFeedUI="false" :allowEdit="($route.params.username === $store.state.username)" :fetchOptions="{url: `/api/goals?author=${$route.params.username}`}" :key="refreshGoals" />
     </section>
   </main>
   <NotFound v-else />
@@ -223,5 +222,11 @@ export default {
 main {
   max-width: 60em;
   margin: 0 auto;
+}
+
+header {
+  display: flex;
+  flex-direction: row;
+  justify-content:space-between
 }
 </style>

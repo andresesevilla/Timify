@@ -1,26 +1,26 @@
 <template>
   <section v-if="categories !== null" class="animate">
-    <b-button class="is-primary" id="add-category" @click="addCategory"
-      >Add category</b-button
-    >
 
     <ul v-if="categories.length" id="categories-list">
       <li v-for="category in categories" :key="category.id" class="category">
         <span v-if="editing !== category">{{ category.name }}</span>
         <b-input v-else v-model="draft.name" v-on:keyup.native.enter="saveEdit(category)"></b-input>
         <span class="category-actions" v-if="!editing">
-          <b-tooltip label="Edit"><a @click="startEdit(category)"><b-icon icon="pencil" /></a></b-tooltip>
-          <b-tooltip label="Delete"><a @click="deleteCategory(category)"><b-icon icon="delete" /></a></b-tooltip>
+          <b-tooltip label="Edit"><a @click="startEdit(category)"><b-icon icon="pencil" style="color: #087f5b" /></a></b-tooltip>
+          <b-tooltip label="Delete"><a @click="deleteCategory(category)"><b-icon icon="delete" style="color: #000" /></a></b-tooltip>
         </span>
         <span class="category-actions" v-else-if="editing === category">
-          <b-tooltip label="Save"><a @click="saveEdit(category)"><b-icon icon="check" /></a></b-tooltip>
-          <b-tooltip label="Cancel"><a @click="discardEdit(category)"><b-icon icon="close" /></a></b-tooltip>
+          <b-tooltip label="Save"><a @click="saveEdit(category)"><b-icon icon="check" style="color: #087f5b" /></a></b-tooltip>
+          <b-tooltip label="Cancel"><a @click="discardEdit(category)"><b-icon icon="close" style="color: #000" /></a></b-tooltip>
         </span>
       </li>
     </ul>
     <div v-else>
       <p>You have no categories yet. Add one!</p>
     </div>
+    <b-button class="is-primary" id="add-category" @click="addCategory"
+    >Add category</b-button
+    >
   </section>
   <section v-else>
     <b-skeleton :animated="true"></b-skeleton>
@@ -185,7 +185,9 @@ li {
   margin-left: 0;
 }
 .category {
-  background-color: $color-5;
+  background-color: $oc-gray-1;
+  border: 2px solid $oc-gray-4;
+  font-weight: 600;
   padding: 0.5em;
   margin-bottom: 0.5em;
   border-radius: 0.5em;
@@ -196,6 +198,10 @@ li {
 }
 .category-actions {
   margin-left: auto;
+  // change icons to primary color
+  svg {
+    fill: $primary;
+  }
 }
 #add-category {
   margin-bottom: 0.5em;
