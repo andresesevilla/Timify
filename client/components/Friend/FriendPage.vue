@@ -1,11 +1,7 @@
 <template>
   <main v-if="isValidUsername">
     <section>
-      <header>
-        <h2>
-          My friends
-        </h2>
-      </header>
+      <h1>Friends</h1>
       <article v-if="friends.length === 0">
         <h3>No friends found. Explore and work through your goals together!</h3>
       </article>
@@ -79,8 +75,11 @@ export default {
 <style lang="scss" scoped>
 @import "@/public/variables.scss";
 
+h1 {
+  margin-bottom: 0.5em;
+}
 main {
-  max-width: 40em;
+  max-width: 60em;
   margin: 0 auto;
 }
 ul {

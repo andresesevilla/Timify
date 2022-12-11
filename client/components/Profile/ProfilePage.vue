@@ -4,37 +4,28 @@
   <main v-if="isValidUsername">
     <section>
       <header>
-        <h2>Profile: @{{ $route.params.username }}</h2>
-        <router-link v-if="$route.params.username === $store.state.username" :to="{ name: 'Friends' }"><b-button>View
-          Friends</b-button>
-        </router-link>
+        <h1>Profile: @{{ $route.params.username }}</h1>
+        <span class="actions">
+          <router-link v-if="$route.params.username === $store.state.username" :to="{ name: 'Friends' }"><b-button>View Friends</b-button></router-link>
+          <router-link v-if="$route.params.username === $store.state.username" :to="{ name: 'Requests' }"><b-button>View Friend Requests</b-button></router-link>
+          <section class="button-row">
+            <b-button @click="sendRequest"
+              v-if="$route.params.username != $store.state.username && friendStatus === 'no'">Send
+              Friend Request</b-button>
+            <b-button @click="cancelRequest"
+              v-if="$route.params.username != $store.state.username && friendStatus === 'request sent'">Cancel Friend
+              Request</b-button>
+            <b-button @click="acceptRequest"
+              v-if="$route.params.username != $store.state.username && friendStatus === 'request received'">Accept Friend
+              Request</b-button>
+            <b-button @click="rejectRequest"
+              v-if="$route.params.username != $store.state.username && friendStatus === 'request received'">Reject Friend
+              Request</b-button>
+            <b-button @click="removeFriend"
+              v-if="$route.params.username != $store.state.username && friendStatus === 'friends'">Remove Friend</b-button>
+          </section>
+        </span>
       </header>
-      <section class="button-row">
-        <b-button @click="sendRequest"
-          v-if="$route.params.username != $store.state.username && friendStatus === 'no'">Send
-          Friend Request</b-button>
-        <b-button @click="cancelRequest"
-          v-if="$route.params.username != $store.state.username && friendStatus === 'request sent'">Cancel Friend
-          Request</b-button>
-        <b-button @click="acceptRequest"
-          v-if="$route.params.username != $store.state.username && friendStatus === 'request received'">Accept Friend
-          Request</b-button>
-        <b-button @click="rejectRequest"
-          v-if="$route.params.username != $store.state.username && friendStatus === 'request received'">Reject Friend
-          Request</b-button>
-        <b-button @click="removeFriend"
-          v-if="$route.params.username != $store.state.username && friendStatus === 'friends'">Remove Friend</b-button>
-      </section>
-
-      <section v-if="friendStatus === 'friends'">
-        <p class="info">You are friends.</p>
-      </section>
-      <section v-if="friendStatus === 'request sent'">
-        <p class="info">You sent a friend request to @{{ $route.params.username }}, but they have not yet accepted.</p>
-      </section>
-      <section v-if="friendStatus === 'request received'">
-        <p class="info">@{{ $route.params.username }} has sent you a friend request.</p>
-      </section>
       <CreateGoalForm v-if="$route.params.username === $store.state.username" @refreshGoals="refreshGoals ^= 1"/>
       <header>
         <h2>{{$route.params.username}}'s Goals</h2>
@@ -227,6 +218,11 @@ main {
 header {
   display: flex;
   flex-direction: row;
-  justify-content:space-between
+  align-items: center;
+  .actions {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5em;
+  }
 }
 </style>

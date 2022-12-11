@@ -5,10 +5,10 @@
     <b-skeleton active :animated="true" height="3em" />
   </div>
   <div v-else>
-    <header>
-      <h4>weekly progress of {{thisMonday}} to {{thisSunday}} </h4>
-    </header>
     <section v-if="goals.length">
+      <header>
+        <h4>weekly progress of {{thisMonday}} to {{thisSunday}} </h4>
+      </header>
       <GoalComponent
         v-for="goal in goals"
         :key="goal.id"
