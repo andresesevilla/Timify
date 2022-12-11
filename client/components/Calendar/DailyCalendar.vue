@@ -203,6 +203,14 @@ export default {
     handleEventClick(clickInfo) {
       if (this.isPlaying) return;
 
+      if (this.isEventDraft) {
+        if (this.validateEvent(this.eventSelected)) {
+          this.saveSelected(this.eventSelected);
+        } else {
+          this.eventSelected.remove();
+        }
+      }
+
       if (this.eventSelected && this.eventSelected.id === clickInfo.event.id) {
         this.eventSelected = this.eventDraft = null;
       } else {
@@ -249,6 +257,15 @@ export default {
           return false;
         }
       }
+
+      if (!event.title) {
+        this.$buefy.toast.open({
+          message: "Category cannot be empty",
+          type: "is-danger",
+        });
+        return false;
+      }
+
       if (!this.categories.includes(event.title)) {
         this.$buefy.toast.open({
           message: "Category does not exist",
