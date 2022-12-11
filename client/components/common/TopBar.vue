@@ -15,7 +15,7 @@
       <b-navbar-item tag="div">
         <SearchComponent />
         <div class="buttons">
-          <b-button tag="router-link" to="/">
+          <b-button tag="router-link" to="/" class="button is-primary">
             <b-icon icon="home" size="is-small" />
             Home
           </b-button>
