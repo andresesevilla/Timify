@@ -165,14 +165,11 @@ section {
 
 </style>
 
-<style>
-.play-icon {
-  padding: 1em;
+<style lang="scss" scoped>
+.icon {
   color: #f1f3f5;
-  
-}
-
-.play-icon :hover {
-  color: white;
+  :hover {
+    color: white;
+  }
 }
 </style>

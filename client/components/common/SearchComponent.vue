@@ -57,10 +57,11 @@ form {
   margin-right: 2em;
   box-shadow: none;
 }
+
 .icon {
-  color: $oc-gray-0;
+  color: #f1f3f5;
   :hover {
-    color: $oc-gray-4;
+    color: white;
   }
 }
 
