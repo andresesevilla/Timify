@@ -162,11 +162,17 @@ section {
   gap: 1em;
   align-items: center;
 }
+
+</style>
+
+<style>
 .play-icon {
   padding: 1em;
-  color: $oc-gray-1;
-  :hover {
-    color: white;
-  }
+  color: #f1f3f5;
+  
+}
+
+.play-icon :hover {
+  color: white;
 }
 </style>
