@@ -126,7 +126,7 @@ export default {
       categoriesLoading: true,
 
       isPlaying: false,
-      storePlaying: {},
+      storePlaying: null,
     };
   },
   computed: {
@@ -382,11 +382,15 @@ export default {
     },
   },
   watch: {
-    "storePlaying": function (playing) {
+    "storePlaying": function (playing) {      
       const calApi = this.$refs.fullCalendar.getApi();  
 
       if (playing === null) { // playing is bad event, just skip over it
-        calApi.getEventById("playing").remove();
+        try {
+          calApi.getEventById("playing").remove();
+        } catch (e) {
+          // do nothing
+        }
         this.isPlaying = false;
       } else if (playing.end) { // end of the event, add it to the calendar
         calApi.getEventById("playing").remove();
