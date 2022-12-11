@@ -69,12 +69,14 @@ const isValidEntryContent = async (req: Request, res: Response, next: NextFuncti
     return;
   }
 
-  const existingEntries = await EntryCollection.findAll(userId, undefined, undefined, undefined);
-  if (existingEntries.some(entry => util.isConflict(new Date(entry.start), new Date(entry.end), start, end))) {
-    res.status(409).json({
-      error: 'Time entry conflicts with existing time entry.'
-    });
-    return;
+  if (!req.body.overwrite) {
+    const existingEntries = await EntryCollection.findAll(userId, undefined, undefined, undefined);
+    if (existingEntries.some(entry => util.isConflict(new Date(entry.start), new Date(entry.end), start, end))) {
+      res.status(409).json({
+        error: 'Time entry conflicts with existing time entry.'
+      });
+      return;
+    }
   }
 
   next();

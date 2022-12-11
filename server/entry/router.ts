@@ -1,4 +1,4 @@
-import type {NextFunction, Request, Response} from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import EntryCollection from './collection';
 import * as userValidator from '../user/middleware';
@@ -41,6 +41,41 @@ router.post(
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
 
+    if (req.body.overwrite) {
+      const newEntryStart = new Date(req.body.start);
+      const newEntryEnd = new Date(req.body.end);
+
+
+      const existingEntries = await EntryCollection.findAll(userId, undefined, undefined, undefined);
+      for (const entry of existingEntries) {
+        if (util.isConflict(entry.start, entry.end, newEntryStart, newEntryEnd)) {
+          // Case 1: new entry completely contains old entry (must delete old entry)
+          if (entry.start.getTime() - newEntryStart.getTime() >= 0 && newEntryEnd.getTime() - entry.end.getTime() >= 0) {
+            EntryCollection.deleteOne(entry.id);
+          }
+
+          // Case 2: old entry completely contains new entry (must split old entry)
+          else if (newEntryStart.getTime() - entry.start.getTime() >= 0 &&  entry.end.getTime() - newEntryEnd.getTime() >= 0) {
+            // Create a new entry that starts at the new entry end, ends at the old entry end
+            EntryCollection.addOneId(userId, entry.category, newEntryEnd, entry.end, entry.tag);
+            
+            // Update the old entry to end at the new entry start
+            EntryCollection.updateOneTime(entry.id, entry.start, newEntryStart);
+          }
+
+          // Case 3: New entry clips start of old entry
+          else if (entry.end.getTime() - newEntryEnd.getTime() >= 0 && newEntryEnd.getTime() - entry.start.getTime() >= 0) {
+            EntryCollection.updateOneTime(entry.id, newEntryEnd, entry.end);
+          }
+
+          // Case 4: New entry clips end of old entry
+          else if (newEntryEnd.getTime() - entry.end.getTime() >= 0 && entry.end.getTime() - newEntryStart.getTime() >= 0) {
+            EntryCollection.updateOneTime(entry.id, entry.start, newEntryStart);
+          }
+        }
+      }
+    }
+
     const entry = await EntryCollection.addOne(userId, req.body.category, req.body.start, req.body.end, req.body.tag);
 
     res.status(201).json({
@@ -80,7 +115,7 @@ router.put(
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
 
-    const {entryId} = req.params;
+    const { entryId } = req.params;
     const entry = await EntryCollection.updateOne(userId, entryId, req.body.category, req.body.start, req.body.end, req.body.tag);
     res.status(201).json({
       message: 'Your entry was updated successfully.',
@@ -89,4 +124,4 @@ router.put(
   }
 );
 
-export {router as entryRouter};
+export { router as entryRouter };

@@ -23,6 +23,19 @@ class EntryCollection {
     return entry.populate(['authorId', 'category']);
   }
 
+  static async addOneId(authorId: Types.ObjectId | string, categoryId: Types.ObjectId | string, start: Date, end: Date, tag: string): Promise<HydratedDocument<Entry>> {
+    const entry = new EntryModel({
+      authorId,
+      category: categoryId,
+      start: start,
+      end: end,
+      tag
+    });
+
+    await entry.save(); // Saves entry to MongoDB
+    return entry.populate(['authorId', 'category']);
+  }
+
   /**
    * Find an entry by entryId
    *
@@ -42,6 +55,16 @@ class EntryCollection {
     entry.start = new Date(start);
     entry.end = new Date(end);
     entry.tag = tag;
+
+    await entry.save();
+    return entry.populate(['authorId', 'category']);
+  }
+
+  static async updateOneTime(entryId: Types.ObjectId | string, start: Date, end: Date): Promise<HydratedDocument<Entry>> {
+    const entry = await EntryModel.findOne({_id: entryId}).populate(['authorId', 'category']);
+
+    entry.start = start;
+    entry.end = end;
 
     await entry.save();
     return entry.populate(['authorId', 'category']);

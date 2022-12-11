@@ -328,6 +328,7 @@ The following backend routes are implemented.
 - `end` *{string}* - ISO end time
 - `category` *{string} -* The name of the category associated with this time entry
 - `tag` *{string}* - The tag for this time entry (not required)
+- `overwrite` *{boolean}* - true if time entry should overwrite conflicts
 
 **Returns**
 
