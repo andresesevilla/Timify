@@ -25,7 +25,7 @@
   <article v-else>
     <header style="justify-content:space-between">
       <h3 style="color: #087f5b; fontWeight: 900">{{goal.category}}</h3>
-      <span class="goal-sentence"> {{ goal.type === 'goal' ? '>' : '<'}} {{ goal.hours }} hours </span>
+      <span class="goal-sentence"> {{ goal.type === 'goal' ? 'at least' : 'at most'}} {{ goal.hours }} hours </span>
       <span class="goal-actions" v-if="allowEdit">
         <b-tooltip label="Edit"><a @click="startEdit"><b-icon icon="pencil" /></a></b-tooltip>
         <b-tooltip label="Delete"><a @click="deleteCategory"><b-icon icon="delete" /></a></b-tooltip>
