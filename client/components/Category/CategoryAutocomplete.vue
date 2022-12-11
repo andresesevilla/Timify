@@ -65,6 +65,7 @@ export default {
         message: `Add a new category:`,
         inputAttrs: {
           placeholder: 'Category name',
+          value: this.category,
         },
         onConfirm: value => this.addCategory(value)
       });
