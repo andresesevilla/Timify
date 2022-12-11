@@ -21,7 +21,7 @@
   </article>
   
   <!-- For Home page UI -->
-  <article v-else>
+  <article v-else-if="editing === false">
     <header>
       <h3 class="category-name">{{goal.category}}</h3>
       <b-tooltip class="visibility" :label="goal.visibility === 'friends' ? 'friends can see' : 'private'"> <b-icon :icon="goal.visibility === 'friends' ? 'account-multiple' : 'lock'" /> </b-tooltip>
@@ -38,6 +38,14 @@
       </b-progress>
     </section>
   </article>
+  <!-- <GoalForm 
+    v-else
+    :title="'Edit goal'"
+    :submitButtonText="'Save'"
+    :submitCallback="submitEdit"
+    @refreshGoals="$emit('refreshGoals')"
+
+  /> -->
 </template>
 
 <script>
@@ -60,7 +68,7 @@ export default {
   },
   data() {
     return {
-      editing: null,
+      editing: false,
       draft: {},
     };
   },
