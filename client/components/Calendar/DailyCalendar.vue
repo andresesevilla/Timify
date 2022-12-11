@@ -126,6 +126,7 @@ export default {
       categoriesLoading: true,
 
       isPlaying: false,
+      storePlaying: {},
     };
   },
   computed: {
@@ -150,6 +151,8 @@ export default {
     this.fetchEvents();
 
     document.addEventListener("keydown", this.handleKeyDown);
+    this.storePlaying = this.$store.state.playing;
+
   },
   methods: {
     fetchEvents() {
@@ -362,7 +365,7 @@ export default {
     },
   },
   watch: {
-    "$store.state.playing": function (playing) {
+    "storePlaying": function (playing) {
       const calApi = this.$refs.fullCalendar.getApi();  
 
       if (playing === null) { // playing is bad event, just skip over it
@@ -390,6 +393,9 @@ export default {
       calApi.setOption("editable", !this.isPlaying);
       calApi.setOption("selectable", !this.isPlaying);
     },
+    "$store.state.playing": function (playing) {
+      this.storePlaying = playing;
+    }
   }
 };
 </script>
