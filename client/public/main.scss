@@ -2,6 +2,12 @@ $family-primary: 'Lato', sans-serif;
 
 @import "./variables.scss";
 
+
 @import "~bulma/sass/utilities/_all";
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
+
+
+.input::placeholder, .input::-moz-placeholder, .input::-webkit-input-placeholder {
+  color: rgba(53, 53, 53, 0.8);
+}
