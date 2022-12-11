@@ -166,7 +166,7 @@ section {
   padding: 1em;
   color: $oc-gray-1;
   :hover {
-    color: $oc-gray-5;
+    color: white;
   }
 }
 </style>
