@@ -18,6 +18,7 @@
           {{ thisSunday.toLocaleDateString() }}
         </h4>
       </div>
+      <h3 class="chart-empty" v-if="this.categories.length === 0">No time entries in this range.</h3>
       <FrappeChart
         class="column"
         :type="'pie'"
@@ -39,6 +40,7 @@ export default {
   data() {
     return {
       updateChart: 0,
+      categories: [],
     };
   },
   computed: {
@@ -78,6 +80,7 @@ export default {
               categories[entry.category] = timeSpentHours;
             }
           });
+          this.categories = Object.keys(categories);
           this.$refs.chart.update({
             labels: Object.keys(categories),
             datasets: [
@@ -99,5 +102,10 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+.chart-empty {
+  display: flex;
+  justify-content: center;
+  margin-top: 1em;
 }
 </style>
