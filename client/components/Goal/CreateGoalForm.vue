@@ -21,15 +21,6 @@
           />
         </template>
 
-        <b-dropdown-item :value="false" aria-role="listitem">
-          <div class="media">
-            <b-icon class="media-left" icon="lock"></b-icon>
-            <div class="media-content">
-              <h4>Private</h4>
-              <small>Only you can see</small>
-            </div>
-          </div>
-        </b-dropdown-item>
 
         <b-dropdown-item :value="true" aria-role="listitem">
           <div class="media">
@@ -40,6 +31,17 @@
             </div>
           </div>
         </b-dropdown-item>
+
+        <b-dropdown-item :value="false" aria-role="listitem">
+          <div class="media">
+            <b-icon class="media-left" icon="lock"></b-icon>
+            <div class="media-content">
+              <h4>Private</h4>
+              <small>Only you can see</small>
+            </div>
+          </div>
+        </b-dropdown-item>
+
       </b-dropdown>
     </section>
 
@@ -88,7 +90,7 @@ export default {
       hours: 1,
       category: null,
       categories: [],
-      isFriends: false,
+      isFriends: true,
       loading: true,
     };
   },

@@ -11,3 +11,7 @@ $family-primary: 'Lato', sans-serif;
 .input::placeholder, .input::-moz-placeholder, .input::-webkit-input-placeholder {
   color: rgba(53, 53, 53, 0.8);
 }
+a.dropdown-item.is-active, .dropdown .dropdown-menu .has-link a.is-active, button.dropdown-item.is-active {
+  background-color: $primary;
+  color: $white;
+}
