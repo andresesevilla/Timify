@@ -6,8 +6,7 @@
           {{ goal.author }}
         </router-link>
       </h3>
-      <span class="visibility"> <b-icon :icon="goal.visibility === 'friends' ? 'account-multiple' : 'lock'" /> {{ goal.visibility }} </span>
-      <span class="goal-sentence"> Spend {{ goal.type === 'goal' ? 'at least' : 'at most'}} {{ goal.hours }} hours on {{ goal.category }} </span>
+      <span class="goal-sentence"> Spend {{ goal.type === 'goal' ? 'at least' : 'at most'}} {{ goal.hours }} hours on <span class="category-name">{{ goal.category }}</span> </span>
       <span class="goal-actions" v-if="allowEdit">
           <b-tooltip label="Edit"><a @click="startEdit"><b-icon icon="pencil" /></a></b-tooltip>
           <b-tooltip label="Delete"><a @click="deleteCategory"><b-icon icon="delete" /></a></b-tooltip>
@@ -23,9 +22,10 @@
   
   <!-- For Home page UI -->
   <article v-else>
-    <header style="justify-content:space-between">
-      <h3 style="color: #087f5b; fontWeight: 900">{{goal.category}}</h3>
-      <span class="goal-sentence"> {{ goal.type === 'goal' ? 'at least' : 'at most'}} {{ goal.hours }} hours </span>
+    <header>
+      <h3 class="category-name">{{goal.category}}</h3>
+      <b-tooltip class="visibility" :label="goal.visibility === 'friends' ? 'friends can see' : 'private'"> <b-icon :icon="goal.visibility === 'friends' ? 'account-multiple' : 'lock'" /> </b-tooltip>
+      <span class="goal-sentence"> spend {{ goal.type === 'goal' ? 'at least' : 'at most'}} {{ goal.hours }} hours </span>
       <span class="goal-actions" v-if="allowEdit">
         <b-tooltip label="Edit"><a @click="startEdit"><b-icon icon="pencil" /></a></b-tooltip>
         <b-tooltip label="Delete"><a @click="deleteCategory"><b-icon icon="delete" /></a></b-tooltip>
@@ -169,6 +169,11 @@ header {
     margin-left: auto;
     display: flex;
     gap: 1em;
+  }
+
+  .category-name {
+    color: #087f5b;
+    font-weight: bold;
   }
 }
 
