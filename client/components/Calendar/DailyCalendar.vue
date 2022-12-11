@@ -1,6 +1,7 @@
 <template>
   <section class="calendar-container">
     <FullCalendar ref="fullCalendar" :options="calendarOptions">
+      <!-- have following only if calendar view is day -->
       <template v-slot:eventContent="arg">
         <div class="event-content">
           <b>{{ arg.timeText }}</b>
@@ -110,6 +111,12 @@ export default {
         eventOverlap: false,
 
         eventColor: "#087f5b",
+
+        headerToolbar: {
+          start: 'title', end: 'today prev,next',
+          center: 'timeGridDay,timeGridWeek'
+        },
+        buttonText: {today: "go to today"},
       },
       eventSelected: null,
       eventDraft: null,
