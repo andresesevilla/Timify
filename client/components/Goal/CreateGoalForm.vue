@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="submit">
     <section class="form-header">
-      <h2>Create a new goal</h2>
+      <h2>Create a new weekly goal</h2>
       <b-dropdown v-model="isFriends" aria-role="list">
         <template v-if="!isFriends" #trigger>
           <b-button
@@ -167,6 +167,7 @@ form h2 {
 .form-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 1em;
 }
 
