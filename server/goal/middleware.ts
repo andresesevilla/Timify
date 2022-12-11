@@ -70,6 +70,51 @@ const isValidGoalContent = async (req: Request, res: Response, next: NextFunctio
   next();
 };
 
+const isValidGoalEdit = async (req: Request, res: Response, next: NextFunction) => {
+  const {hours} = req.body as {hours: number};
+  if (!hours) {
+    res.status(400).json({
+      error: 'Hours must be a valid number.'
+    });
+    return;
+  }
+
+  const {type} = req.body;
+  if (type !== 'goal' && type !== 'budget') {
+    res.status(400).json({
+      error: 'Goal type is invalid.'
+    });
+    return;
+  }
+
+  const priv = req.body.private;
+  if (priv !== false && priv !== true) {
+    res.status(400).json({
+      error: 'Privacy is not valid.'
+    });
+    return;
+  }
+
+  const userId = (req.session.userId as string) ?? '';
+  const category = await CategoryCollection.findByNameAndUserId(userId, req.body.category);
+  if (!category) {
+    res.status(404).json({
+      error: 'Given category does not exist.'
+    });
+    return;
+  }
+
+  const goal = await GoalCollection.findOneByCategoryId(category.id);
+  if (goal && goal.id !== req.params.goalId) {
+    res.status(409).json({
+      error: 'This category already has a goal.'
+    });
+    return;
+  }
+
+  next();
+};
+
 /**
  * Checks if the current user is the author of the goal whose goalId is in req.params
  */
@@ -111,5 +156,6 @@ export {
   isValidGoalContent,
   isGoalExists,
   isValidGoalModifier,
-  isViewAllowed
+  isViewAllowed,
+  isValidGoalEdit
 };

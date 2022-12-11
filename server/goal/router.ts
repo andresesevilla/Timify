@@ -83,6 +83,29 @@ router.post(
 );
 
 /**
+ * Update a goal.
+ */
+router.put(
+  '/:goalId',
+  [
+    userValidator.isUserLoggedIn,
+    goalValidator.isValidGoalEdit,
+    goalValidator.isGoalExists
+  ],
+  async (req: Request, res: Response) => {
+    const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
+    
+    const {goalId} = req.params;
+    
+    const goal = await GoalCollection.updateOne(userId, goalId, req.body.category, req.body.hours, req.body.type, req.body.private);
+    res.status(201).json({
+      message: 'Your goal was updated successfully.',
+      goal: await util.constructGoalResponse(goal)
+    });
+  }
+);
+
+/**
  * Delete a goal
  *
  * @name DELETE /api/goals/:id

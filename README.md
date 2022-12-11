@@ -107,7 +107,6 @@ The following backend routes are implemented.
 
 **Body**
 
-- `name` *{string}* - The name of the Goal
 - `hours` *{number}* - The number of hours
 - `category` *{string}* - The name of the category associated with the goal
 - `type` *{string}* - The type of the goal (”goal” or “budget”)
@@ -124,6 +123,29 @@ The following backend routes are implemented.
 - `409` if logged in user already has a goal for the given category
 - `400` if hours is invalid number
 - `404` if category does not exist
+- `400` if type is invalid
+
+## `PUT /api/goals/goalId` - Update a goal
+
+**Body**
+
+- `hours` *{number}* - The number of hours
+- `category` *{string}* - The name of the category associated with the goal
+- `type` *{string}* - The type of the goal (”goal” or “budget”)
+- `private` *{boolean}* - true if goal is private, false if goal is not private
+
+**Returns**
+
+- A success message
+- An object with the updated goal
+
+**Throws**
+
+- `403` if the user is not logged in
+- `409` if logged in user already has a goal for the given category
+- `400` if hours is invalid number
+- `404` if category does not exist
+- `404` if given goal does not exist
 - `400` if type is invalid
 
 ## `DELETE /api/goals/:goalId?` - Delete an existing goal
@@ -354,4 +376,5 @@ The following backend routes are implemented.
 - `400` if end is incorrect format
 - `400` if the time period from start to end is not a valid non zero time period
 - `404` if category with given name is not found
+- `404` if given time entry does not exist
 - `409` if this time entry would conflict with another

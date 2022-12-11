@@ -61,6 +61,21 @@ class GoalCollection {
     return goal.populate(['authorId', 'category']);
   }
 
+  static async updateOne(authorId: Types.ObjectId | string, goalId:Types.ObjectId | string, categoryName: string, hours: number, type: string, priv: boolean): Promise<HydratedDocument<Goal>> {
+    const goal = await GoalModel.findOne({_id: goalId}).populate(['authorId', 'category']);
+
+    const category = await CategoryCollection.findByNameAndUserId(authorId, categoryName);
+
+    goal.category = category.id;
+    goal.hours = hours;
+    goal.type = type;
+    goal.private = priv;
+
+    await goal.save();
+    return goal.populate(['authorId', 'category']);
+  }
+
+
   /**
    * Find a goal by goalId (used by middleware)
    *

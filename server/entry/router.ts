@@ -69,7 +69,7 @@ router.delete(
 );
 
 /**
- * Create a new entry.
+ * Update an entry.
  */
 router.put(
   '/:entryId?',
