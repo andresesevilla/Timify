@@ -8,22 +8,7 @@
         <span class="actions">
           <router-link v-if="$route.params.username === $store.state.username" :to="{ name: 'Friends' }"><b-button>View Friends</b-button></router-link>
           <router-link v-if="$route.params.username === $store.state.username" :to="{ name: 'Requests' }"><b-button>View Friend Requests</b-button></router-link>
-          <section class="button-row">
-            <b-button @click="sendRequest"
-              v-if="$route.params.username != $store.state.username && friendStatus === 'no'">Send
-              Friend Request</b-button>
-            <b-button @click="cancelRequest"
-              v-if="$route.params.username != $store.state.username && friendStatus === 'request sent'">Cancel Friend
-              Request</b-button>
-            <b-button @click="acceptRequest"
-              v-if="$route.params.username != $store.state.username && friendStatus === 'request received'">Accept Friend
-              Request</b-button>
-            <b-button @click="rejectRequest"
-              v-if="$route.params.username != $store.state.username && friendStatus === 'request received'">Reject Friend
-              Request</b-button>
-            <b-button @click="removeFriend"
-              v-if="$route.params.username != $store.state.username && friendStatus === 'friends'">Remove Friend</b-button>
-          </section>
+          <b-button v-for="action in friendStatusToAction[friendStatus]" :key="action" @click="action[1]">{{ action[0] }}</b-button>
         </span>
       </header>
       <CreateGoalForm v-if="$route.params.username === $store.state.username" @refreshGoals="refreshGoals ^= 1"/>
@@ -51,7 +36,13 @@ export default {
     return {
       isValidUsername: true,
       friendStatus: undefined,
-      refreshGoals: 0
+      refreshGoals: 0,
+      friendStatusToAction: {
+        'no': [['Send Friend Request', this.sendRequest]],
+        'request sent': [['Withdraw Friend Request', this.cancelRequest]],
+        'request received': [['Accept Friend Request', this.acceptRequest], ['Reject Friend Request', this.rejectRequest]],
+        'friends': [['Remove Friend', this.removeFriend]]
+      }
     };
   },
   watch: {
@@ -62,128 +53,63 @@ export default {
     }
   },
   methods: {
-    async sendRequest() {
-      const url = `api/friends/requests/${this.$route.params.username}`;
+    sendRequest() {
+      const url = `/api/friends/requests/${this.$route.params.username}`;
       const options = {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin' // Sends express-session credentials with request
       };
-      try {
-        const r = await fetch(url, options);
-        if (!r.ok) {
-          const res = await r.json();
-          throw new Error(res.error);
-        }
-        this.$store.commit('alert', {
-          message: `Successfully sent friend request!`, status: 'success'
-        });
-        this.friendStatus = "request sent";
-      } catch (e) {
-        this.$store.commit('alert', {
-          message: e, status: 'error'
-        });
-      }
+      this.handleRequestForFriend(url, options, "request sent");
     },
-    async cancelRequest() {
-      const url = `api/friends/requests/${this.$route.params.username}`;
+    cancelRequest() {
+      const url = `/api/friends/requests/${this.$route.params.username}`;
       const options = {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin' // Sends express-session credentials with request
       };
-      try {
-        const r = await fetch(url, options);
-        if (!r.ok) {
-          const res = await r.json();
-          throw new Error(res.error);
-        }
-        this.$store.commit('alert', {
-          message: `Successfully cancelled friend request!`, status: 'success'
-        });
-        this.friendStatus = "no";
-      } catch (e) {
-        this.$store.commit('alert', {
-          message: e, status: 'error'
-        });
-      }
+      this.handleRequestForFriend(url, options, "no");
     },
-    async acceptRequest() {
-      const url = `api/friends/requests/respond/${this.$route.params.username}`;
+    acceptRequest() {
+      const url = `/api/friends/requests/respond/${this.$route.params.username}`;
       const options = {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin' // Sends express-session credentials with request
+        body: JSON.stringify({ response: "accept" })
       };
-      const fields = {
-        response: "accept",
-      }
-      options.body = JSON.stringify(fields);
-      try {
-        const r = await fetch(url, options);
-        if (!r.ok) {
-          const res = await r.json();
-          throw new Error(res.error);
-        }
-        this.$store.commit('alert', {
-          message: `Successfully accepted friend request!`, status: 'success'
-        });
-        this.friendStatus = "friends";
-      } catch (e) {
-        this.$store.commit('alert', {
-          message: e, status: 'error'
-        });
-      }
+      this.handleRequestForFriend(url, options, "friends");
     },
-    async rejectRequest() {
-      const url = `api/friends/requests/respond/${this.$route.params.username}`;
+    rejectRequest() {
+      const url = `/api/friends/requests/respond/${this.$route.params.username}`;
       const options = {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin' // Sends express-session credentials with request
+        body: JSON.stringify({ response: "reject" })
       };
-      const fields = {
-        response: "reject",
-      }
-      options.body = JSON.stringify(fields);
-      try {
-        const r = await fetch(url, options);
-        if (!r.ok) {
-          const res = await r.json();
-          throw new Error(res.error);
-        }
-        this.$store.commit('alert', {
-          message: `Successfully rejected friend request!`, status: 'success'
-        });
-        this.friendStatus = "no";
-      } catch (e) {
-        this.$store.commit('alert', {
-          message: e, status: 'error'
-        });
-      }
+      this.handleRequestForFriend(url, options, "no");
     },
-    async removeFriend() {
-      const url = `api/friends//list/${this.$route.params.username}`;
+    removeFriend() {
+      const url = `/api/friends/list/${this.$route.params.username}`;
       const options = {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin' // Sends express-session credentials with request
       };
-      try {
-        const r = await fetch(url, options);
-        if (!r.ok) {
-          const res = await r.json();
-          throw new Error(res.error);
+      this.handleRequestForFriend(url, options, "no");
+    },
+    handleRequestForFriend(url, options, newFriendStatus) {
+      fetch(url, options).then(res => res.json()).then(res => {
+        if (res.error) {
+          this.$buefy.toast.open({
+            message: res.error,
+            type: 'is-danger'
+          });
+          return;
         }
-        this.$store.commit('alert', {
-          message: `Successfully removed friend!`, status: 'success'
+        this.$buefy.toast.open({
+          message: res.message,
+          type: 'is-success'
         });
-        this.friendStatus = "no";
-      } catch (e) {
-        this.$store.commit('alert', {
-          message: e, status: 'error'
-        });
-      }
+        this.friendStatus = newFriendStatus;
+      });
     },
     async getFriendStatus() {
       const profileUsername = this.$route.params.username;
@@ -191,7 +117,7 @@ export default {
       if (profileUsername === loggedInUsername) {
         return;
       }
-      const url = `api/friends/status/${profileUsername}`;
+      const url = `/api/friends/status/${profileUsername}`;
       try {
         const r = await fetch(url);
         const res = await r.json();
