@@ -1,5 +1,5 @@
 <template>
-    <b-field :type="{'is-danger': !isCategoryValid}" :message="{'Please choose one of your categories': !isCategoryValid}" class="autocomplete-field">
+    <b-field :type="{'is-danger': isValidationEnabled && !isCategoryValid}" :message="{'Please choose one of your categories': isValidationEnabled && !isCategoryValid}" class="autocomplete-field">
     <b-autocomplete 
       v-model="category" 
       placeholder="Choose a category"
@@ -35,6 +35,10 @@ export default {
     loading: {
       type: Boolean,
       default: false,
+    },
+    isValidationEnabled: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {

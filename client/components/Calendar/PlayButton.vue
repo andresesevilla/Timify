@@ -6,6 +6,7 @@
         <CategoryAutocomplete
           :categories="categories"
           :loading="categoriesLoading"
+          :isValidationEnabled="false"
           @select="(c) => (category = c)"
           @add-category="(category) => {this.categories.unshift(category);}"
           class="autocomplete"
