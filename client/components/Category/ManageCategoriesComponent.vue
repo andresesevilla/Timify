@@ -1,6 +1,7 @@
 <template>
   <section v-if="categories !== null" class="animate">
 
+    <b-button class="is-primary" id="add-category" @click="addCategory">Add category</b-button>
     <ul v-if="categories.length" id="categories-list">
       <li v-for="category in categories" :key="category.id" class="category">
         <span v-if="editing !== category">{{ category.name }}</span>
@@ -18,9 +19,6 @@
     <div v-else>
       <p>You have no categories yet. Add one!</p>
     </div>
-    <b-button class="is-primary" id="add-category" @click="addCategory"
-    >Add category</b-button
-    >
   </section>
   <section v-else>
     <b-skeleton :animated="true"></b-skeleton>
