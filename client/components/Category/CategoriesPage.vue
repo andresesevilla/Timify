@@ -13,36 +13,15 @@
     <div class="column">
       <div style="display:flex; flexDirection: column; align-items:center"> 
         <h3>Time spent by categories</h3>
-        <h4>
-          from {{this.currentStart.toLocaleDateString()}} to
-          {{this.currentEnd.toLocaleDateString()}}
-        </h4>
-        <div style="display:flex; margin-top: 1em">
+
+
+        <div class="date-picker-container">
+          <span>Choose dates:</span>
           <b-datepicker
-              v-model="startDateSelected"
-              :locale="locale"
-              placeholder="Start Date"
-              icon="calendar-today"
-              :icon-right="selected ? 'close-circle' : ''"
-              icon-right-clickable
-              @icon-right-click="clearDate"
-              trap-focus
-              class="date-picker"
-              >
-          </b-datepicker>
-          <b-datepicker
-                v-model="endDateSelected"
-                :locale="locale"
-                placeholder="End Date"
-                icon="calendar-today"
-                :icon-right="selected ? 'close-circle' : ''"
-                icon-right-clickable
-                @icon-right-click="clearDate"
-                trap-focus
-                class="date-picker"
-                style="margin: 0" 
-                >
-          </b-datepicker>
+            placeholder="Click to select..."
+            v-model="dates"
+            range />
+
         </div>
         
       </div>
@@ -70,9 +49,10 @@ export default {
       updateChart: 0,
       categories: [],
       showWeekNumber: false,
-      locale: undefined, // Browser locale
       startDateSelected: null,
       endDateSelected: null,
+      selected: null,
+      dates: []
     };
   },
   computed: {
@@ -89,34 +69,19 @@ export default {
       const day = today.getDay();
       const diff = today.getDate() - day + (day == 0 ? 0 : 7);
       return new Date(today.setDate(diff));
-    },
-    currentStart() {
-      return this.startDateSelected || this.thisMonday;
-    },
-    currentEnd() {
-      return this.endDateSelected || this.thisSunday;
-    },
+    }
   },
   mounted() {
-    // make this referesh when the date range changes
-    this.$watch(
-      () => [this.currentStart, this.currentEnd],
-      () => {
-        this.fetchEntries();
-      },
-      { deep: true }
-    );
+    this.dates = [this.thisMonday, this.thisSunday];
     this.fetchEntries();
   },
   methods: {
     fetchEntries() {
-      const start = this.currentStart.toISOString(),
-        end = this.currentEnd.toISOString();
-      console.log('FETCHING ENTRIES', start, end)
+      const start = this.dates[0].toISOString(),
+        end = this.dates[1].toISOString();
       fetch(`/api/entries?start=${start}&end=${end}`)
         .then((response) => response.json())
         .then((entries) => {
-          console.log('ENTRIES', entries)
           const categories = {};
           entries.forEach((entry) => {
             // calculate time spent for the category given start and end date in hours
@@ -141,8 +106,13 @@ export default {
         });
     },
     clearDate () {
-            this.selected = null
+      this.selected = null
     },
+  },
+  watch: {
+    dates() {
+      this.fetchEntries();
+    }
   },
 };
 </script>
@@ -162,6 +132,13 @@ export default {
 
 .date-picker {
   width: 200px;
-  margin-right: 1em;
+}
+
+.date-picker-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+  margin: 1em 0;
 }
 </style>
