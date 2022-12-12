@@ -106,8 +106,7 @@ export default {
       },
       { deep: true }
     );
-
-    // this.fetchEntries();
+    this.fetchEntries();
   },
   methods: {
     fetchEntries() {
