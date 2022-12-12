@@ -27,7 +27,7 @@
               icon-right-clickable
               @icon-right-click="clearDate"
               trap-focus
-              style="margin-right: 1em; width: 200px"
+              class="date-picker"
               >
           </b-datepicker>
           <b-datepicker
@@ -39,7 +39,8 @@
                 icon-right-clickable
                 @icon-right-click="clearDate"
                 trap-focus
-                style="width: 200px"
+                class="date-picker"
+                style="margin: 0" 
                 >
           </b-datepicker>
         </div>
@@ -156,5 +157,10 @@ export default {
   display: flex;
   justify-content: center;
   margin-top: 1em;
+}
+
+.date-picker {
+  width: 200px;
+  margin-right: 1em;
 }
 </style>
