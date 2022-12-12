@@ -112,9 +112,11 @@ export default {
     fetchEntries() {
       const start = this.currentStart.toISOString(),
         end = this.currentEnd.toISOString();
+      console.log('FETCHING ENTRIES', start, end)
       fetch(`/api/entries?start=${start}&end=${end}`)
         .then((response) => response.json())
         .then((entries) => {
+          console.log('ENTRIES', entries)
           const categories = {};
           entries.forEach((entry) => {
             // calculate time spent for the category given start and end date in hours
