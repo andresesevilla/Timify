@@ -14,9 +14,36 @@
       <div style="display:flex; flexDirection: column; align-items:center"> 
         <h3>Time spent by categories</h3>
         <h4>
-          from {{ thisMonday.toLocaleDateString() }} to
-          {{ thisSunday.toLocaleDateString() }}
+          from {{this.currentStart.toLocaleDateString()}} to
+          {{this.currentEnd.toLocaleDateString()}}
         </h4>
+        <div style="display:flex; margin-top: 1em">
+          <b-datepicker
+              v-model="startDateSelected"
+              :locale="locale"
+              placeholder="Start Date"
+              icon="calendar-today"
+              :icon-right="selected ? 'close-circle' : ''"
+              icon-right-clickable
+              @icon-right-click="clearDate"
+              trap-focus
+              style="margin-right: 1em; width: 200px"
+              >
+          </b-datepicker>
+          <b-datepicker
+                v-model="endDateSelected"
+                :locale="locale"
+                placeholder="End Date"
+                icon="calendar-today"
+                :icon-right="selected ? 'close-circle' : ''"
+                icon-right-clickable
+                @icon-right-click="clearDate"
+                trap-focus
+                style="width: 200px"
+                >
+          </b-datepicker>
+        </div>
+        
       </div>
       <h3 class="chart-empty" v-if="this.categories.length === 0">No time entries in this range.</h3>
       <FrappeChart
@@ -41,6 +68,10 @@ export default {
     return {
       updateChart: 0,
       categories: [],
+      showWeekNumber: false,
+      locale: undefined, // Browser locale
+      startDateSelected: null,
+      endDateSelected: null,
     };
   },
   computed: {
@@ -58,14 +89,29 @@ export default {
       const diff = today.getDate() - day + (day == 0 ? 0 : 7);
       return new Date(today.setDate(diff));
     },
+    currentStart() {
+      return this.startDateSelected || this.thisMonday;
+    },
+    currentEnd() {
+      return this.endDateSelected || this.thisSunday;
+    },
   },
   mounted() {
-    this.fetchEntries();
+    // make this referesh when the date range changes
+    this.$watch(
+      () => [this.currentStart, this.currentEnd],
+      () => {
+        this.fetchEntries();
+      },
+      { deep: true }
+    );
+
+    // this.fetchEntries();
   },
   methods: {
     fetchEntries() {
-      const start = this.thisMonday.toISOString(),
-        end = this.thisSunday.toISOString();
+      const start = this.currentStart.toISOString(),
+        end = this.currentEnd.toISOString();
       fetch(`/api/entries?start=${start}&end=${end}`)
         .then((response) => response.json())
         .then((entries) => {
@@ -91,6 +137,9 @@ export default {
             ],
           });
         });
+    },
+    clearDate () {
+            this.selected = null
     },
   },
 };
