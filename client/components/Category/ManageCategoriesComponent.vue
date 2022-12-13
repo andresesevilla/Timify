@@ -3,9 +3,9 @@
 
     <b-button class="is-primary" id="add-category" @click="addCategory">Add category</b-button>
     <ul v-if="categories.length" id="categories-list">
-      <li v-for="category in categories" :key="category.id" class="category">
-        <span v-if="editing !== category">{{ category.name }}</span>
-        <b-input v-else v-model="draft.name" v-on:keyup.native.enter="saveEdit(category)"></b-input>
+      <li v-for="category in categories" :key="category" class="category">
+        <span v-if="editing !== category">{{ category }}</span>
+        <b-input v-else v-model="draft" v-on:keyup.native.enter="saveEdit(category)"></b-input>
         <span class="category-actions" v-if="!editing">
           <b-tooltip label="Edit"><a @click="startEdit(category)"><b-icon icon="pencil" style="color: #087f5b" /></a></b-tooltip>
           <b-tooltip label="Delete"><a @click="deleteCategory(category)"><b-icon icon="delete" style="color: #000" /></a></b-tooltip>
@@ -36,7 +36,7 @@ export default {
   data() {
     return {
       editing: null,
-      draft: {},
+      draft: null,
       categories: null,
       isLoading: true,
       lastActionMethod: null,
@@ -47,16 +47,9 @@ export default {
   },
   methods: {
     fetchCategories() {
-      if (!this.$store.state.categories) {
-        fetch("/api/categories")
-          .then((response) => response.json())
-          .then((categories) => {
-            this.categories = categories;
-            this.$store.commit("setCategories", [...categories]);
-          });
-      } else {
+      this.$store.dispatch("fetchCategories").then(() => {
         this.categories = [...this.$store.state.categories];
-      }
+      });
     },
     addCategory() {
       if (this.editing) {
@@ -68,7 +61,7 @@ export default {
         });
         return;
       }
-      this.categories.unshift({ name: this.getUniqueName("Category") });
+      this.categories.unshift(this.getUniqueName("Category"));
       this.lastActionMethod = "POST";
       this.startEdit(this.categories[0]);
     },
@@ -77,7 +70,7 @@ export default {
         this.lastActionMethod = "PATCH";
       }
       this.editing = category;
-      this.draft = Object.assign({}, category);
+      this.draft = category;
       const index = this.categories.indexOf(category);
       // focus on li with this index
       this.$nextTick(() => {
@@ -87,8 +80,7 @@ export default {
       });
     },
     saveEdit(category) {
-      // make patch request to /api/categories/category.name and send draft name in the body
-      if (this.lastActionMethod !== "POST" && category.name === this.draft.name) {
+      if (this.lastActionMethod !== "POST" && category === this.draft) {
         this.$buefy.toast.open({
           message: "No changes made.",
           type: "is-warning",
@@ -97,13 +89,13 @@ export default {
         this.discardEdit(category);
         return;
       }
-      const url = this.lastActionMethod === "POST" ? "/api/categories" : `/api/categories/${category.name}`;
+      const url = this.lastActionMethod === "POST" ? "/api/categories" : `/api/categories/${category}`;
       fetch(url, {
         method: this.lastActionMethod,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(this.draft),
+        body: JSON.stringify({name: this.draft}),
       }).then(res => res.json()).then(res => {
         if (res.error) {
           this.$buefy.toast.open({
@@ -120,6 +112,7 @@ export default {
           this.editing = null;
           this.categories[this.categories.indexOf(category)] = this.draft;
           this.lastActionMethod = null;
+          this.$store.dispatch("fetchCategories");
           this.$emit("update-categories");
         }
       });
@@ -129,7 +122,7 @@ export default {
         this.categories.splice(this.categories.indexOf(category), 1);
       }
       this.editing = null;
-      this.draft = {};
+      this.draft = null;
     },
     deleteCategory(category) {
       this.$buefy.dialog.confirm({
@@ -140,7 +133,7 @@ export default {
         type: "is-danger",
         hasIcon: true,
         onConfirm: () => {
-          fetch(`/api/categories/${category.name}`, {
+          fetch(`/api/categories/${category}`, {
             method: "DELETE",
           }).then(res => res.json()).then(res => {
             if (res.error) {
@@ -165,7 +158,7 @@ export default {
     getUniqueName(prefix) {
       let names = new Set();
       this.categories.forEach((c) => {
-        names.add(c.name);
+        names.add(c);
       });
       let ptr = 1;
       while (names.has(`${prefix} ${ptr}`)) ptr++;

@@ -21,7 +21,7 @@ const store = new Vuex.Store({
   actions: {
     fetchCategories({commit}) {
       commit("setCategories", null);
-      fetch("/api/categories")
+      return fetch("/api/categories")
       .then((response) => response.json())
       .then((categories) => {
         commit("setCategories", categories.map(c => c.name));
