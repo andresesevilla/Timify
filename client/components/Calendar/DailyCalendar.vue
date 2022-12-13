@@ -158,6 +158,8 @@ export default {
       fetch("/api/entries")
         .then((response) => response.json())
         .then((entries) => {
+          const calApi = this.$refs.fullCalendar.getApi();
+          calApi.removeAllEvents();
           this.calendarOptions.events = entries.map((entry) => {
             return {
               id: entry._id,
@@ -336,6 +338,8 @@ export default {
           }
           event.setProp("id", response.entry._id);
           this.$emit("refreshGoals");
+          const calApi = this.$refs.fullCalendar.getApi();
+          this.$store.commit("setEvents", calApi.getEvents());
         });
     },
     cancelSelected() {

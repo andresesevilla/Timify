@@ -110,7 +110,7 @@ export default {
         this.endDate = new Date();
         clearInterval(this.interval);
         this.interval = null;
-        if (this.timeSpentSeconds < 5) {
+        if (this.timeSpentSeconds < 5 * 60) {
           this.$buefy.toast.open({
             message: "You need to work for at least 5 minutes to log time, so this won't be logged.",
             type: "is-warning",
