@@ -12,7 +12,7 @@
     </div>
     <div class="column">
       <div style="display:flex; flexDirection: column; align-items:center"> 
-        <h3>Time spent by categories</h3>
+        <h3>Time spent by categories in hours</h3>
 
 
         <div class="date-picker-container">
