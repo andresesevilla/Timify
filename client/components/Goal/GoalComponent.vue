@@ -96,20 +96,20 @@ export default {
           return "Keep it up!";
         }
         if (this.progress >= 0) {
-          return "You can do it!";
+          return "Let's go!";
         }
       } else {
         if (this.progress >= 100) {
           return "Limit reached!";
         }
         if (this.progress >= 85) {
-          return "Be careful with the limit!";
+          return "Careful with the limit!";
         }
         if (this.progress >= 50) {
           return "Less than half of the limit left!";
         }
         if (this.progress >= 25) {
-          return "You're doing great!";
+          return "Doing great so far!";
         }
         if (this.progress >= 0) {
           return "Good luck!";
