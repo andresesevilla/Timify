@@ -305,6 +305,7 @@ export default {
     },
     saveSelected(event = this.eventSelected) {
       if (!this.validateEvent(event)) {
+        if (!event.id) event.remove();
         return;
       }
       const url = !event.id
