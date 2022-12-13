@@ -145,7 +145,7 @@ const isViewAllowed = async (req: Request, res: Response, next: NextFunction) =>
 
   if (!friendship && friend.id !== userId) {
     return res.status(403).json({
-      error: `You are not friends with ${friendUsername}. Only friends can view this resource.`
+      error: `You are not friends with ${friendUsername}. Only friends can their goals.`
     });
   }
 
