@@ -20,9 +20,8 @@ router.get(
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
 
     const categoryName = req.query.category as string;
-    const start = new Date(req.query.startTime as string);
-    const end = new Date(req.query.endTime as string);
-
+    const start = new Date(req.query.start as string);
+    const end = new Date(req.query.end as string);
     const allEntries = await EntryCollection.findAll(userId, categoryName, start, end);
     const response = allEntries.map(util.constructEntryResponse);
     res.status(200).json(response);
