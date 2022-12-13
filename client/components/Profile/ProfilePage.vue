@@ -6,28 +6,50 @@
       <header>
         <h1>Profile: @{{ $route.params.username }}</h1>
         <span class="actions">
-          <router-link v-if="$route.params.username === $store.state.username" :to="{ name: 'Friends' }"><b-button>View Friends</b-button></router-link>
-          <router-link v-if="$route.params.username === $store.state.username" :to="{ name: 'Requests' }"><b-button>View Friend Requests</b-button></router-link>
-          <b-button v-for="action in friendStatusToAction[friendStatus]" :key="action" @click="action[1]">{{ action[0] }}</b-button>
+          <router-link
+            v-if="$route.params.username === $store.state.username"
+            :to="{ name: 'Friends' }"
+            ><b-button>View Friends</b-button></router-link
+          >
+          <router-link
+            v-if="$route.params.username === $store.state.username"
+            :to="{ name: 'Requests' }"
+            ><b-button>View Friend Requests</b-button></router-link
+          >
+          <b-button
+            v-for="action in friendStatusToAction[friendStatus]"
+            :key="action"
+            @click="action[1]"
+            >{{ action[0] }}</b-button
+          >
         </span>
       </header>
-      <CreateGoalForm v-if="$route.params.username === $store.state.username" @refreshGoals="refreshGoals ^= 1"/>
+      <CreateGoalForm
+        v-if="$route.params.username === $store.state.username"
+        @refreshGoals="refreshGoals ^= 1"
+      />
       <header>
-        <h2>{{$route.params.username}}'s Goals</h2>
+        <h2>{{ $route.params.username }}'s Goals</h2>
       </header>
-      <GoalListComponent :isFeedUI="false" :allowEdit="($route.params.username === $store.state.username)" :fetchOptions="{url: `/api/goals?author=${$route.params.username}`}" :key="refreshGoals" />
+      <GoalListComponent
+        :isFeedUI="false"
+        :allowEdit="$route.params.username === $store.state.username"
+        :fetchOptions="{ url: `/api/goals?author=${$route.params.username}` }"
+        :key="refreshGoals"
+        @refreshGoals="refreshGoals ^= 1"
+      />
     </section>
   </main>
   <NotFound v-else />
 </template>
 
 <script>
-import NotFound from '../../NotFound.vue';
-import CreateGoalForm from '@/components/Goal/CreateGoalForm.vue';
-import GoalListComponent from '@/components/Goal/GoalListComponent.vue';
+import NotFound from "../../NotFound.vue";
+import CreateGoalForm from "@/components/Goal/CreateGoalForm.vue";
+import GoalListComponent from "@/components/Goal/GoalListComponent.vue";
 
 export default {
-  name: 'ProfilePage',
+  name: "ProfilePage",
   components: { NotFound, CreateGoalForm, GoalListComponent },
   mounted() {
     this.getFriendStatus();
@@ -38,78 +60,83 @@ export default {
       friendStatus: undefined,
       refreshGoals: 0,
       friendStatusToAction: {
-        'no': [['Send Friend Request', this.sendRequest]],
-        'request sent': [['Withdraw Friend Request', this.cancelRequest]],
-        'request received': [['Accept Friend Request', this.acceptRequest], ['Reject Friend Request', this.rejectRequest]],
-        'friends': [['Remove Friend', this.removeFriend]]
-      }
+        no: [["Send Friend Request", this.sendRequest]],
+        "request sent": [["Withdraw Friend Request", this.cancelRequest]],
+        "request received": [
+          ["Accept Friend Request", this.acceptRequest],
+          ["Reject Friend Request", this.rejectRequest],
+        ],
+        friends: [["Remove Friend", this.removeFriend]],
+      },
     };
   },
   watch: {
-    '$route'() {
+    $route() {
       this.friendStatus = undefined;
       this.getFriendStatus();
       this.refreshGoals ^= 1;
-    }
+    },
   },
   methods: {
     sendRequest() {
       const url = `/api/friends/requests/${this.$route.params.username}`;
       const options = {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
       };
       this.handleRequestForFriend(url, options, "request sent");
     },
     cancelRequest() {
       const url = `/api/friends/requests/${this.$route.params.username}`;
       const options = {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       };
       this.handleRequestForFriend(url, options, "no");
     },
     acceptRequest() {
       const url = `/api/friends/requests/respond/${this.$route.params.username}`;
       const options = {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ response: "accept" })
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ response: "accept" }),
       };
       this.handleRequestForFriend(url, options, "friends");
     },
     rejectRequest() {
       const url = `/api/friends/requests/respond/${this.$route.params.username}`;
       const options = {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ response: "reject" })
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ response: "reject" }),
       };
       this.handleRequestForFriend(url, options, "no");
     },
     removeFriend() {
       const url = `/api/friends/list/${this.$route.params.username}`;
       const options = {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       };
       this.handleRequestForFriend(url, options, "no");
     },
     handleRequestForFriend(url, options, newFriendStatus) {
-      fetch(url, options).then(res => res.json()).then(res => {
-        if (res.error) {
+      fetch(url, options)
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.error) {
+            this.$buefy.toast.open({
+              message: res.error,
+              type: "is-danger",
+            });
+            return;
+          }
           this.$buefy.toast.open({
-            message: res.error,
-            type: 'is-danger'
+            message: res.message,
+            type: "is-success",
           });
-          return;
-        }
-        this.$buefy.toast.open({
-          message: res.message,
-          type: 'is-success'
+          this.friendStatus = newFriendStatus;
         });
-        this.friendStatus = newFriendStatus;
-      });
     },
     async getFriendStatus() {
       const profileUsername = this.$route.params.username;
@@ -130,7 +157,7 @@ export default {
         this.isValidUsername = false;
       }
     },
-  }
+  },
 };
 </script>
 

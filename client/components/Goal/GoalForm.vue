@@ -72,7 +72,7 @@
       />
     </section>
 
-    <b-button type="submit" @click="submit">{{submitButtonText}}</b-button>
+    <b-button type="submit" @click="submitCallback(type, hours, category, isFriends)">{{submitButtonText}}</b-button>
   </form>
 </template>
 
@@ -143,41 +143,7 @@ export default {
         this.categories.includes(this.category)
       );
     },
-  },
-  mounted() {
-    
-  },
-  methods: {
-    submit() {
-      fetch("/api/goals", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          type: this.type,
-          hours: this.hours,
-          category: this.category,
-          private: !this.isFriends,
-        }),
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          if (res.error) {
-            this.$buefy.toast.open({
-              message: res.error,
-              type: "is-danger",
-            });
-          } else {
-            this.$buefy.toast.open({
-              message: "Goal created!",
-              type: "is-success",
-            });
-            this.$emit("refreshGoals");
-          }
-        });
-    },
-  },
+  }
 };
 </script>
 

@@ -9,7 +9,7 @@
       <span class="goal-sentence"> Spend {{ goal.type === 'goal' ? 'at least' : 'at most'}} {{ goal.hours }} hours on <span class="category-name">{{ goal.category }}</span> </span>
       <span class="goal-actions" v-if="allowEdit">
           <b-tooltip label="Edit"><a @click="startEdit"><b-icon icon="pencil" /></a></b-tooltip>
-          <b-tooltip label="Delete"><a @click="deleteCategory"><b-icon icon="delete" /></a></b-tooltip>
+          <b-tooltip label="Delete"><a @click="deleteGoal"><b-icon icon="delete" /></a></b-tooltip>
         </span>
     </header>
     <p>{{ infoMessage }}</p>
@@ -28,7 +28,7 @@
       <span class="goal-sentence"> spend {{ goal.type === 'goal' ? 'at least' : 'at most'}} {{ goal.hours }} hours </span>
       <span class="goal-actions" v-if="allowEdit">
         <b-tooltip label="Edit"><a @click="startEdit"><b-icon icon="pencil" /></a></b-tooltip>
-        <b-tooltip label="Delete"><a @click="deleteCategory"><b-icon icon="delete" /></a></b-tooltip>
+        <b-tooltip label="Delete"><a @click="deleteGoal"><b-icon icon="delete" /></a></b-tooltip>
       </span>
     </header>
     <p>{{ infoMessage }}</p>
@@ -38,19 +38,24 @@
       </b-progress>
     </section>
   </article>
-  <!-- <GoalForm 
+  <GoalForm 
     v-else
     :title="'Edit goal'"
     :submitButtonText="'Save'"
     :submitCallback="submitEdit"
-    @refreshGoals="$emit('refreshGoals')"
-
-  /> -->
+    :initType="goal.type"
+    :initHours="goal.hours"
+    :initIsFriends="goal.visibility === 'friends'"
+    :initCategory="goal.category"
+  />
 </template>
 
 <script>
+import GoalForm from "@/components/Goal/GoalForm.vue";
+
 export default {
   name: 'GoalComponent',
+  components: {GoalForm},
   props: {
     // Data from the stored goal
     goal: {
@@ -69,7 +74,6 @@ export default {
   data() {
     return {
       editing: false,
-      draft: {},
     };
   },
   computed: {
@@ -132,13 +136,35 @@ export default {
   },
   methods: {
     startEdit() {
-      this.$buefy.toast.open({
-        message: 'Editing is not yet implemented, delete and create a new goal instead. lol.',
-        type: 'is-warning',
-        duration: 3000,
+      this.editing = true;
+    },
+    submitEdit(type, hours, category, isFriends) {
+      fetch(`/api/goals/${this.goal._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type, hours, category,
+          private: !isFriends
+        })
+      }).then(res => res.json()).then(res => {
+        if (res.error) {
+          this.$buefy.toast.open({
+            message: res.error,
+            type: "is-danger"
+          });
+          return;
+        }
+        this.$buefy.toast.open({
+          message: res.message,
+          type: "is-success"
+        });
+        this.$emit("refreshGoals");
+        this.editing = false;
       });
     },
-    deleteCategory() {
+    deleteGoal() {
       this.$emit("delete");
     },
   }

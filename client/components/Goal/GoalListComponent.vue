@@ -16,6 +16,7 @@
         :allowEdit="allowEdit"
         :isFeedUI="isFeedUI"
         @delete="handleDeleteGoal(goal)"
+        @refreshGoals="$emit('refreshGoals')"
       />
     </section>
     <article v-else>
