@@ -1,7 +1,7 @@
 <template>
   <main class="columns">
     <div class="column">
-      <div style="display:flex; flexDirection: column; align-items:center; marginBottom: 24px"> 
+      <div style="display:flex; flexDirection: column; align-items:center; marginBottom: 1.5em"> 
         <h3>Manage Categories</h3>
         <h4>Edit a category name, or delete it and remove all related logs.</h4>
       </div>

@@ -152,7 +152,6 @@ export default {
 
     document.addEventListener("keydown", this.handleKeyDown);
     this.storePlaying = this.$store.state.playing;
-
   },
   methods: {
     fetchEvents() {
@@ -382,10 +381,10 @@ export default {
     },
   },
   watch: {
-    "storePlaying": function (playing) {      
+    "storePlaying": function (playing) {
       const calApi = this.$refs.fullCalendar.getApi();  
 
-      if (playing === null) { // playing is bad event, just skip over it
+      if (!playing || !playing.start) { // playing is bad event, just skip over it
         try {
           calApi.getEventById("playing").remove();
         } catch (e) {
