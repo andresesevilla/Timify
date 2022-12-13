@@ -103,7 +103,7 @@ export default {
         eventResize: this.handleEventDragOrResize,
         eventDrop: this.handleEventDragOrResize,
 
-        eventMinHeight: 30,
+        eventMinHeight: 24,
         slotDuration: "00:15:00",
         scrollTime: new Date().getHours() - 1 + ":00:00",
 

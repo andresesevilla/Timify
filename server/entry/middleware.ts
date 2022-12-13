@@ -129,7 +129,7 @@ const isValidEntryEdit = async (req: Request, res: Response, next: NextFunction)
   }
 
   const existingEntries = await EntryCollection.findAll(userId, undefined, undefined, undefined);
-  if (existingEntries.some(entry => entry.id !== entryId && util.isConflict(new Date(entry.start), new Date(entry.end), start, end))) {
+  if (existingEntries.some(entry => entry._id.toString() !== entryId && util.isConflict(new Date(entry.start), new Date(entry.end), start, end))) {
     res.status(409).json({
       error: 'Time entry conflicts with existing time entry.'
     });
