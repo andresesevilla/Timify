@@ -103,7 +103,7 @@ export default {
         eventResize: this.handleEventDragOrResize,
         eventDrop: this.handleEventDragOrResize,
 
-        eventShortHeight: 15,
+        eventMinHeight: 30,
         slotDuration: "00:15:00",
         scrollTime: new Date().getHours() - 1 + ":00:00",
 
@@ -166,6 +166,7 @@ export default {
               end: entry.end,
             };
           });
+          this.$store.commit("setEvents", this.calendarOptions.events);
         });
       this.eventSelected = this.eventDraft = null;
     },
@@ -200,7 +201,8 @@ export default {
       calendarApi.unselect();
     },
     handleEventClick(clickInfo) {
-      if (this.isPlaying) return;
+      // if (this.isPlaying) return;
+      if (clickInfo.event.id === "playing") return;
 
       if (this.isEventDraft) {
         if (this.validateEvent(this.eventSelected)) {
@@ -353,7 +355,7 @@ export default {
     },
 
     handleKeyDown(event) {
-      if (this.isPlaying || document.querySelector(".dialog.modal.is-active")) return;
+      if (document.querySelector(".dialog.modal.is-active")) return;
 
 
       if (this.eventSelected) {
@@ -393,12 +395,7 @@ export default {
         this.isPlaying = false;
       } else if (playing.end) { // end of the event, add it to the calendar
         calApi.getEventById("playing").remove();
-        calApi.addEvent({
-          id: playing.id,
-          title: playing.title,
-          start: playing.start,
-          end: playing.end,
-        });
+        this.fetchEvents();
         this.isPlaying = false;
       } else { // here it should have start, so just add it as playing
         calApi.addEvent({
@@ -406,12 +403,10 @@ export default {
           start: new Date(),
           color: "green",
           id: "playing",
+          editable: false
         });
         this.isPlaying = true;
       }
-
-      calApi.setOption("editable", !this.isPlaying);
-      calApi.setOption("selectable", !this.isPlaying);
     },
     "$store.state.playing": function (playing) {
       this.storePlaying = playing;

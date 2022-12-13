@@ -8,6 +8,7 @@ export function getDefaultState() {
   return {
     username: null, // Username of the logged in user
     playing: {},
+    events: []
   };
 }
 
@@ -18,14 +19,13 @@ const store = new Vuex.Store({
   state: getDefaultState(),
   mutations: {
     setUsername(state, username) {
-      /**
-       * Update the stored username to the specified one.
-       * @param username - new username to set
-       */
       state.username = username;
     },
     setPlaying(state, playingEvent) {
       state.playing = playingEvent;
+    },
+    setEvents(state, events) {
+      state.events = events;
     }
   },
   // Store data across page refreshes, only discard on browser close

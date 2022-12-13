@@ -87,16 +87,33 @@ export default {
           });
           return;
         }
+        const now = new Date();
+        let isWarning = false;
+        console.log(this.$store.state.events);
+        for (const e of this.$store.state.events) {
+          if (new Date(e.start) >= now || (e.end && new Date(e.end) >= now)) {
+            isWarning = true;
+            break;
+          }
+        }
+        if (isWarning) {
+          this.$buefy.toast.open({
+            message: "Started time log might collide with existing time logs. Other time logs will be overriden by this action based on end time of this work.",
+            type: "is-warning",
+            duration: 4000
+          });
+        }
+
 
         this.timeSpentSeconds = 0;
-        this.startDate = new Date();
+        this.startDate = now;
         this.interval = setInterval(this.incrementTime, 1000);
         this.$store.commit("setPlaying", {title: this.category, start: this.startDate});
       } else {
         this.endDate = new Date();
         clearInterval(this.interval);
         this.interval = null;
-        if (this.timeSpentSeconds < 5 * 60) {
+        if (this.timeSpentSeconds < 5) {
           this.$buefy.toast.open({
             message: "You need to work for at least 5 minutes to log time, so this won't be logged.",
             type: "is-warning",
@@ -115,6 +132,7 @@ export default {
             category: this.category,
             start: this.startDate,
             end: this.endDate,
+            overwrite: true,
           }),
         })
           .then((response) => response.json())
