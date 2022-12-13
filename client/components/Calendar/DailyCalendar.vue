@@ -114,9 +114,17 @@ export default {
 
         headerToolbar: {
           start: 'title', end: 'today prev,next',
-          center: 'timeGridDay,timeGridWeek'
+          center: 'timeGridDay,timeGridThreeDay'
         },
         buttonText: {today: "go to today"},
+
+        views: {
+          timeGridThreeDay: {
+            type: 'timeGrid',
+            duration: { days: 3 },
+            buttonText: '3-day',
+          },
+        },
       },
       eventSelected: null,
       eventDraft: null,
