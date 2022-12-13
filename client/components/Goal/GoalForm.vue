@@ -97,10 +97,6 @@ export default {
       type: String,
       default: null,
     },
-    initCategories: {
-      type: Array,
-      default: [],
-    },
     initIsFriends: {
       type: Boolean,
       default: true,
@@ -123,12 +119,16 @@ export default {
       type: this.initType,
       hours: this.initHours,
       category: this.initCategory,
-      categories: this.initCategories,
       isFriends: this.initIsFriends,
-      loading: true,
     };
   },
   computed: {
+    categories() {
+      return this.$store.state.categories || [];
+    },
+    loading() {
+      return this.$store.state.categories === null;
+    },
     filteredCategories() {
       return this.categories.filter((category) => {
         return category
@@ -145,13 +145,7 @@ export default {
     },
   },
   mounted() {
-    this.loading = true;
-    fetch("/api/categories")
-      .then((response) => response.json())
-      .then((categories) => {
-        this.categories = categories.map((category) => category.name);
-        this.loading = false;
-      });
+    
   },
   methods: {
     submit() {

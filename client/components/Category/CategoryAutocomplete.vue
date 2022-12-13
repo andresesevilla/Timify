@@ -28,14 +28,14 @@ export default {
       type: String,
       default: null,
     },
-    categories: {
-      type: Array,
-      default: [],
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
+    // categories: {
+    //   type: Array,
+    //   default: [],
+    // },
+    // loading: {
+    //   type: Boolean,
+    //   default: false,
+    // },
     isValidationEnabled: {
       type: Boolean,
       default: true,
@@ -47,6 +47,12 @@ export default {
     };
   },
   computed: {
+    categories() {
+      return this.$store.state.categories || [];
+    },
+    loading() {
+      return this.categories === null;
+    },
     filteredCategories() {
       return this.categories.filter((category) => {
         return category.toLowerCase().includes(this.category === null ? "" : this.category.toLowerCase());
@@ -92,7 +98,7 @@ export default {
             });
             return;
           }
-          this.$emit("add-category", category);
+          this.$store.dispatch("fetchCategories");
           this.reset();
         });
     },

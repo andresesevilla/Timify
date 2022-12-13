@@ -47,11 +47,16 @@ export default {
   },
   methods: {
     fetchCategories() {
-      fetch("/api/categories")
-        .then((response) => response.json())
-        .then((categories) => {
-          this.categories = categories;
-        });
+      if (!this.$store.state.categories) {
+        fetch("/api/categories")
+          .then((response) => response.json())
+          .then((categories) => {
+            this.categories = categories;
+            this.$store.commit("setCategories", [...categories]);
+          });
+      } else {
+        this.categories = [...this.$store.state.categories];
+      }
     },
     addCategory() {
       if (this.editing) {

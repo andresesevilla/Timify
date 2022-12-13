@@ -4,8 +4,6 @@
       <span>Start working on:</span>
       <div>
         <CategoryAutocomplete
-          :categories="categories"
-          :loading="categoriesLoading"
           :isValidationEnabled="false"
           @select="(c) => (category = c)"
           @add-category="(category) => {this.categories.unshift(category);}"
@@ -37,14 +35,18 @@ export default {
       category: null,
       timeSpentSeconds: 0,
       interval: null,
-      categories: [],
-      categoriesLoading: true,
 
       startDate: null,
       endDate: null,
     };
   },
   computed: {
+    categories() {
+      return this.$store.state.categories || [];
+    },
+    categoriesLoading() {
+      return this.categories === null;
+    },
     timeSpentReadable() {
       if (this.timeSpentSeconds < 60) {
         return `${this.timeSpentSeconds} seconds`;
@@ -64,12 +66,7 @@ export default {
   },
   methods: {
     fetchCategories() {
-      fetch("/api/categories")
-        .then((response) => response.json())
-        .then((categories) => {
-          this.categories = categories.map((category) => category.name);
-          this.categoriesLoading = false;
-        });
+      this.$store.dispatch("fetchCategories");
     },
     togglePlaying() {
       if (!this.playing) {

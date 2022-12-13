@@ -31,10 +31,7 @@
             <p class="card-header-title">
               <CategoryAutocomplete
                 :value="eventSelected.title"
-                :categories="categories"
-                :loading="categoriesLoading"
                 @select="updateEventSelected({ title: $event })"
-                @add-category="(category) => {this.categories.unshift(category);}"
                 ref="categoryAutocomplete"
               />
             </p>
@@ -130,14 +127,14 @@ export default {
       eventDraft: null,
       beforeEdit: null,
 
-      categories: [],
-      categoriesLoading: true,
-
       isPlaying: false,
       storePlaying: null,
     };
   },
   computed: {
+    categories() {
+      return this.$store.state.categories || [];
+    },
     startEventSelected() {
       return this.eventSelected ? this.hmTime(this.eventSelected.start) : null;
     },
@@ -150,13 +147,8 @@ export default {
   },
   mounted() {
     // get categories
-    fetch("/api/categories")
-      .then((response) => response.json())
-      .then((categories) => {
-        this.categories = categories.map((category) => category.name);
-        this.categoriesLoading = false;
-      });
     this.fetchEvents();
+    this.$store.dispatch("fetchCategories");
 
     document.addEventListener("keydown", this.handleKeyDown);
     this.storePlaying = this.$store.state.playing;

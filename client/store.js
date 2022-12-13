@@ -8,6 +8,7 @@ export function getDefaultState() {
   return {
     username: null, // Username of the logged in user
     playing: {},
+    categories: null,
     events: []
   };
 }
@@ -17,6 +18,16 @@ export function getDefaultState() {
  */
 const store = new Vuex.Store({
   state: getDefaultState(),
+  actions: {
+    fetchCategories({commit}) {
+      commit("setCategories", null);
+      fetch("/api/categories")
+      .then((response) => response.json())
+      .then((categories) => {
+        commit("setCategories", categories.map(c => c.name));
+      });
+    }
+  },
   mutations: {
     setUsername(state, username) {
       state.username = username;
@@ -26,6 +37,9 @@ const store = new Vuex.Store({
     },
     setEvents(state, events) {
       state.events = events;
+    },
+    setCategories(state, categories) {
+      state.categories = categories;
     }
   },
   // Store data across page refreshes, only discard on browser close
