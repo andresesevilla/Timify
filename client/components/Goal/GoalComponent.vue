@@ -103,10 +103,10 @@ export default {
           return "Limit reached!";
         }
         if (this.progress >= 85) {
-          return "Be careful with your limit!";
+          return "Be careful with the limit!";
         }
         if (this.progress >= 50) {
-          return "Less than half of your limit left!";
+          return "Less than half of the limit left!";
         }
         if (this.progress >= 25) {
           return "You're doing great!";
@@ -117,24 +117,27 @@ export default {
       }
     },
     infoMessage() {
-      let message = `You have spent ${Math.round(this.goal.progress * 100) / 100} hours on ${this.goal.category} so far. `;
+      let message = `Spent ${this.twoDigitRound(this.goal.progress)} hours on ${this.goal.category} so far. `;
       if (this.goal.type === 'goal') {
         if (this.goal.progress >= this.goal.hours) {
-          message += `You have reached your goal!`;
+          message += `Goal reached!`;
         } else {
-          message += `Only ${this.goal.hours - this.goal.progress} hours left to reach your goal!`;
+          message += `Only ${this.twoDigitRound(this.goal.hours - this.goal.progress)} hours left to reach the goal!`;
         }
       } else {
         if (this.goal.progress >= this.goal.hours) {
-          message += `You have reached your limit! Try to spend less time on this.`;
+          message += `Reached the limit! Need to spend less time on this.`;
         } else {
-          message += `Just ${this.goal.hours - this.goal.progress} hours this week left to reach your limit, use it wisely!`;
+          message += `Just ${this.twoDigitRound(this.goal.hours - this.goal.progress)} hours this week left to reach the limit, use it wisely!`;
         }
       }
       return message;
     }
   },
   methods: {
+    twoDigitRound(x) {
+      return Math.round(x * 100) / 100;
+    },
     startEdit() {
       this.editing = true;
     },
